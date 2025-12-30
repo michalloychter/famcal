@@ -1,0 +1,11 @@
+
+.main-div {
+    padding: 20px;
+}
+.calendar-container {
+  padding: 20px;
+}
+.calendar-container {
+  height: 400px;
+  overflow-x: scroll;
+}

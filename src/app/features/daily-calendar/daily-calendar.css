@@ -1,0 +1,70 @@
+/* Task type background colors (copied from family-members.css) */
+.type-meeting {
+    background: #1976d2 !important;
+    color: #fff !important;
+}
+.type-class {
+    background: #388e3c !important;
+    color: #fff !important;
+}
+.type-shopping {
+    background: #fbc02d !important;
+    color: #222 !important;
+}
+.type-birthday {
+    background: #e040fb !important;
+    color: #fff !important;
+}
+.type-doctor {
+    background: #0097a7 !important;
+    color: #fff !important;
+}
+.type-other {
+    background: #757575 !important;
+    color: #fff !important;
+}
+.main-div {
+    padding: 20px;
+}
+.daily-tasks-container ul {
+    list-style-type: none; /* Removes the bullet points */
+    padding: 0;           /* Removes default padding */
+    margin: 0; 
+    display: flex;           /* Removes default margin */
+}
+.daily-tasks-container ul li{background-color: #d7f2f1;
+    align-self: center;
+    width: 40%;
+    border-radius: 10px;
+    list-style: none;
+    margin-top: 20px;
+    padding: 20px;
+        margin: 10px;
+}
+/* 2. Style the container itself (optional, makes it look like a card) */
+.daily-tasks-container {
+    
+    padding: 20px;
+    border-radius: 8px;
+   
+}
+.userName{
+  color: #fbd202;;
+  font-weight: bolder;
+}
+/* 3. Center the entire container on the screen */
+/* Since this is a standalone component, you might need to apply the centering to a parent container like the <body> or a main app container */
+body, html, .main-app-container {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;     /* Centers vertically */
+}
+.task-member-name {
+    border-bottom: 1px solid #222;
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+    font-size: 1.05em;
+    font-weight: 600;
+}

@@ -1,0 +1,14 @@
+.main-footer {
+  /* Position the footer at a fixed location relative to the viewport */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  /* Set the height and other styles */
+  height: 10%; /* The desired height */
+   background-color: #40e0d0;;
+  color: rgb(110, 109, 109);
+  text-align: center;
+  padding: 1rem 0; /* Add padding for content inside the footer */
+}

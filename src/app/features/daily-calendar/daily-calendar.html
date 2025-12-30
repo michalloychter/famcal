@@ -1,0 +1,50 @@
+<div class="daily-tasks-container main-div">
+  <!-- Use firstName() as it's a signal -->
+  <p class="userName">Hey {{ firstName() }},</p> 
+
+ <!-- Weather Forecast Section (New) -->
+  <div class="weather-widget">
+    <h3>Today's Weather</h3>
+    
+    <!-- FIX 1: Use the PUBLIC 'weatherData()' signal instead of the private 'weather()' -->
+    <!-- FIX 2: Use an 'as weather' alias for clean access within the div -->
+    <div *ngIf="weather() as weather" class="weather-info">
+      <!-- Access properties directly from the 'weather' alias -->
+      <p><strong>{{ weather.city }}</strong></p>
+      <p>{{ weather.temp | number:'1.0-0' }}°C</p>
+      <p>{{ weather.description }}</p>
+      <!-- Use the alias here too -->
+      <img [src]="weather.iconUrl" alt="{{ weather.description }} icon" />
+    </div>
+
+    <!-- FIX 3: Check weatherData() and weatherError() signals for loading/error states -->
+    <div *ngIf="!weather() && !weatherError()" class="loading">
+      Loading weather...
+    </div>
+    
+    <!-- Check weatherError() signal value -->
+    <div *ngIf="weatherError()" class="error-message">
+      {{ weatherError() }}
+    </div>
+  </div>
+
+  <h3>Tasks for Today ({{ taskCount() }})</h3>
+  
+
+  <div *ngIf="taskCount() > 0; else noTasks">
+    <ul *ngIf="todayTasks()">
+      <li *ngFor="let task of todayTasks()" [ngClass]="'task type-' + mapTaskType(task.title)">
+        <div class="task-content">
+          <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
+          <strong>{{ task.title }}</strong>
+          <p>{{ task.details }}</p>
+          <small>{{ task.date | friendlyDateTime }}</small>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #noTasks>
+    <p>No tasks scheduled for today.</p>
+  </ng-template>
+</div>

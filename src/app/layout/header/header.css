@@ -1,0 +1,100 @@
+/* Update the main header styles */
+.main-header {
+   font-family: "Gochi Hand";
+  background-color: white; /* White background */
+  padding: 1rem 2rem;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Right-side shadow */
+  display: flex;
+  justify-content: flex-start; /* Align content to the left */
+  align-items: center;
+  position: sticky; /* Keep header visible at the top */
+  top: 0;
+  z-index: 1000;
+}
+
+/* Hamburger menu styles */
+.header-right{
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: 16px;
+}
+.hamburger{
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.hamburger-menu{
+  position: absolute;
+  right: 0;
+  top: 36px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  min-width: 160px;
+  z-index: 1000;
+}
+.hamburger-menu li{
+  padding: 8px 16px;
+}
+.hamburger-menu li a{
+  text-decoration: none;
+  color: #333;
+}
+.hamburger-menu li a:hover{
+  color: var(--primary-color, #1976d2);
+}
+
+/* Style the logo container */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+/* Create the circular turquoise logo */
+.logo-circle {
+   color: rgb(110, 109, 109);
+  width: 50px;
+  height: 50px;
+  background-color: #40e0d0; /* Turquoise color */
+  border-radius: 10%; /* Make it a circle */
+  display: flex;
+  flex-direction: column; /* Stack text vertically */
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+.divider {
+  margin: 10px;
+  width: 100%;
+  height: 1px; /* Adjust height of the line */
+  background-color: #ddd; /* Color of the line */
+  margin: 0 1rem; /* Space around the line */
+}
+
+/* Style the text inside the logo */
+.logo-circle span {
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
+  line-height: 1; /* Adjust line height for closer text */
+  text-transform: uppercase;
+}
+.main-nav {
+  margin-top:20px
+}
+.main-nav-list a {
+  text-decoration: none;
+  padding: 20px;
+  color: rgb(75, 74, 74); /* Set a default color for the links */
+}
+
+/* Add an effect for hover */
+.main-nav-list a:hover {
+  color: #40e0d0;; /* Example: change color on hover */
+}

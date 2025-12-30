@@ -1,0 +1,148 @@
+/* Style for the member name at the top of each task, with a bottom border */
+.task-member-name {
+  border-bottom: 2px solid #bbb;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+  font-size: 1.05em;
+  font-weight: 600;
+}
+/* Rounded corners for all inputs and textareas in the add-task form */
+.add-task-form input,
+.add-task-form textarea {
+  border-radius: 30px;
+}
+/* Rounded corners for the add-task form container */
+.add-task-form {
+  border-radius: 30px;
+}
+/* Background color for add-task form by type (matches button) */
+.bg-meeting {
+  background: #1976d2 !important;
+  color: #fff !important;
+  min-height: 60px;
+}
+.bg-class {
+  background: #388e3c !important;
+  color: #fff !important;
+  min-height: 60px;
+}
+.bg-shopping {
+  background: #fbc02d !important;
+  color: #222 !important;
+  min-height: 60px;
+}
+.bg-birthday {
+  background: #e040fb !important;
+  color: #fff !important;
+  min-height: 60px;
+}
+.bg-doctor {
+  background: #0097a7 !important;
+  color: #fff !important;
+  min-height: 60px;
+}
+.bg-other {
+  background: #757575 !important;
+  color: #fff !important;
+  min-height: 60px;
+}
+/* Unique colors for each task type button */
+.type-btn.type-meeting {
+  background-color: #1976d2;
+  color: #fff;
+}
+.type-btn.type-class {
+  background-color: #388e3c;
+  color: #fff;
+}
+.type-btn.type-shopping {
+  background-color: #fbc02d;
+  color: #222;
+}
+.type-btn.type-birthday {
+  background-color: #e040fb;
+  color: #fff;
+}
+.type-btn.type-doctor {
+  background-color: #0097a7;
+  color: #fff;
+}
+.type-btn.type-other {
+  background-color: #757575;
+  color: #fff;
+}
+.main-div {
+    padding: 20px;
+}
+.type-meeting {
+  background: #1976d2 !important;
+  color: #fff !important;
+}
+.type-class {
+  background: #388e3c !important;
+  color: #fff !important;
+}
+.type-shopping {
+  background: #fbc02d !important;
+  color: #222 !important;
+}
+.type-birthday {
+  background: #e040fb !important;
+  color: #fff !important;
+}
+.type-doctor {
+  background: #0097a7 !important;
+  color: #fff !important;
+}
+.type-other {
+  background: #757575 !important;
+  color: #fff !important;
+}
+
+.tab-button:hover {
+    color: #fbd202; /* Darker color on hover */
+}
+
+.fam-btn {
+  border-radius: 30px;
+    border: 1px;
+   color: #17a89a;
+   padding: 5px 10px;
+   cursor: pointer;
+   background-color: #dad5d5;
+}
+form div {
+padding: 5px;
+}
+
+form {
+  align-self: center;
+  width: 60%;
+  padding: 20px;
+  border-radius: 30px !important;
+  list-style: none; /* This line is added to ensure no list style is applied */
+}
+label {
+padding: 10px;
+}
+.task {
+  border-radius: 30px; /* Set border-radius for li.task */
+  list-style: none; /* Remove bullet points */
+  margin: 10px;
+  padding: 20px;
+  /* No background or color here, so .bg-* can take effect */
+}
+.member-tasks{
+  display: flex;
+}
+
+/* Optimistic task styling */
+.optimistic {
+  color: #777;
+  font-style: italic;
+  margin-left: 8px;
+  font-size: 0.9em;
+}
+.optimistic-task {
+  opacity: 0.8;
+}
