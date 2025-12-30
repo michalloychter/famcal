@@ -38,6 +38,25 @@ testem.log
 /typings
 __screenshots__/
 
+# Firebase/Express backend secrets
+server/firebase-service-account.json
+.env
+
+# Build output
+dist/
+
+# Ignore Angular environments except production
+src/environments/*.ts
+!src/environments/environment.prod.ts
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+*.tgz
+
 # System files
 .DS_Store
 Thumbs.db
