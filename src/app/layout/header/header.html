@@ -18,65 +18,12 @@
 
       <!-- Show "Logout" only IF the user IS logged in -->
       <span *ngIf="authService.currentUser()">
-        <span class="logged-in-as">Logged in as {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</span>
+  <span class="logged-in-as">Logged in as {{ authService.currentUser()?.familyName }}</span>
         <!-- We use a click handler here instead of routerLink -->
         <a href="#" (click)="logout()">Logout</a>
       </span>
   
   </div>
 </nav>
-  <!-- Right side: hamburger menu -->
-  <div class="header-right">
-    <button class="hamburger" aria-label="Open menu" (click)="toggleMenu()">☰</button>
-    <ul class="hamburger-menu" *ngIf="menuOpen()">
-      <!-- If user provided values, show them with external links -->
-      <li *ngIf="authService.currentUser()?.healthFundName">
-        <a [href]="authService.currentUser()?.healthFundUrl || '#'" target="_blank" (click)="menuOpen.set(false)">
-          Health fund: {{ authService.currentUser()?.healthFundName }}
-        </a>
-      </li>
-      <li *ngIf="authService.currentUser()?.superName">
-        <a [href]="authService.currentUser()?.superUrl || '#'" target="_blank" (click)="menuOpen.set(false)">
-          Super: {{ authService.currentUser()?.superName }}
-        </a>
-      </li>
-      <li *ngIf="authService.currentUser()?.bankName">
-        <a [href]="authService.currentUser()?.bankUrl || '#'" target="_blank" (click)="menuOpen.set(false)">
-          Bank: {{ authService.currentUser()?.bankName }}
-        </a>
-      </li>
-      <!-- Always show menu items; if DB values exist show them with links, otherwise show fallback route -->
-      <li>
-        <ng-container *ngIf="authService.currentUser()?.healthFundName; else healthFallback">
-          <a [href]="authService.currentUser()?.healthFundUrl || '#'" target="_blank" (click)="menuOpen.set(false)">
-            Health fund: {{ authService.currentUser()?.healthFundName }}
-          </a>
-        </ng-container>
-        <ng-template #healthFallback>
-          <a [routerLink]="['/health-fund']" (click)="menuOpen.set(false)">Health fund</a>
-        </ng-template>
-      </li>
-      <li>
-        <ng-container *ngIf="authService.currentUser()?.superName; else superFallback">
-          <a [href]="authService.currentUser()?.superUrl || '#'" target="_blank" (click)="menuOpen.set(false)">
-            Super: {{ authService.currentUser()?.superName }}
-          </a>
-        </ng-container>
-        <ng-template #superFallback>
-          <a [routerLink]="['/super']" (click)="menuOpen.set(false)">Super</a>
-        </ng-template>
-      </li>
-      <li>
-        <ng-container *ngIf="authService.currentUser()?.bankName; else bankFallback">
-          <a [href]="authService.currentUser()?.bankUrl || '#'" target="_blank" (click)="menuOpen.set(false)">
-            Bank: {{ authService.currentUser()?.bankName }}
-          </a>
-        </ng-container>
-        <ng-template #bankFallback>
-          <a [routerLink]="['/bank']" (click)="menuOpen.set(false)">Bank</a>
-        </ng-template>
-      </li>
-    </ul>
-  </div>
-  <!-- Other navigation items here -->
+ 
 </header>

@@ -1,6 +1,6 @@
 <div class="daily-tasks-container main-div">
-  <!-- Use firstName() as it's a signal -->
-  <p class="userName">Hey {{ firstName() }},</p> 
+  <!-- Show member name as greeting -->
+  <p class="userName">Hey {{ memberName() }},</p>
 
  <!-- Weather Forecast Section (New) -->
   <div class="weather-widget">
@@ -28,21 +28,22 @@
     </div>
   </div>
 
-  <h3>Tasks for Today ({{ taskCount() }})</h3>
-  
+  <h3>Tasks for Today</h3>
 
-  <div *ngIf="taskCount() > 0; else noTasks">
-    <ul *ngIf="todayTasks()">
-      <li *ngFor="let task of todayTasks()" [ngClass]="'task type-' + mapTaskType(task.title)">
-        <div class="task-content">
-          <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
-          <strong>{{ task.title }}</strong>
-          <p>{{ task.details }}</p>
-          <small>{{ task.date | friendlyDateTime }}</small>
-        </div>
-      </li>
-    </ul>
-  </div>
+  <ng-container *ngIf="tasks$ | async as tasks">
+    <ng-container *ngIf="tasks.length > 0; else noTasks">
+      <ul>
+        <li *ngFor="let task of tasks | filterToday" [ngClass]="'task type-' + mapTaskType(task.title)">
+          <div class="task-content">
+            <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
+            <strong>{{ task.title }}</strong>
+            <p>{{ task.details }}</p>
+            <small>{{ task.date | friendlyDateTime }}</small>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
+  </ng-container>
 
   <ng-template #noTasks>
     <p>No tasks scheduled for today.</p>

@@ -2,92 +2,73 @@
 <h2>Register for Family Calendar</h2>
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <div>
-    <label for="firstName">First Name:</label>
-    <input type="text" formControlName="firstName" id="firstName" required>
-    <div *ngIf="submitted && f['firstName'].errors" class="error">
-      <div *ngIf="f['firstName'].errors['required']">First Name is required</div>
+    <label for="familyName">Family Name: <span class="required-asterisk">*</span></label>
+    <input type="text" formControlName="familyName" id="familyName" required>
+    <div *ngIf="submitted && (f['familyName']?.errors ?? false)" class="error">
+      <div *ngIf="(f['familyName']?.errors?.['required'] ?? false)">Family Name is required</div>
     </div>
   </div>
-
-  <div>
-    <label for="lastName">Last Name:</label>
-    <input type="text" formControlName="lastName" id="lastName" required>
-    <div *ngIf="submitted && f['lastName'].errors" class="error">
-      <div *ngIf="f['lastName'].errors['required']">Last Name is required</div>
+  <div *ngFor="let member of members; let i = index" class="member-entry">
+    <div>
+      <label>Member name: <span class="required-asterisk">*</span></label>
+      <input type="text" [(ngModel)]="member.memberName" name="memberName-{{i}}" required [ngModelOptions]="{standalone: true}">
+    </div>
+    <div>
+      <label>Username: <span class="required-asterisk">*</span></label>
+      <input type="text" [(ngModel)]="member.username" name="username-{{i}}" required [ngModelOptions]="{standalone: true}">
+    </div>
+    <div>
+      <label>Email:</label>
+      <input type="email" [(ngModel)]="member.email" name="email-{{i}}" [ngModelOptions]="{standalone: true}">
+    </div>
+    <div>
+      <label>Country</label>
+      <select [(ngModel)]="member.country" name="country-{{i}}" class="country-select" [ngModelOptions]="{standalone: true}">
+        <option value="">Select country</option>
+        <option value="Israel (+972)">Israel (+972)</option>
+        <option value="United States (+1)">United States (+1)</option>
+        <option value="United Kingdom (+44)">United Kingdom (+44)</option>
+        <option value="France (+33)">France (+33)</option>
+        <option value="Germany (+49)">Germany (+49)</option>
+        <option value="India (+91)">India (+91)</option>
+        <option value="Brazil (+55)">Brazil (+55)</option>
+        <option value="Russia (+7)">Russia (+7)</option>
+        <option value="China (+86)">China (+86)</option>
+        <option value="Japan (+81)">Japan (+81)</option>
+        <option value="Nepal (+977)">Nepal (+977)</option>
+      </select>
+    </div>
+    <div>
+      <label>Phone:</label>
+      <input type="tel" [(ngModel)]="member.whatsappNumber" name="whatsappNumber-{{i}}" placeholder="e.g., 0545766580" pattern="^0?\d{8,14}$" [ngModelOptions]="{standalone: true}">
+    </div>
+    <div>
+      <button type="button" (click)="removeMember(i)">Remove</button>
     </div>
   </div>
-
-  <!-- Email Field Added -->
-  <div>
-    <label for="email">Email:</label>
-    <input type="email" formControlName="email" id="email" required>
-    <div *ngIf="submitted && f['email'].errors" class="error">
-      <div *ngIf="f['email'].errors['required']">Email is required</div>
-      <div *ngIf="f['email'].errors['email']">Email must be a valid format</div>
-    </div>
-  </div>
-
-  <div>
-    <label for="userName">Username:</label>
-    <input type="text" formControlName="userName" id="userName" required>
-    <div *ngIf="submitted && f['userName'].errors" class="error">
-      <div *ngIf="f['userName'].errors['required']">Username is required</div>
-    </div>
-  </div>
-
-  <div>
-    <label for="password">Password:</label>
-    <input type="password" formControlName="password" id="password" required>
-    <div *ngIf="submitted && f['password'].errors" class="error">
-      <div *ngIf="f['password'].errors['required']">Password is required</div>
-      <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
-    </div>
-  </div>
+  <button type="button" (click)="addMember()">+ Add Member</button>
   
-  <div>
-    <label for="members">Family Member Names (comma separated):</label>
-    <input type="text" formControlName="members" id="members" placeholder="e.g., John, Jane, Buddy" required>
-    <div *ngIf="submitted && f['members'].errors" class="error">
-      <div *ngIf="f['members'].errors['required']">Member names are required</div>
-    </div>
-  </div>
 
-  <hr>
-  <h4>Bank / Health / Super (optional)</h4>
-  <div>
-    <label for="bankName">Bank Name:</label>
-    <input type="text" formControlName="bankName" id="bankName" placeholder="e.g., Bank Hapoalim">
-  </div>
-  <div>
-    <label for="bankUrl">Bank URL:</label>
-    <input type="url" formControlName="bankUrl" id="bankUrl" placeholder="https://www.example-bank.com">
-  </div>
-
-  <div>
-    <label for="healthFundName">Health Fund (Kupat Holim) Name:</label>
-    <input type="text" formControlName="healthFundName" id="healthFundName" placeholder="e.g., Clalit">
-  </div>
-  <div>
-    <label for="healthFundUrl">Health Fund URL:</label>
-    <input type="url" formControlName="healthFundUrl" id="healthFundUrl" placeholder="https://www.clalit.co.il">
-  </div>
-
-  <div>
-    <label for="superName">Superannuation (Pension) Fund Name:</label>
-    <input type="text" formControlName="superName" id="superName" placeholder="e.g., Fund X">
-  </div>
-  <div>
-    <label for="superUrl">Super Fund URL:</label>
-    <input type="url" formControlName="superUrl" id="superUrl" placeholder="https://www.super-fund.example">
-  </div>
-
+<div>
   <button class="fam-btn" type="submit" [disabled]="loading">
     <span *ngIf="loading">Registering...</span>
     <span *ngIf="!loading">Register</span>
   </button>
-
-  <div *ngIf="error" class="error-message">{{ error }}</div>
+</div>
+  <div *ngIf="error()" class="error-message">{{ error() }}</div>
 </form>
 
-<p>Already have an account? <a routerLink="/login">Login here</a></p>
+
+  <p>Already have an account? <a [routerLink]="['/login']" class="login-link">Login here</a></p>
+<style>
+  .login-link {
+    cursor: pointer;
+  }
+  .login-link:hover {
+    color: #113d70;
+  }
+  .error, .error-message {
+    color: rgb(198, 35, 35);
+  }
+</style>
 </div>

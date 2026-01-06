@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
 import {MatButtonModule} from '@angular/material/button';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { AuthService, UserDetails, FamilyMember } from '../../core/authService'; 
+import { MatDialog } from '@angular/material/dialog';
+import { AuthService, FamilyMember } from '../../core/authService';
+import { HttpClient } from '@angular/common/http';
 import { TasksService, Task, NewTaskPayload as OrigNewTaskPayload } from '../../core/tasksService'; 
 // Extend NewTaskPayload to allow 'type' for UI payload
 type NewTaskPayload = OrigNewTaskPayload & { type?: string };
@@ -23,70 +24,96 @@ import { log } from 'console';
 })
 export class FamilyMembers implements OnInit {
   selectedTaskType: string | null = null;
-  
-  //familyMembers: FamilyMember[] = [];
-  selectedMember=signal< FamilyMember | null> (null) ;
-  // will hold a computed signal, initialized in constructor so injected services are available
+  selectedMember = signal<FamilyMember | null>(null);
   selectedMemberTasks: any;
-  public readonly currentUserId= computed(()=>{
+  public readonly currentUserId = computed(() => {
     return this.authService?.currentUser()?.id;
-  }); 
- public readonly familyMembers= computed(()=>{
-  const user=this.authService.currentUser()
-  return user?.familyMembers || []
- })
-  // --- New Properties for the Add Task Form ---
+  });
+  // Computed property: true if current user is main user (not a member)
+  // Computed property: true if current user is main user (not a member)
+  public readonly isMainUser = computed(() => {
+    const user = this.authService.currentUser();
+    // Heuristic: if user has a familyMembers array, treat as main user; if not, treat as member
+    return !!user && Array.isArray(user.familyMembers);
+  });
+  public readonly familyMembers = signal<FamilyMember[]>([]);
   isFormVisible: boolean = false;
   newTaskForm: FormGroup;
-  // ---------------------------------------------
+
+  // --- Add Member Form ---
+  showAddMemberForm: boolean = false;
+  addMemberForm: FormGroup;
 
   constructor(
     private authService: AuthService,
     private tasksService: TasksService,
-    private fb: FormBuilder ,// Inject FormBuilder
-    //private cdr: ChangeDetectorRef ,
-    private dialog: MatDialog 
+    private fb: FormBuilder ,
+    private dialog: MatDialog,
+    private http: HttpClient
   ) {
+    // Fetch all members with the same familyName
+    const familyName = this.authService.currentUser()?.familyName;
+    if (familyName) {
+      this.http.get<FamilyMember[]>(`http://localhost:3000/api/members?familyName=${encodeURIComponent(familyName)}`)
+        .subscribe(members => this.familyMembers.set(members));
+    }
     // Initialize the form group with validators
     this.newTaskForm = this.fb.group({
       title: ['', Validators.required],
       details: [''],
-      date: ['', Validators.required], // Start time input (will be a string from HTML date picker)
-      end: [''], // Optional end time
-      type: [''] // New: task type
+      date: ['', Validators.required],
+      reminderDateTime: ['', Validators.required],
+      end: [''],
+      type: ['']
     });
 
-    // initialize computed after services are available
-    this.selectedMemberTasks = computed(() => {
-      const member = this.selectedMember();
-      if (!member) return [] as Task[];
-      return this.tasksService.allTasks().filter(task => task.memberName === member.memberName);
+    // Add Member Form
+    this.addMemberForm = this.fb.group({
+      memberName: ['', Validators.required],
+      isUser: [false]
+    });
+
+    // Use a signal to store tasks for the selected member
+    this.selectedMemberTasks = signal<Task[]>([]);
+  }
+  // Add Member logic
+  submitAddMember(): void {
+    if (this.addMemberForm.invalid) return;
+    const { memberName, isUser } = this.addMemberForm.value;
+    this.tasksService.addMember({ name: memberName, isUser }).subscribe({
+      next: () => {
+        this.addMemberForm.reset();
+        this.showAddMemberForm = false;
+        // Refresh members list
+        this.tasksService.fetchFamilyMembers().subscribe();
+      },
+      error: (err) => {
+        alert('Failed to add member: ' + (err?.error?.error || err.message || err));
+      }
     });
   }
 
   ngOnInit(): void {
-
-
-    this.loadTasks(); // Use a dedicated method to load tasks
+  // Load family members from backend
+  this.tasksService.fetchFamilyMembers().subscribe();
+  // No need to load all tasks at once; tasks are loaded per member
   }
 
   // A helper method to reload tasks after an addition
   loadTasks(): void {
-  this.tasksService.getTasks().subscribe(tasks => {
-    // tasks are written to the service's signal by getTasks();
-    const currentMembers = this.familyMembers();
-    const currentSelectedMember = this.selectedMember();
-    if ( currentSelectedMember) {
-      this.selectMember(currentSelectedMember);
-    } else if (currentMembers.length > 0) {
-      this.selectMember(currentMembers[0]);
-    }
-  });
+  // No-op: tasks are loaded per member
   }
 
   selectMember(member: FamilyMember): void {
     this.selectedMember.set(member);
-    this.isFormVisible = false; 
+    this.isFormVisible = false;
+    if (member && member.email) {
+      this.tasksService.getTasksByEmail(member.email).subscribe(tasks => {
+        this.selectedMemberTasks.set(tasks);
+      });
+    } else {
+      this.selectedMemberTasks.set([]);
+    }
   }
   
 
@@ -118,14 +145,19 @@ export class FamilyMembers implements OnInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       // 'result' is 'true' if the user confirmed the deletion
       if (result === true) {
+        // Optimistically remove the task from the selectedMemberTasks signal
+        const prevTasks = this.selectedMemberTasks();
+        this.selectedMemberTasks.update((tasks: Task[]) => tasks.filter((t: Task) => t.id !== taskId));
         this.tasksService.deleteTask(taskId).subscribe({
           next: () => {
             console.log(`Task ${taskId} deleted successfully.`);
-            this.loadTasks(); // Reload tasks to update the UI instantly
+            // No need to reload tasks, already removed optimistically
           },
           error: (err) => {
             console.error('Error deleting task:', err);
             alert('Failed to delete task.');
+            // Rollback if error
+            this.selectedMemberTasks.set(prevTasks);
           }
         });
       }
@@ -145,28 +177,39 @@ export class FamilyMembers implements OnInit {
       return;
     }
 
-    // (formValue already declared above)
     const userIdValue = this.currentUserId();
     const selectedMemberValue = this.selectedMember();
     const newTaskPayload: NewTaskPayload = {
       title: formValue.title,
       details: formValue.details,
-      date: convertAnyDateToJSDate(formValue.date), // Convert HTML string input to Date object
-      end: formValue.end ? convertAnyDateToJSDate(formValue.end) : undefined, // Convert optional end time
-      userID: String(userIdValue),
-      // Assign to the currently selected member (use memberName property)
-      memberName: selectedMemberValue ? String(selectedMemberValue.memberName) : '',
-      type: formValue.type || this.selectedTaskType || '' // Include task type in payload
+      date: convertAnyDateToJSDate(formValue.date),
+      reminderDateTime: formValue.reminderDateTime ? convertAnyDateToJSDate(formValue.reminderDateTime) : undefined,
+      end: formValue.end ? convertAnyDateToJSDate(formValue.end) : undefined,
+      familyName: this.authService.currentUser()?.familyName || '',
+      memberName: selectedMemberValue ? String(selectedMemberValue.name) : '',
+      email: selectedMemberValue ? String(selectedMemberValue.email) : '',
+      type: formValue.type || this.selectedTaskType || ''
     };
+
+    // Optimistically update the selectedMemberTasks signal
+    const tempId = (typeof crypto !== 'undefined' && 'randomUUID' in crypto) ? (crypto as any).randomUUID() : `temp-${Date.now()}-${Math.floor(Math.random()*10000)}`;
+    const optimisticTask: Task = {
+      ...newTaskPayload,
+      id: tempId,
+      _optimistic: true
+    } as Task;
+  this.selectedMemberTasks.update((tasks: Task[]) => [...tasks, optimisticTask]);
 
     // Actually submit the task to the backend
     this.tasksService.addTask(newTaskPayload).subscribe({
       next: (response) => {
-        console.log('Task added successfully', response);
+        // Replace the optimistic task with the real one
+  this.selectedMemberTasks.update((tasks: Task[]) => tasks.map((t: Task) => t.id === tempId ? response : t));
         this.toggleFormVisibility(); // Hide form on success
-        this.loadTasks(); // Refresh the task list
       },
       error: (err) => {
+        // Remove the optimistic task if error
+  this.selectedMemberTasks.update((tasks: Task[]) => tasks.filter((t: Task) => t.id !== tempId));
         console.error('Error adding task:', err);
         alert('Failed to add task.');
       }

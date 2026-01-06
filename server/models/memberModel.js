@@ -1,52 +1,89 @@
 const {db}= require ('../firebaseConfig');
-const memberCollection= db.collection('members');
- 
-const MemberModel={
-async userMembers(userId){
-    try{
-      console.log("userId",userId);
-      
-      const membersById=  await memberCollection.where("userID","==",String(userId)).get();
-      console.log("membersByIdnn",membersById);
-      
-      const userMembersList=  membersById.docs.map(doc=>{
-        const data=doc.data();
-        // Use the document ID as the stable memberId and normalize userID casing
-        const memberId = doc.id;
-        const userID = data.userID || data.userId || null;
-        console.log("member data", { memberId, ...data });
-        // Return both 'id' and 'memberId' for compatibility with frontend expectations
-        return { id: memberId, memberName: data.memberName, memberId: memberId, userID };
-      });
-      return  userMembersList
-    }
-    catch(error){
-       console.error("Database error in getMember:", error);
-            // Re-throw the error so the BLL/Controller can handle it
-            throw new Error("Failed to get members from database.");
-    }
-},
-async addMembers(memberNames,newUserId){
+const memberCollection = db.collection('members');
+
+const MemberModel = {
+  // Get all members by familyName
+  async getMembersByFamilyName(familyName) {
     try {
-         const batch = db.batch();
-
-    for (const memberName of memberNames) {
-      const memberDocRef = memberCollection.doc(); // Auto-generate ID for member
-      batch.set(memberDocRef, {
-        memberName: memberName,
-        // Persist the owner user id under the consistent 'userID' field name
-        userID: String(newUserId)
+      const snapshot = await memberCollection.where('familyName', '==', familyName).get();
+      return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data
+        };
       });
+    } catch (error) {
+      console.error('Database error in getMembersByFamilyName:', error);
+      throw new Error('Failed to get members by familyName.');
     }
-        await batch.commit(); // Commit all member writes at once
-        return { success: true, message: `Added ${memberNames.length} members.` };
+  },
+  // Find members by email and username for login
+  async findMembersByEmailAndUsername(email, username) {
+    try {
+      const snapshot = await memberCollection
+        .where('email', '==', email)
+        .where('username', '==', username)
+        .get();
+      return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data
+        };
+      });
+    } catch (error) {
+      console.error('Database error in findMembersByEmailAndUsername:', error);
+      throw new Error('Failed to find member for login.');
     }
-    catch(error){
-  console.error("Database error in add Member:", error);
-            // Re-throw the error so the BLL/Controller can handle it
-            throw new Error("Failed to add members from database.");
+  },
+  async getMembersByFamilyId(familyId) {
+    try {
+      console.log('familyId', familyId);
+      const membersByFamily = await memberCollection.where('familyId', '==', String(familyId)).get();
+      console.log('membersByFamily QuerySnapshot', membersByFamily);
+      const membersList = membersByFamily.docs.map(doc => {
+        const data = doc.data();
+        const memberId = doc.id;
+        return {
+          id: memberId,
+          name: data.name || '',
+          username: data.username || '',
+          whatsappNumber: data.whatsappNumber || '',
+          email: data.email || '',
+          familyId: data.familyId || null
+        };
+      });
+      return membersList;
+    } catch (error) {
+      console.error('Database error in getMembersByFamilyId:', error);
+      throw new Error('Failed to get members from database.');
     }
-}
+  },
+  async addMembers(members, familyId) {
+    try {
+      const batch = db.batch();
+      for (const member of members) {
+        if (!member.name || !member.username || !member.email) {
+          throw new Error('Each member must have name, username, and email');
+        }
+        const memberDocRef = memberCollection.doc();
+        batch.set(memberDocRef, {
+          name: member.name,
+          username: member.username,
+          whatsappNumber: member.whatsappNumber || '',
+          email: member.email,
+          familyId: String(familyId),
+          familyName: member.familyName || ''
+        });
+      }
+      await batch.commit();
+      return { success: true, message: `Added ${members.length} members.` };
+    } catch (error) {
+      console.error('Database error in addMembers:', error);
+      throw new Error('Failed to add members to database.');
+    }
+  }
+};
 
-}
-module.exports =MemberModel;
+module.exports = MemberModel;

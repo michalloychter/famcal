@@ -1,40 +1,14 @@
+// Removed: now imported from family.ts
 import { Injectable, PLATFORM_ID, Inject , signal, Signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { FamilyMember, familyDetails, FamilyRegistrationPayload } from '../shared/models/family';
+export type { FamilyMember } from '../shared/models/family';
+export type { familyDetails } from '../shared/models/family';
 import { isPlatformBrowser } from '@angular/common'; // <-- Import this
 
-// Define an interface for a single family member
-export interface FamilyMember {
-  id: number;
-  memberName: string;
-  userID: string;
-}
-
-export interface UserDetails {
-  id: number;
-  userName: string;
-  email: string;
-  firstName:string;
-  lastName:string;
-  token?: string; 
-
-  familyMembers?: FamilyMember[]; 
-  // Optional contact/info fields
-  bankName?: string | null;
-  bankUrl?: string | null;
-  healthFundName?: string | null;
-  healthFundUrl?: string | null;
-  superName?: string | null;
-  superUrl?: string | null;
-}
-export interface UserRegistrationPayload {
-  userName: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  email:string
-  members: string; 
-}
+// FamilyMember and familyDetails now imported from family.ts
+// MemberRegistration and UserRegistrationPayload removed; use FamilyRegistrationPayload from family.ts
 @Injectable({
   providedIn: 'root',
 })
@@ -42,58 +16,87 @@ export class AuthService {
     private loginUrl = 'http://localhost:3000/api/login';
     private registerUrl = 'http://localhost:3000/api/register'; 
     private isBrowser: boolean; 
-    private _currentUser= signal<UserDetails | null>(null);
-   currentUser=this._currentUser.asReadonly()
-   
-   constructor(
+  private _currentUser= signal<familyDetails | null>(null);
+  currentUser=this._currentUser.asReadonly()
+
+    constructor(
       private http: HttpClient,
       @Inject(PLATFORM_ID) platformId: Object 
-    ) { 
+    ) {
       this.isBrowser = isPlatformBrowser(platformId);
-
-
       let storedUser = null;
       if (this.isBrowser) { 
         const userString = localStorage.getItem('currentUser');
         storedUser = userString ? JSON.parse(userString) : null;
       }
-       this._currentUser.set(storedUser);
+      this._currentUser.set(storedUser);
+    }
+
+    // User login: for a member with isUser=true (by email and username)
+    loginWithEmail(email: string, username: string): Observable<any> {
+  return this.http.post<any>(this.loginUrl, { email, username }).pipe(
+    tap(response => {
+      if (response && response.user) {
+        // Store member name and username in currentUser for greeting
+        const memberUser = {
+          ...response.user,
+          name: response.user.name || response.user.username || '',
+          username: response.user.username || '',
+        };
+        if (this.isBrowser) {
+          localStorage.setItem('currentUser', JSON.stringify(memberUser));
+        }
+        this._currentUser.set(memberUser);
+      }
+    })
+  );
+    }
+
+    // Admin login: for the main user (not a member) by username and password
+    loginAsAdmin(password: string, userName: string): Observable<any> {
+      return this.http.post<any>(this.loginUrl, { password, userName }).pipe(
+        tap(response => {
+          if (response && response.user) {
+            const family: familyDetails = response.user;
+            if (this.isBrowser) {
+              localStorage.setItem('currentUser', JSON.stringify(family));
+            }
+            this._currentUser.set(family);
+          }
+        })
+      );
     }
 
     /**
      * Refresh the current user from the server by id and update the stored signal/localStorage.
      */
-    fetchUserById(userId: number | string) {
-      if (!userId) throw new Error('userId is required');
-      return this.http.get<UserDetails>(`http://localhost:3000/api/users/${userId}`).pipe(
-        tap(user => {
-          if (user) {
-            if (this.isBrowser) { localStorage.setItem('currentUser', JSON.stringify(user)); }
-            this._currentUser.set(user);
+    fetchFamilyById(familyId: number | string) {
+      if (!familyId) throw new Error('familyId is required');
+      return this.http.get<familyDetails>(`http://localhost:3000/api/families/${familyId}`).pipe(
+        tap(family => {
+          if (family) {
+            if (this.isBrowser) { localStorage.setItem('currentUser', JSON.stringify(family)); }
+            this._currentUser.set(family);
           }
         })
       );
     }
     
 
-    public get currentUserValue(): UserDetails | null {
-     
+    public get currentFamilyValue(): familyDetails | null {
       return this.currentUser();
     }
 
-    login(userName: string, password: string): Observable<any> {
-      return this.http.post<any>(this.loginUrl, { userName, password }).pipe(
+    login(familyName: string, password: string): Observable<any> {
+      return this.http.post<any>(this.loginUrl, { familyName, password }).pipe(
         tap(response => {
           console.log("res:",response);
           if (response && response.user) {
-          
-            // The response.user now includes 'familyMembers' which matches the updated interface
-            const user: UserDetails = response.user;
-            
+            const family: familyDetails = response.user;
             if (this.isBrowser) { 
-              localStorage.setItem('currentUser', JSON.stringify(user));
+              localStorage.setItem('currentUser', JSON.stringify(family));
             }
-            this._currentUser.set(user); 
+            this._currentUser.set(family); 
           }
         })
       );
@@ -105,7 +108,7 @@ export class AuthService {
       }
       this._currentUser.set(null); 
     }
-     register(userData: UserRegistrationPayload): Observable<any> {
-        return this.http.post(this.registerUrl, userData);
-    }
+   register(familyData: FamilyRegistrationPayload): Observable<any> {
+    return this.http.post(this.registerUrl, familyData);
+  }
 }

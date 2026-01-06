@@ -1,8 +1,9 @@
 import { Component, OnInit , signal, computed, inject} from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
+import { FilterTodayPipe } from '../../shared/filter-today.pipe';
 import { TasksService ,Task} from '../../core/tasksService'; 
-import { AuthService, UserDetails } from '../../core/authService';
+import { AuthService} from '../../core/authService';
 import { WeatherService, WeatherData } from '../../core/weather';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 import { Observable } from 'rxjs';
@@ -10,7 +11,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-daily-calendar',
   standalone: true,
-  imports: [CommonModule, FriendlyDateTimePipe], 
+  imports: [CommonModule, FriendlyDateTimePipe, FilterTodayPipe], 
   templateUrl: './daily-calendar.html',
   styleUrl: './daily-calendar.css',
 })
@@ -34,30 +35,30 @@ export class DailyCalendar implements OnInit {
     private weatherService: WeatherService
   ) {}
  tasks$!: Observable<Task[]>; 
+ memberEmail: string | null = null;
  weather = signal<WeatherData | null>(null);
   weatherError = signal<string | null>(null);
   clothingAdvice = signal<string | null>(null); 
- readonly firstName = computed(() => this.authService.currentUser()?.firstName || '');
+
+readonly memberName = computed(() => {
+  const user = this.authService.currentUser();
+  // Prefer name, then username, then email, then id
+  return user && (user.name || user.username || user.email || user.id || '');
+});
 
  
-public readonly tasksWithDates=computed(() => {
-   return this.taskService.allTasks().map(task=>({
-    ...task,
-    date:convertAnyDateToJSDate(task.date),
-    end: convertAnyDateToJSDate(task.end)
-  }))
-   
-})
- public readonly todayTasks=computed(()=>{ 
- return this.filterTasksForToday(this.tasksWithDates())
- })
-  public readonly taskCount = computed(() => this.todayTasks().length);
 
- ngOnInit(): void {
-    //this.taskService.getTasks().subscribe({
-    
-  //});
-     this.tasks$ = this.taskService.getTasks();
+// Use tasks$ observable for async pipe in template. Filter for today in template or with a helper if needed.
+
+ngOnInit(): void {
+    // Get the logged-in member's email from authService
+    const user = this.authService.currentUser();
+    this.memberEmail = user && user.email ? user.email : null;
+    if (this.memberEmail) {
+      this.tasks$ = this.taskService.getTasksByEmail(this.memberEmail);
+    } else {
+      this.tasks$ = this.taskService.getTasks(); // fallback: all tasks
+    }
     this.fetchWeatherAndAdvice();
  }
 

@@ -1,11 +1,14 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core'; 
+import { Component, OnInit, signal, computed } from '@angular/core'; 
+import { MatDialog } from '@angular/material/dialog';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { TasksService, Task} from '../../core/tasksService'; 
+import { TaskModalComponent } from './task-modal.component';
 import { CommonModule } from '@angular/common';
-import { AuthService, UserDetails } from '../../core/authService';
+import { AuthService } from '../../core/authService';
+import type { familyDetails } from '../../shared/models/family';
 import {convertAnyDateToJSDate} from '../../shared/convertTimestamp'
 
 // Define a type guard function (still needed for strict typing)
@@ -16,7 +19,7 @@ function isEventInput(event: EventInput | null): event is EventInput {
 @Component({
   selector: 'app-family-calendar',
   standalone: true,
-  imports: [FullCalendarModule, CommonModule], 
+  imports: [FullCalendarModule, CommonModule, TaskModalComponent], 
   // We use the computed signal in the template options binding now
   templateUrl: './family-calendar.html', 
   styleUrl: './family-calendar.css'
@@ -24,9 +27,10 @@ function isEventInput(event: EventInput | null): event is EventInput {
 
 export class FamilyCalendar implements OnInit {
   constructor(
-   private tasksService :TasksService, 
- private authService : AuthService
-  ){}
+    private tasksService: TasksService,
+    private authService: AuthService,
+    private dialog: MatDialog
+  ) {}
   // private tasksService = inject(TasksService); 
   // private authService = inject(AuthService);
 
@@ -40,11 +44,30 @@ export class FamilyCalendar implements OnInit {
       right: 'timeGridWeek,timeGridDay'
     },
     events: [], // Placeholder, will be overwritten by the computed signal
+    eventClick: this.onEventClick.bind(this)
   };
+
+  // Handler to open modal on event click
+  onEventClick(arg: any) {
+    const event = arg.event;
+    // Find the task by id
+    const task = this.tasksService.allTasks().find(t => t.id === event.id);
+    if (task) {
+      this.dialog.open(TaskModalComponent, {
+        data: task,
+        width: '400px',
+        autoFocus: true,
+        restoreFocus: true,
+        hasBackdrop: true,
+        closeOnNavigation: true
+      });
+    }
+  }
 
   currentUser = computed(() => this.authService.currentUser());
 
   calendarEvents = computed(() => {
+   console.log("currentUser",this.currentUser());
    
     const mappedEvents = this.tasksService.allTasks()
       .map(task => {
@@ -79,12 +102,14 @@ export class FamilyCalendar implements OnInit {
    
     // Trigger the data load
     if (this.currentUser()) {
-      this.tasksService.getTasks().subscribe({
-          error: (err) => console.error("Error fetching daily tasks:", err),
-          next: () => console.log("Task loading initiated via subscribe.")
+      console.log("Current userfamilyId:", this.currentUser()?.familyId);
+      
+      this.tasksService.getTasksByFamilyId(String(this.currentUser()?.familyId || '')).subscribe({
+        error: (err) => console.error("Error fetching family calendar tasks:", err),
+        next: () => console.log("Family calendar task loading initiated via subscribe.")
       });
     } else {
-       console.warn("User not logged in or missing ID. Cannot fetch calendar tasks.");
+      console.warn("User not logged in or missing ID. Cannot fetch calendar tasks.");
     }
   }
 }

@@ -8,40 +8,44 @@ const TaskCollection = db.collection('tasks');
  * @param {object} doc - The raw Firestore document snapshot
  * @returns {object} The formatted task object
  */
-const TasksForUser = (doc) => {
+const TaskFromDoc = (doc) => {
     const data = doc.data();
-   
     return {
         id: doc.id,
         title: data.title,
         details: data.details,
-        // Use 'userID' to match client payload (frontend uses 'userID')
-        userID: data.userID || data.userId || null,
+        email: data.email || null,
         memberName: data.memberName,
-        // Support both Firestore Timestamp (has toDate) and JS Date
         date: data.date ? (data.date.toDate ? data.date.toDate() : data.date) : null,
         end: data.end ? (data.end.toDate ? data.end.toDate() : data.end) : null,
     };
 };
 
 const TaskModel = { 
-async findAllTasksForUser(userId) {
-    try{
-        const snapshot = await TaskCollection.where('userID', '==', String(userId)).get();
-        return snapshot.docs.map(TasksForUser);
-}
-catch(error){
-      console.error("Database error in getTask:", error);
-            // Re-throw the error so the BLL/Controller can handle it
-            throw new Error("Failed to get task from database."); 
-}
+async findAllTasksForEmail(email) {
+    try {
+        const snapshot = await TaskCollection.where('email', '==', String(email)).get();
+        return snapshot.docs.map(TaskFromDoc);
+    } catch (error) {
+        console.error("Database error in getTask:", error);
+        throw new Error("Failed to get task from database.");
+    }
+},
+async findAllTasksForFamilyId(familyId) {
+    try {
+        const snapshot = await TaskCollection.where('familyId', '==', String(familyId)).get();
+        return snapshot.docs.map(TaskFromDoc);
+    } catch (error) {
+        console.error("Database error in getTasks by familyId:", error);
+        throw new Error("Failed to get tasks by familyId from database.");
+    }
 },
 async  addTask(taskData){
     try{
-        // Add the task and then fetch the created document snapshot to return a formatted object
-        const docRef = await TaskCollection.add(taskData);
-        const docSnap = await docRef.get();
-        return TasksForUser(docSnap);
+    // Add the task and then fetch the created document snapshot to return a formatted object
+    const docRef = await TaskCollection.add(taskData);
+    const docSnap = await docRef.get();
+    return TaskFromDoc(docSnap);
     }
     catch(error){
  console.error("Database error in addTask:", error);

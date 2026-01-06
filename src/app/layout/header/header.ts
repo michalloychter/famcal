@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, computed, signal, ElementRef, Renderer2 } from '@angular/core';
-import { AuthService, UserDetails } from '../../core/authService'; // Adjust the path
+import { AuthService } from '../../core/authService';
+import type { familyDetails } from '../../shared/models/family';
 import { Subscription } from 'rxjs';
 import { Router, RouterLink } from '@angular/router'; // Import RouterLink for standalone component links
 import { CommonModule } from '@angular/common';
@@ -28,10 +29,13 @@ export class Header implements OnInit, OnDestroy {
     this.menuOpen.set(willOpen);
     // If we're opening the menu, refresh the current user's profile from the server
     if (willOpen) {
-      const user = this.authService.currentUser();
-      if (user && user.id) {
+      const family = this.authService.currentUser();
+      if (family && family.id) {
         // fetch fresh profile; subscription will update the stored signal
-  this.authService.fetchUserById(user.id).subscribe({ next: (freshUser) => { console.log('Refreshed user profile:', freshUser); }, error: (err) => { console.error('Failed to refresh user profile', err); } });
+        this.authService.fetchFamilyById(family.id).subscribe({
+          next: (freshFamily: familyDetails) => { console.log('Refreshed family profile:', freshFamily); },
+          error: (err: any) => { console.error('Failed to refresh family profile', err); }
+        });
       }
     }
   }

@@ -1,3 +1,6 @@
+.fc-event, .fc-event-main {
+  cursor: pointer !important;
+}
 
 .main-div {
     padding: 20px;

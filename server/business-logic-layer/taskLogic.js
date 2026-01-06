@@ -1,13 +1,20 @@
 const TaskModel = require('../models/taskModel'); 
 
 const taskLogic = {
-    async getTasksForUser(userId) {
-        if (!userId) {
-            throw new Error('User ID is required for task logic.');
+    async getTasksForEmail(email) {
+        if (!email) {
+            throw new Error('Email is required for task logic.');
         }
         // Call the DAL to get the data
-        return await TaskModel.findAllTasksForUser(userId);
+        return await TaskModel.findAllTasksForEmail(email);
     },
+
+        async getTasksForFamilyId(familyId) {
+            if (!familyId) {
+                throw new Error('familyId is required for task logic.');
+            }
+            return await TaskModel.findAllTasksForFamilyId(familyId);
+        },
 
     async handleIncomingTaskCreation(taskData, userId) {
         console.log("taskData",taskData);

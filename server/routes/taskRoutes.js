@@ -4,12 +4,19 @@ const taskLogic = require('../business-logic-layer/taskLogic');;
 
 
 // 1. GET all tasks
+// GET tasks by member email
 router.get('/tasks', async (req, res) => {
   try {
-    const userId = req.query.userId; // Assuming you pass this via query params
-
-    const tasks = await taskLogic.getTasksForUser(userId); // Call the BLL
-    res.json(tasks); // Send the response
+    const { email, familyId } = req.query;
+    let tasks;
+    if (familyId) {
+      tasks = await taskLogic.getTasksForFamilyId(familyId);
+    } else if (email) {
+      tasks = await taskLogic.getTasksForEmail(email);
+    } else {
+      return res.status(400).send('Missing email or familyId query parameter.');
+    }
+    res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).send('Error fetching tasks from Firestore: ' + error.message);

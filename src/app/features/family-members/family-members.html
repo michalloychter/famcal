@@ -7,27 +7,41 @@
     <button 
       *ngFor="let member of familyMembers()" 
       (click)="selectMember(member)"
-    
       [class.active]="selectedMember()?.id === member.id" 
-      class="tab-button">
-      {{ member.memberName }}
+      class="tab-button"
+      style="border: none; outline: none; font-size: large;">
+      {{ member.name }}
     </button>
   </div>
 
   <hr>
+  <!-- Add Member Button and Form: Only visible to main user -->
+  <ng-container *ngIf="isMainUser()">
+    <button class="fam-btn" (click)="showAddMemberForm = !showAddMemberForm">Add Member</button>
+    <div *ngIf="showAddMemberForm" class="add-member-form">
+      <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()">
+        <label for="memberName">Member Name:</label>
+        <input id="memberName" type="text" formControlName="memberName" required>
+        <label>
+          <input type="checkbox" formControlName="isUser"> Is this member a user?
+        </label>
+        <button class="fam-btn" type="submit" [disabled]="addMemberForm.invalid">Save Member</button>
+      </form>
+    </div>
+  </ng-container>
   
   <!-- Display Area for Selected Member's Tasks -->
 
   <div *ngIf="selectedMember()" class="tasks-display">
     <!-- Task Type Buttons removed here to avoid duplication -->
   
-    <h3>Tasks for {{ selectedMember()?.memberName }}</h3>
+  <h3>Tasks for {{ selectedMember()?.name }}</h3>
 
     <!-- Task Addition Form (shown only when isFormVisible is true) -->
   <div *ngIf="isFormVisible" class="add-task-form" [ngClass]="'bg-' + mapTaskType(selectedTaskType)">
      
       <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
-        <h4>Add {{ selectedTaskType || 'Task' }} for {{ selectedMember()?.memberName }}</h4>
+  <h4>Add {{ selectedTaskType || 'Task' }} for {{ selectedMember()?.name }}</h4>
         <input type="hidden" formControlName="type">
         <div>
           <label for="title">Title:</label>
@@ -41,7 +55,11 @@
           <label for="date">Start Date/Time:</label>
           <input id="date" type="datetime-local" formControlName="date" required>
         </div>
-         <div>
+        <div>
+          <label for="reminderDateTime">Reminder Date/Time:</label>
+          <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
+        </div>
+        <div>
           <label for="end">End Date/Time (Optional):</label>
           <input id="end" type="datetime-local" formControlName="end">
         </div>

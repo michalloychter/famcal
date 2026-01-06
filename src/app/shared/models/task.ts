@@ -9,7 +9,7 @@ export interface Task {
   // date (start time) can be a string, Date object (on client), or timestamp object (from API)
   date: string | Date | FirebaseTimestamp |undefined; 
   details: string; 
-  userID: string; 
+  familyID: string;
   memberName: string;
   // Add an optional 'end' property for calendar scheduling
   end?: string | Date | FirebaseTimestamp|undefined; 

@@ -1,4 +1,4 @@
-const UserModel = require("../models/userModel");
+// Removed FamilyModel
 const MemberModel = require("../models/memberModel");
 const express = require('express');
 const router = express.Router();
@@ -8,125 +8,72 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Ensure 'app', 'jwt', 'JWT_SECRET', and 'openaiClient' are defined in the scope where this code runs
 // It is highly recommended to use a library like bcrypt for password hashing
 
-// 1. Registration Route (Corrected and Improved)
+// 1. Family Registration Route
 router.post('/register', async (req, res) => {
-    const { userName, password, firstName, lastName, members } = req.body; 
+  console.log('REGISTER PAYLOAD:', req.body);
+  const { familyName, members } = req.body;
 
-    // Basic input validation
-    if (!userName || !password || !firstName || !lastName) {
-        return res.status(400).json({ error: 'Missing required fields' });
+  // Basic input validation
+  if (!familyName || !Array.isArray(members) || members.length === 0) {
+    const missing = [];
+    if (!familyName) missing.push('familyName');
+    if (!members || !Array.isArray(members) || members.length === 0) missing.push('members');
+    return res.status(400).json({ error: 'Missing required fields', missing });
+  }
+
+  try {
+    // Save members (no family doc, no familyId, just familyName on each member)
+    if (!members[0].name || !members[0].username || !members[0].email) {
+      return res.status(400).json({ error: 'First member must have name, username, and email' });
     }
-
-    try {
-        // A. Check if the username already exists
-        // Assuming ValidUserName returns the user document if found, null/undefined otherwise
-        const existingUser = await UserModel.ValidUserName({ userName: userName });
-        if (existingUser) { 
-            return res.status(400).json({ error: 'Username already exists' });
-        }
-
-        // B. Create the new user document in 'users' collection
-        // IMPORTANT: Hash the password before storing it
-        // const hashedPassword = await bcrypt.hash(password, 10); // Example using bcrypt
-
-    const newUser = {
-      userName,
-      password: password, // REPLACE WITH hashedPassword IN PRODUCTION
-      firstName,
-      lastName,
-      // Optional financial / health fields
-      bankName: req.body.bankName || null,
-      bankUrl: req.body.bankUrl || null,
-      healthFundName: req.body.healthFundName || null,
-      healthFundUrl: req.body.healthFundUrl || null,
-      superName: req.body.superName || null,
-      superUrl: req.body.superUrl || null,
-    };
-
-        const userDocRef = await UserModel.registerUser(newUser);
-        const newUserId = userDocRef.id; // Get the auto-generated Firebase User ID
-
-        // C. Process family member names
-        let memberNames = [];
-        if (members && typeof members === 'string') {
-             memberNames = members.split(',').map(name => name.trim()).filter(name => name.length > 0);
-        }
-        
-        // D. Add the main user's name to the list of members to be created
-        const mainUserName = firstName; 
-        memberNames.push(mainUserName); 
-        
-        // Assuming addMembers expects (memberNames, newUserId) based on your model
-        await MemberModel.addMembers(memberNames, newUserId);
-        
-        // Return a success response
-        res.status(201).json({ id: newUserId, message: 'User registered successfully and members added' });
-
-    } catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).send('An error occurred during registration: ' + error.message);
-    }
+    // Add familyName to each member before saving
+    const membersWithFamilyName = members.map(m => ({ ...m, familyName }));
+    await MemberModel.addMembers(membersWithFamilyName, null);
+    res.status(201).json({ message: 'Family registered successfully and members added' });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'An error occurred during registration: ' + error.message });
+  }
 });
 
 
 // 2. Login Route (Corrected and Improved)
 router.post('/login', async (req, res) => {
-  const { userName, password } = req.body;
-console.log("name", req.body);
+  const { email, username } = req.body;
+  console.log("login payload", req.body);
 
-  if (!userName || !password) {
-      return res.status(400).json({ error: 'Missing required fields' });
-  }
-
-  try {
-    const user = await UserModel.getUserByName({ userName: userName });
-console.log("user", user);
-
-    // Proper password comparison using a secure method (e.g., bcrypt.compare)
-
-    if (!user ) { // REMOVE THIS LINE AND USE SECURE COMPARISON IN PRODUCTION
-     console.log("noo");
-     
-      return res.status(401).json({ error: 'Invalid credentials' })
-      
-    }
-
-    // FIX: 'userId' was undefined. Use 'user.id' instead.
-    const userMembers = await MemberModel.userMembers(user.id);
-console.log("usermem",userMembers);
-
-    const token = jwt.sign(
-      { userId: user.id, userName: user.userName },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    res.status(200).json({
-      message: 'Login successful',
-      user: {
-        id: user.id, 
-        userName: user.userName,
-        firstName: user.firstName,
-        lastName: user.lastName,
-          token: token,
-          familyMembers: userMembers,
-          // include optional info fields if present
-          bankName: user.bankName || null,
-          bankUrl: user.bankUrl || null,
-          healthFundName: user.healthFundName || null,
-          healthFundUrl: user.healthFundUrl || null,
-          superName: user.superName || null,
-          superUrl: user.superUrl || null
+  if (email && username) {
+    try {
+      // Search members collection directly
+      const members = await MemberModel.findMembersByEmailAndUsername(email, username);
+      if (!members || members.length === 0) {
+        return res.status(401).json({ error: 'Invalid credentials' });
       }
-    });
-
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).send('An error occurred during login: ' + error.message);
+      const member = members[0];
+      const token = jwt.sign(
+        { memberId: member.id, familyId: member.familyId, username: member.username },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+      return res.status(200).json({
+        message: 'Login successful',
+        user: {
+          id: member.id,
+          username: member.username,
+          email: member.email,
+          familyId: member.familyId,
+          familyName: member.familyName,
+          token: token
+        }
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      return res.status(500).send('An error occurred during login: ' + error.message);
+    }
+  } else {
+    return res.status(400).json({ error: 'Email and username are required.' });
   }
 });
-
-
 // 3. Get AI Clothing Advice Route (This route was largely correct, adding basic validation)
 router.post('/clothing-advice', async (req, res) => {
     const { temp, description, city } = req.body; 
@@ -173,3 +120,5 @@ router.get('/users/:id', async (req, res) => {
     res.status(500).send('Error fetching user: ' + error.message);
   }
 });
+
+module.exports = router;

@@ -12,13 +12,17 @@ app.use(express.json()); // Parse JSON bodies
 
 // 3. --- Route Mounting (Applied SECOND) ---
 
+
 // Mount the authentication and user-related routes under the /api base path
 const authRouter = require('./routes/authRoutes');
 app.use('/api', authRouter);
 
+// Mount the member-related routes under /api/members
+const memberRouter = require('./routes/memberRoutes');
+app.use('/api/members', memberRouter);
+
 // Mount the task-related routes under the /api base path
 const taskRouter = require('./routes/taskRoutes');
-// FIX 3: Added the missing '/' in the path
 app.use('/api', taskRouter); 
 
 // --- Start the Server ---

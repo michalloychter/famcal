@@ -130,10 +130,12 @@ padding: 10px;
   list-style: none; /* Remove bullet points */
   margin: 10px;
   padding: 20px;
-  /* No background or color here, so .bg-* can take effect */
+  min-width: 20%;
+
 }
 .member-tasks{
   display: flex;
+  flex-wrap: wrap;
 }
 
 /* Optimistic task styling */

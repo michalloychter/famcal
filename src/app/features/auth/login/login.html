@@ -1,15 +1,14 @@
 <div class="login-container main-div">
   <h2>Login</h2>
   <div>
-    <label for="userName">User name:</label>
-    <input id="userName" [(ngModel)]="userName" name="userName" required>
+    <label for="username">Username:</label>
+    <input id="username" [(ngModel)]="username" name="username" required type="text">
   </div>
   <div>
-    <label for="password">Password:</label>
-    <input id="password" type="password" [(ngModel)]="password" name="password" required>
+    <label for="email">Email:</label>
+    <input id="email" [(ngModel)]="email" name="email" required type="email">
   </div>
   <button class="fam-btn" (click)="onLogin()">Login</button>
-  
   <!-- Display error message if present -->
   <p *ngIf="errorMessage()" class="error-message">{{ errorMessage() }}</p>
 </div>

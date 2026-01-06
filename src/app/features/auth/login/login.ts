@@ -1,39 +1,32 @@
 import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // Required for [(ngModel)]
-import { CommonModule } from '@angular/common'; // Required for *ngIf
-import { Router } from '@angular/router'; // Required for redirection
-import { AuthService } from '../../../core/authService'; // Import the AuthService (adjust path if needed)
-import { log } from 'node:console';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/authService';
 
 @Component({
   selector: 'app-login',
-  standalone: true, // Assuming it's a standalone component
-  imports: [FormsModule, CommonModule], // Add necessary modules here
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login { // Changed class name to standard 'LoginComponent'
-  userName = signal<string>(''); 
-  password = signal<string>('');
-  errorMessage = signal<string | null>(null); 
+export class Login {
+  username = '';
+  email = '';
+  errorMessage = signal<string | null>(null);
 
-  // Inject the AuthService and the Router
   constructor(private authService: AuthService, private router: Router) {}
 
-  // Method to handle the login button click
   onLogin() {
-
-     this.errorMessage.set(null); 
-    this.authService.login(this.userName(), this.password()).subscribe({
-      next: (response:any) => {
-        // Success: Redirect to the daily-calendar route
-        this.router.navigate(['/daily-calendar']); 
-        console.log("res", response);
-        
+    this.errorMessage.set(null);
+    // Login with username and email only
+    this.authService.loginWithEmail(this.email, this.username).subscribe({
+      next: (response: any) => {
+        this.router.navigate(['/daily-calendar']);
       },
-      error: (err:any) => {
-        // Error: Display an error message
-        this.errorMessage.set('Login failed: Invalid credentials.');
+      error: (err: any) => {
+        this.errorMessage.set('Login failed: Invalid email or username.');
         console.error(err);
       }
     });
