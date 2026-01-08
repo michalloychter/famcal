@@ -9,28 +9,28 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   imports: [CommonModule, MatDialogModule, ReactiveFormsModule],
   template: `
     <h2 mat-dialog-title>Add Task</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-dialog-content>
-        <div>
-          <label>Title:</label>
+    <form [formGroup]="form" (ngSubmit)="submit()" style="background: transparent; box-shadow: none;">
+      <mat-dialog-content style="background: transparent; box-shadow: none;">
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Title:</label>
           <input type="text" formControlName="title" required />
         </div>
-        <div>
-          <label>Details:</label>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Details:</label>
           <textarea formControlName="details"></textarea>
         </div>
-        <div>
-          <label>Date:</label>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Date:</label>
           <input type="date" formControlName="date" required />
         </div>
-        <div>
-          <label>Time:</label>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Time:</label>
           <input type="time" formControlName="time" required />
         </div>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Cancel</button>
-        <button mat-button color="primary" type="submit" [disabled]="form.invalid">Add</button>
+        <button class="fam-btn" mat-button type="button" (click)="close()">Cancel</button>
+        <button class="fam-btn" mat-button color="primary" type="submit" [disabled]="form.invalid">Add</button>
       </mat-dialog-actions>
     </form>
   `

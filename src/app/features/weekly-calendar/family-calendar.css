@@ -1,3 +1,12 @@
+ .fam-btn {
+  border-radius: 30px;
+  border: 1px;
+  color: #17a89a;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #dad5d5;
+  margin-inline-end: 20px;
+}
 .fc-v-event .fc-event-main {
   color: #000 !important;
 }

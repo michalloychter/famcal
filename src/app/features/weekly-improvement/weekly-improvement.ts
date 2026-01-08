@@ -10,7 +10,7 @@ import { AiService } from '../../core/aiService';
   template: `
     <form (ngSubmit)="submitImprovement()" class="improvement-form">
       <input id="improvement" name="improvement" [(ngModel)]="improvement" required placeholder="What do you want to improve this week?" />
-      <button type="submit">Send</button>
+      <button class="fam-btn" type="submit">Send</button>
     </form>
     <div *ngIf="aiSuggestion" class="saved-message">
       <strong>AI Suggestion:</strong>

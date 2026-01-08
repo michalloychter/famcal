@@ -40,17 +40,37 @@
     </div>
     <div *ngIf="activeMemberTab === 'add'">
       <div class="task-type-buttons">
-        <button class="fam-btn type-btn type-meeting" (click)="openTaskForm('meeting')">Meeting</button>
-        <button class="fam-btn type-btn type-class" (click)="openTaskForm('class')">Class</button>
-        <button class="fam-btn type-btn type-shopping" (click)="openTaskForm('shopping')">Shopping</button>
-        <button class="fam-btn type-btn type-birthday" (click)="openTaskForm('birthday')">Birthday</button>
-        <button class="fam-btn type-btn type-doctor" (click)="openTaskForm('doctor')">See a Doctor</button>
-        <button class="fam-btn type-btn type-other" (click)="openTaskForm('other')">Other</button>
+        <button class="fam-btn type-btn" (click)="openTaskForm('meeting')">
+          <i class="fa-regular fa-calendar type-icon"></i> Meeting
+        </button>
+        <button class="fam-btn type-btn" (click)="openTaskForm('class')">
+          <i class="fa-solid fa-graduation-cap type-icon"></i> Class
+        </button>
+        <button class="fam-btn type-btn" (click)="openTaskForm('shopping')">
+          <i class="fa-solid fa-cart-shopping type-icon"></i> Shopping
+        </button>
+        <button class="fam-btn type-btn" (click)="openTaskForm('birthday')">
+          <i class="fa-solid fa-gift type-icon"></i> Birthday
+        </button>
+        <button class="fam-btn type-btn" (click)="openTaskForm('doctor')">
+          <i class="fa-solid fa-user-doctor type-icon"></i> See a Doctor
+        </button>
+        <button class="fam-btn type-btn" (click)="openTaskForm('other')">
+          <i class="fa-regular fa-star type-icon"></i> Other
+        </button>
       </div>
   <app-weekly-improvement (suggestAsTask)="onSuggestAsTask($event)"></app-weekly-improvement>
-      <div *ngIf="isFormVisible" class="add-task-form" [ngClass]="'bg-' + mapTaskType(selectedTaskType)">
+  <div *ngIf="isFormVisible" class="add-task-form">
         <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
-          <h4>Add {{ selectedTaskType || 'Task' }} for {{ selectedMember()?.name }}</h4>
+          <h4>
+            <span *ngIf="selectedTaskType === 'meeting'" class="type-icon"><i class="fa-regular fa-calendar"></i></span>
+            <span *ngIf="selectedTaskType === 'class'" class="type-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+            <span *ngIf="selectedTaskType === 'shopping'" class="type-icon"><i class="fa-solid fa-cart-shopping"></i></span>
+            <span *ngIf="selectedTaskType === 'birthday'" class="type-icon"><i class="fa-solid fa-gift"></i></span>
+            <span *ngIf="selectedTaskType === 'doctor'" class="type-icon"><i class="fa-solid fa-user-doctor"></i></span>
+            <span *ngIf="selectedTaskType === 'other'" class="type-icon"><i class="fa-regular fa-star"></i></span>
+            Add <span [ngClass]="'type-label type-' + selectedTaskType">{{ selectedTaskType || 'Task' }}</span> for {{ selectedMember()?.name }}
+          </h4>
           <input type="hidden" formControlName="type">
           <div>
             <label for="title">Title:</label>

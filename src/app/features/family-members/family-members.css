@@ -15,67 +15,16 @@
 .add-task-form {
   border-radius: 30px;
   max-width: fit-content;
+      border: 1px solid;
+    margin-top: 10px;
 }
 .add-task-form form{
   width: 100%;
 }
 
 /* Background color for add-task form by type (matches button) */
-.bg-meeting {
-  background: #1976d2 !important;
-  color: #fff !important;
-  min-height: 60px;
-}
-.bg-class {
-  background: #388e3c !important;
-  color: #fff !important;
-  min-height: 60px;
-}
-.bg-shopping {
-  background: #fbc02d !important;
-  color: #222 !important;
-  min-height: 60px;
-}
-.bg-birthday {
-  background: #e040fb !important;
-  color: #fff !important;
-  min-height: 60px;
-}
-.bg-doctor {
-  background: #0097a7 !important;
-  color: #fff !important;
-  min-height: 60px;
-}
-.bg-other {
-  background: #757575 !important;
-  color: #fff !important;
-  min-height: 60px;
-}
 /* Unique colors for each task type button */
-.type-btn.type-meeting {
-  background-color: #1976d2;
-  color: #fff;
-}
-.type-btn.type-class {
-  background-color: #388e3c;
-  color: #fff;
-}
-.type-btn.type-shopping {
-  background-color: #fbc02d;
-  color: #222;
-}
-.type-btn.type-birthday {
-  background-color: #e040fb;
-  color: #fff;
-}
-.type-btn.type-doctor {
-  background-color: #0097a7;
-  color: #fff;
-}
-.type-btn.type-other {
-  background-color: #757575;
-  color: #fff;
-}
+
 .main-div {
     padding: 20px;
 }
