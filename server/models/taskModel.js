@@ -10,6 +10,20 @@ const TaskCollection = db.collection('tasks');
  */
 const TaskFromDoc = (doc) => {
     const data = doc.data();
+    // For 'class' tasks, return weekday and time instead of date
+    if (data.type === 'class') {
+        return {
+            id: doc.id,
+            title: data.title,
+            details: data.details,
+            email: data.email || null,
+            memberName: data.memberName,
+            type: data.type,
+            weekday: data.weekday, // 0-6 (Sun-Sat)
+            time: data.time,       // 'HH:mm'
+            end: null,
+        };
+    }
     return {
         id: doc.id,
         title: data.title,
@@ -18,6 +32,7 @@ const TaskFromDoc = (doc) => {
         memberName: data.memberName,
         date: data.date ? (data.date.toDate ? data.date.toDate() : data.date) : null,
         end: data.end ? (data.end.toDate ? data.end.toDate() : data.end) : null,
+        type: data.type,
     };
 };
 
@@ -42,15 +57,32 @@ async findAllTasksForFamilyId(familyId) {
 },
 async  addTask(taskData){
     try{
-    // Add the task and then fetch the created document snapshot to return a formatted object
-    const docRef = await TaskCollection.add(taskData);
-    const docSnap = await docRef.get();
-    return TaskFromDoc(docSnap);
+        // If this is a 'class' task, only save weekday and time
+        if (taskData.type === 'class') {
+            // Expect frontend to send weekday (0-6) and time ('HH:mm')
+            const { title, details, email, memberName, type, weekday, time } = taskData;
+            const docRef = await TaskCollection.add({
+                title,
+                details,
+                email,
+                memberName,
+                type,
+                weekday,
+                time
+            });
+            const docSnap = await docRef.get();
+            return TaskFromDoc(docSnap);
+        } else {
+            // Normal task with date
+            const docRef = await TaskCollection.add(taskData);
+            const docSnap = await docRef.get();
+            return TaskFromDoc(docSnap);
+        }
     }
     catch(error){
- console.error("Database error in addTask:", error);
-            // Re-throw the error so the BLL/Controller can handle it
-            throw new Error("Failed to add task to database."); 
+        console.error("Database error in addTask:", error);
+        // Re-throw the error so the BLL/Controller can handle it
+        throw new Error("Failed to add task to database."); 
     }
 },
 async deleteTask(taskId){

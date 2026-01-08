@@ -33,12 +33,20 @@
   <ng-container *ngIf="tasks$ | async as tasks">
     <ng-container *ngIf="tasks.length > 0; else noTasks">
       <ul>
-        <li *ngFor="let task of tasks | filterToday" [ngClass]="'task type-' + mapTaskType(task.title)">
+        <li *ngFor="let task of filterTasksForToday(tasks)" [ngClass]="'task type-' + mapTaskType(task.type)">
           <div class="task-content">
             <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
             <strong>{{ task.title }}</strong>
             <p>{{ task.details }}</p>
-            <small>{{ task.date | friendlyDateTime }}</small>
+            <ng-container *ngIf="task.type === 'class'; else normalTask">
+              <small>
+                Class on {{ getWeekdayName(task.weekday ?? 0) }}
+                <span *ngIf="task.time">at {{ task.time }}</span>
+              </small>
+            </ng-container>
+            <ng-template #normalTask>
+              <small>{{ task.date | friendlyDateTime }}</small>
+            </ng-template>
           </div>
         </li>
       </ul>

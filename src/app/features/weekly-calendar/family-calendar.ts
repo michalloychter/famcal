@@ -19,7 +19,7 @@ function isEventInput(event: EventInput | null): event is EventInput {
 @Component({
   selector: 'app-family-calendar',
   standalone: true,
-  imports: [FullCalendarModule, CommonModule, TaskModalComponent], 
+  imports: [FullCalendarModule, CommonModule],
   // We use the computed signal in the template options binding now
   templateUrl: './family-calendar.html', 
   styleUrl: './family-calendar.css'
@@ -31,8 +31,7 @@ export class FamilyCalendar implements OnInit {
     private authService: AuthService,
     private dialog: MatDialog
   ) {}
-  // private tasksService = inject(TasksService); 
-  // private authService = inject(AuthService);
+ 
 
   // Define the BASE options once
   private baseCalendarOptions: CalendarOptions = {

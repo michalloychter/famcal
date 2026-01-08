@@ -6,7 +6,6 @@ import { HttpClient , HttpParams} from '@angular/common/http';
 import { Observable, tap, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService, FamilyMember } from './authService';
-import {convertAnyDateToJSDate} from '.././shared/convertTimestamp'
 
 
 export interface Task {
@@ -24,6 +23,9 @@ export interface Task {
   reminderDateTime?: Date | string;
   // Optional flag used for optimistic UI updates
   _optimistic?: boolean;
+  type?: string; // Add type for class/meeting/etc.
+  weekday?: number; // 0 (Sunday) - 6 (Saturday)
+  time?: string;    // 'HH:mm'
 }
 
 // Interface for creating a new task, where 'id' might be optional before saving

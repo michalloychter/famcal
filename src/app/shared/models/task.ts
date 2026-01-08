@@ -4,15 +4,17 @@ export interface FirebaseTimestamp {
 }
 
 export interface Task {
-  id: string; 
+  id: string;
   title: string;
-  // date (start time) can be a string, Date object (on client), or timestamp object (from API)
-  date: string | Date | FirebaseTimestamp |undefined; 
-  details: string; 
+  date?: string | Date | FirebaseTimestamp; // For normal tasks
+  details: string;
   familyID: string;
   memberName: string;
-  // Add an optional 'end' property for calendar scheduling
-  end?: string | Date | FirebaseTimestamp|undefined; 
+  end?: string | Date | FirebaseTimestamp;
+  // For class tasks (recurring weekly)
+  type?: string;
+  weekday?: number; // 0 (Sunday) - 6 (Saturday)
+  time?: string;    // 'HH:mm'
 }
 
 // Interface for creating a new task, where 'id' might be optional before saving

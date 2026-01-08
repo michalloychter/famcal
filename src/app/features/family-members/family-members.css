@@ -14,7 +14,12 @@
 /* Rounded corners for the add-task form container */
 .add-task-form {
   border-radius: 30px;
+  max-width: fit-content;
 }
+.add-task-form form{
+  width: 100%;
+}
+
 /* Background color for add-task form by type (matches button) */
 .bg-meeting {
   background: #1976d2 !important;
@@ -110,6 +115,13 @@
    padding: 5px 10px;
    cursor: pointer;
    background-color: #dad5d5;
+  margin-inline-end: 20px
+}
+.member-tabs-inner{
+  padding: 20px;
+}
+.task-type-buttons {
+  margin-bottom: 20px;
 }
 form div {
 padding: 5px;

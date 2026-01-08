@@ -1,4 +1,5 @@
 import { Component, OnInit , signal, computed, inject} from '@angular/core'; 
+import { weekdayToString } from '../../shared/weekdayToString';
 import { CommonModule } from '@angular/common';
 import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
 import { FilterTodayPipe } from '../../shared/filter-today.pipe';
@@ -78,34 +79,27 @@ ngOnInit(): void {
   }
   
 
-  private filterTasksForToday(tasks: Task[]): Task[] {
+  // Returns tasks for today, including recurring class tasks (by weekday)
+  filterTasksForToday(tasks: Task[]): Task[] {
     const today = new Date();
-    // Normalize "today" to midnight today in local time
-    today.setHours(0, 0, 0, 0); 
-    
-    const todayTimestamp = today.getTime(); // Get the numeric value of today's midnight
-
+    today.setHours(0, 0, 0, 0);
+    const todayTimestamp = today.getTime();
+    const todayWeekday = today.getDay();
     return tasks.filter(task => {
-       const taskDate = task.date ;
-       console.log('taskdata',task );
-       
-      // 1. Convert any incoming date format (Timestamp or String) into a JS Date object
-        if (!taskDate || isNaN(taskDate.getTime())) {
-        return false; 
+      if (task.type === 'class' && typeof task.weekday === 'number') {
+        return task.weekday === todayWeekday;
       }
-      
-      // 2. Validation check: Ensure the date object is valid
-      if (isNaN(taskDate.getTime())) {
-        console.warn('Skipping task due to unprocessable date format:', task.title);
-        return false; 
+      if (task.date) {
+        const taskDate = new Date(task.date);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate.getTime() === todayTimestamp;
       }
-      
-      // 3. Normalize the task date to midnight on its specific day
-      taskDate.setHours(0, 0, 0, 0);
-console.log(taskDate.getTime());
-
-      // 4. Compare the normalized numeric timestamps
-      return taskDate.getTime() === todayTimestamp;
+      return false;
     });
+  }
+
+  // Helper to get weekday name for display
+  getWeekdayName(weekday: number): string {
+    return weekdayToString(weekday);
   }
 }

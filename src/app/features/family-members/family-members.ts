@@ -1,36 +1,53 @@
+import { WeeklyImprovementComponent } from '../weekly-improvement/weekly-improvement';
 import { Component, OnInit, Pipe, PipeTransform , signal, computed} from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
-import {MatButtonModule} from '@angular/material/button';
+import {HttpClient} from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService, FamilyMember } from '../../core/authService';
-import { HttpClient } from '@angular/common/http';
-import { TasksService, Task, NewTaskPayload as OrigNewTaskPayload } from '../../core/tasksService'; 
-// Extend NewTaskPayload to allow 'type' for UI payload
-type NewTaskPayload = OrigNewTaskPayload & { type?: string };
+import { AuthService, FamilyMember } from '../../core/authService'; 
+import { TasksService, Task, NewTaskPayload } from '../../core/tasksService'; 
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
-import { log } from 'console';
+
 //import {FirebaseDatePipe} from '../../shared/pipes/firebase-date.pipe';
 
 
 @Component({
   selector: 'app-family-members',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe], 
+  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe, WeeklyImprovementComponent], 
   templateUrl: './family-members.html',
   styleUrl: './family-members.css',
 })
 export class FamilyMembers implements OnInit {
+
+  /**
+   * Handler for AI improvement suggestion to prefill the add task form.
+   * Opens the form with type 'improve' and prefilled details.
+   */
+  onSuggestAsTask(event: { type: string, details: string }): void {
+    this.selectedTaskType = event.type || 'improve';
+    this.isFormVisible = true;
+    this.newTaskForm.reset({
+      title: event.type.charAt(0).toUpperCase() + event.type.slice(1),
+      details: event.details,
+      date: '',
+      reminderDateTime: '',
+      end: '',
+      type: event.type || 'improve',
+      weekday: '',
+      time: ''
+    });
+  }
   selectedTaskType: string | null = null;
+  activeMemberTab: 'add' | 'all' = 'all';
   selectedMember = signal<FamilyMember | null>(null);
   selectedMemberTasks: any;
   public readonly currentUserId = computed(() => {
     return this.authService?.currentUser()?.id;
   });
-  // Computed property: true if current user is main user (not a member)
-  // Computed property: true if current user is main user (not a member)
+
   public readonly isMainUser = computed(() => {
     const user = this.authService.currentUser();
     // Heuristic: if user has a familyMembers array, treat as main user; if not, treat as member
@@ -55,16 +72,18 @@ export class FamilyMembers implements OnInit {
     const familyName = this.authService.currentUser()?.familyName;
     if (familyName) {
       this.http.get<FamilyMember[]>(`http://localhost:3000/api/members?familyName=${encodeURIComponent(familyName)}`)
-        .subscribe(members => this.familyMembers.set(members));
+        .subscribe((members: FamilyMember[]) => this.familyMembers.set(members));
     }
-    // Initialize the form group with validators
+    // Initialize the form group with validators (only once)
     this.newTaskForm = this.fb.group({
       title: ['', Validators.required],
       details: [''],
-      date: ['', Validators.required],
-      reminderDateTime: ['', Validators.required],
+      date: [''],
+      reminderDateTime: [''],
       end: [''],
-      type: ['']
+      type: [''],
+      weekday: [''],
+      time: ['']
     });
 
     // Add Member Form
@@ -94,9 +113,21 @@ export class FamilyMembers implements OnInit {
   }
 
   ngOnInit(): void {
-  // Load family members from backend
-  this.tasksService.fetchFamilyMembers().subscribe();
-  // No need to load all tasks at once; tasks are loaded per member
+    // Load family members from backend
+    this.tasksService.fetchFamilyMembers().subscribe({
+      next: (members: FamilyMember[]) => {
+        this.familyMembers.set(members);
+        // Find current user in members and select by default
+        const currentUser = this.authService.currentUser();
+        if (currentUser && currentUser.email) {
+          const match = members.find(m => m.email === currentUser.email);
+          if (match) {
+            this.selectMember(match);
+          }
+        }
+      }
+    });
+    // No need to load all tasks at once; tasks are loaded per member
   }
 
   // A helper method to reload tasks after an addition
@@ -122,7 +153,16 @@ export class FamilyMembers implements OnInit {
   toggleFormVisibility(): void {
     this.isFormVisible = !this.isFormVisible;
     if (!this.isFormVisible) {
-      this.newTaskForm.reset();
+      this.newTaskForm.reset({
+        title: '',
+        details: '',
+        date: '',
+        reminderDateTime: '',
+        end: '',
+        type: '',
+        weekday: '',
+        time: ''
+      });
       this.selectedTaskType = null;
     }
   }
@@ -130,9 +170,16 @@ export class FamilyMembers implements OnInit {
   openTaskForm(type: string): void {
   this.selectedTaskType = type;
   this.isFormVisible = true;
-  this.newTaskForm.reset();
-  // Set both type and title to the selected type
-  this.newTaskForm.patchValue({ type: type, title: type });
+  this.newTaskForm.reset({
+    title: type,
+    details: '',
+    date: '',
+    reminderDateTime: '',
+    end: '',
+    type: type,
+    weekday: '',
+    time: ''
+  });
   }
 
   deleteTask(taskId: string): void {
@@ -179,17 +226,32 @@ export class FamilyMembers implements OnInit {
 
     const userIdValue = this.currentUserId();
     const selectedMemberValue = this.selectedMember();
-    const newTaskPayload: NewTaskPayload = {
-      title: formValue.title,
-      details: formValue.details,
-      date: convertAnyDateToJSDate(formValue.date),
-      reminderDateTime: formValue.reminderDateTime ? convertAnyDateToJSDate(formValue.reminderDateTime) : undefined,
-      end: formValue.end ? convertAnyDateToJSDate(formValue.end) : undefined,
-      familyName: this.authService.currentUser()?.familyName || '',
-      memberName: selectedMemberValue ? String(selectedMemberValue.name) : '',
-      email: selectedMemberValue ? String(selectedMemberValue.email) : '',
-      type: formValue.type || this.selectedTaskType || ''
-    };
+    let newTaskPayload: NewTaskPayload & { weekday?: number; time?: string; type?: string };
+    if (formValue.type === 'class') {
+      newTaskPayload = {
+        title: formValue.title,
+        details: formValue.details,
+        date: undefined, // required by type, but not used for class
+        familyName: this.authService.currentUser()?.familyName || '',
+        memberName: selectedMemberValue ? String(selectedMemberValue.name) : '',
+        email: selectedMemberValue ? String(selectedMemberValue.email) : '',
+        type: 'class',
+        weekday: formValue.weekday,
+        time: formValue.time
+      };
+    } else {
+      newTaskPayload = {
+        title: formValue.title,
+        details: formValue.details,
+        date: convertAnyDateToJSDate(formValue.date),
+        reminderDateTime: formValue.reminderDateTime ? convertAnyDateToJSDate(formValue.reminderDateTime) : undefined,
+        end: formValue.end ? convertAnyDateToJSDate(formValue.end) : undefined,
+        familyName: this.authService.currentUser()?.familyName || '',
+        memberName: selectedMemberValue ? String(selectedMemberValue.name) : '',
+        email: selectedMemberValue ? String(selectedMemberValue.email) : '',
+        type: formValue.type || this.selectedTaskType || ''
+      };
+    }
 
     // Optimistically update the selectedMemberTasks signal
     const tempId = (typeof crypto !== 'undefined' && 'randomUUID' in crypto) ? (crypto as any).randomUUID() : `temp-${Date.now()}-${Math.floor(Math.random()*10000)}`;

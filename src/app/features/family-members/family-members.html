@@ -33,65 +33,86 @@
   <!-- Display Area for Selected Member's Tasks -->
 
   <div *ngIf="selectedMember()" class="tasks-display">
-    <!-- Task Type Buttons removed here to avoid duplication -->
-  
-  <h3>Tasks for {{ selectedMember()?.name }}</h3>
-
-    <!-- Task Addition Form (shown only when isFormVisible is true) -->
-  <div *ngIf="isFormVisible" class="add-task-form" [ngClass]="'bg-' + mapTaskType(selectedTaskType)">
-     
-      <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
-  <h4>Add {{ selectedTaskType || 'Task' }} for {{ selectedMember()?.name }}</h4>
-        <input type="hidden" formControlName="type">
-        <div>
-          <label for="title">Title:</label>
-          <input id="title" type="text" formControlName="title" required>
-        </div>
-        <div>
-          <label for="details">Details (optional):</label>
-          <textarea id="details" formControlName="details"></textarea>
-        </div>
-        <div>
-          <label for="date">Start Date/Time:</label>
-          <input id="date" type="datetime-local" formControlName="date" required>
-        </div>
-        <div>
-          <label for="reminderDateTime">Reminder Date/Time:</label>
-          <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
-        </div>
-        <div>
-          <label for="end">End Date/Time (Optional):</label>
-          <input id="end" type="datetime-local" formControlName="end">
-        </div>
-  <button  class="fam-btn " type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
-      </form>
+    <h3>Tasks for {{ selectedMember()?.name }}</h3>
+    <div class="member-tabs-inner">
+      <button (click)="activeMemberTab = 'add'" [class.active]="activeMemberTab === 'add'">Add Task</button>
+      <button (click)="activeMemberTab = 'all'" [class.active]="activeMemberTab === 'all'">All Tasks</button>
     </div>
-    
-    <!-- List of Existing Tasks -->
-    <ul class="member-tasks" *ngIf="selectedMemberTasks().length > 0; else noTasks">
-    
-  <li class="task" *ngFor="let task of selectedMemberTasks()" [ngClass]="'task type-' + mapTaskType(task.title)" [class.optimistic-task]="task._optimistic">
-    <div class="task-content">
-      <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
-      <strong>{{ task.title }}</strong>
-      <span *ngIf="task._optimistic" class="optimistic">Saving...</span>
-      <p>{{ task.details }}</p>
-      <small>{{ task.date | friendlyDateTime }}</small>
+    <div *ngIf="activeMemberTab === 'add'">
+      <div class="task-type-buttons">
+        <button class="fam-btn type-btn type-meeting" (click)="openTaskForm('meeting')">Meeting</button>
+        <button class="fam-btn type-btn type-class" (click)="openTaskForm('class')">Class</button>
+        <button class="fam-btn type-btn type-shopping" (click)="openTaskForm('shopping')">Shopping</button>
+        <button class="fam-btn type-btn type-birthday" (click)="openTaskForm('birthday')">Birthday</button>
+        <button class="fam-btn type-btn type-doctor" (click)="openTaskForm('doctor')">See a Doctor</button>
+        <button class="fam-btn type-btn type-other" (click)="openTaskForm('other')">Other</button>
+      </div>
+  <app-weekly-improvement (suggestAsTask)="onSuggestAsTask($event)"></app-weekly-improvement>
+      <div *ngIf="isFormVisible" class="add-task-form" [ngClass]="'bg-' + mapTaskType(selectedTaskType)">
+        <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
+          <h4>Add {{ selectedTaskType || 'Task' }} for {{ selectedMember()?.name }}</h4>
+          <input type="hidden" formControlName="type">
+          <div>
+            <label for="title">Title:</label>
+            <input id="title" type="text" formControlName="title" required>
+          </div>
+          <div>
+            <label for="details">Details (optional):</label>
+            <textarea id="details" formControlName="details"></textarea>
+          </div>
+          <ng-container *ngIf="newTaskForm.get('type')?.value === 'class'; else normalTaskFields">
+            <div>
+              <label for="weekday">Day of Week:</label>
+              <select id="weekday" formControlName="weekday" required>
+                <option [ngValue]="0">Sunday</option>
+                <option [ngValue]="1">Monday</option>
+                <option [ngValue]="2">Tuesday</option>
+                <option [ngValue]="3">Wednesday</option>
+                <option [ngValue]="4">Thursday</option>
+                <option [ngValue]="5">Friday</option>
+                <option [ngValue]="6">Saturday</option>
+              </select>
+            </div>
+            <div>
+              <label for="time">Time:</label>
+              <input id="time" type="time" formControlName="time" required>
+            </div>
+          </ng-container>
+          <ng-template #normalTaskFields>
+            <div>
+              <label for="date">Start Date/Time:</label>
+              <input id="date" type="datetime-local" formControlName="date" required>
+            </div>
+            <div>
+              <label for="reminderDateTime">Reminder Date/Time:</label>
+              <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
+            </div>
+            <div>
+              <label for="end">End Date/Time (Optional):</label>
+              <input id="end" type="datetime-local" formControlName="end">
+            </div>
+          </ng-template>
+          <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
+          <button class="fam-btn cancel-btn" type="button" (click)="toggleFormVisibility()">Cancel</button>
+        </form>
+      </div>
     </div>
-    <button (click)="deleteTask(task.id!)" class="delete-button fam-btn " color="primary">Delete</button>
-  </li>
-    </ul>
-    <ng-template #noTasks>
+    <div *ngIf="activeMemberTab === 'all'">
+      <ul class="member-tasks" *ngIf="selectedMemberTasks().length > 0; else noTasks">
+        <li class="task" *ngFor="let task of selectedMemberTasks()" [ngClass]="'task type-' + mapTaskType(task.title)" [class.optimistic-task]="task._optimistic">
+          <div class="task-content">
+            <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
+            <strong>{{ task.title }}</strong>
+            <span *ngIf="task._optimistic" class="optimistic">Saving...</span>
+            <p>{{ task.details }}</p>
+            <small>{{ task.date | friendlyDateTime }}</small>
+          </div>
+          <button (click)="deleteTask(task.id!)" class="delete-button fam-btn " color="primary">Delete</button>
+        </li>
+      </ul>
+      <ng-template #noTasks>
         <p>No tasks found for this member.</p>
-    </ng-template>
-  </div>
-  <!-- Task Type Buttons always visible when a member is selected and form is not open -->
-  <div class="task-type-buttons" *ngIf="selectedMember() && !isFormVisible">
-  <button class="fam-btn type-btn type-meeting" (click)="openTaskForm('meeting')">Meeting</button>
-  <button class="fam-btn type-btn type-class" (click)="openTaskForm('class')">Class</button>
-  <button class="fam-btn type-btn type-shopping" (click)="openTaskForm('shopping')">Shopping</button>
-  <button class="fam-btn type-btn type-birthday" (click)="openTaskForm('birthday')">Birthday</button>
-  <button class="fam-btn type-btn type-doctor" (click)="openTaskForm('doctor')">See a Doctor</button>
-  <button class="fam-btn type-btn type-other" (click)="openTaskForm('other')">Other</button>
+      </ng-template>
+    </div>
   </div>
 </div>
