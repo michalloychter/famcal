@@ -1,42 +1,41 @@
 <div class="family-members-container main-div">
-  <h2>Family Members & Tasks</h2>
 
-  <!-- Member Selection Tabs/Buttons -->
-    <div class="member-tabs">
-
-    <button 
-      *ngFor="let member of familyMembers()" 
-      (click)="selectMember(member)"
-      [class.active]="selectedMember()?.id === member.id" 
-      class="tab-button"
-      style="border: none; outline: none; font-size: large;">
-      {{ member.name }}
-    </button>
-  </div>
-
-  <hr>
-  <!-- Add Member Button and Form: Only visible to main user -->
-  <ng-container *ngIf="isMainUser()">
-    <button class="fam-btn" (click)="showAddMemberForm = !showAddMemberForm">Add Member</button>
-    <div *ngIf="showAddMemberForm" class="add-member-form">
-      <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()">
-        <label for="memberName">Member Name:</label>
-        <input id="memberName" type="text" formControlName="memberName" required>
-        <label>
-          <input type="checkbox" formControlName="isUser"> Is this member a user?
-        </label>
-        <button class="fam-btn" type="submit" [disabled]="addMemberForm.invalid">Save Member</button>
-      </form>
+  <!-- Member Cards Grid -->
+  <ng-container *ngIf="!selectedMember()">
+    <div class="member-cards">
+      <div 
+        *ngFor="let member of familyMembers()" 
+        class="member-card fam-btn"
+        [ngStyle]="{'background': getMemberColor(member.name), 'color': '#fff'}"
+        (click)="selectMember(member)"
+      >
+        <span style="font-size:1.2em; font-weight:600;">{{ member.name }}</span>
+      </div>
     </div>
+    <ng-container *ngIf="isMainUser()">
+      <button class="fam-btn" (click)="showAddMemberForm = !showAddMemberForm">Add Member</button>
+      <div *ngIf="showAddMemberForm" class="add-member-form">
+        <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()">
+          <label for="memberName">Member Name:</label>
+          <input id="memberName" type="text" formControlName="memberName" required>
+          <label>
+            <input type="checkbox" formControlName="isUser"> Is this member a user?
+          </label>
+          <button class="fam-btn" type="submit" [disabled]="addMemberForm.invalid">Save Member</button>
+        </form>
+      </div>
+    </ng-container>
   </ng-container>
-  
-  <!-- Display Area for Selected Member's Tasks -->
 
   <div *ngIf="selectedMember()" class="tasks-display">
+    <button class="back-btn fam-btn" (click)="selectedMember.set(null)" style="margin-bottom:16px;">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
     <h3>Tasks for {{ selectedMember()?.name }}</h3>
     <div class="member-tabs-inner">
-      <button (click)="activeMemberTab = 'add'" [class.active]="activeMemberTab === 'add'">Add Task</button>
-      <button (click)="activeMemberTab = 'all'" [class.active]="activeMemberTab === 'all'">All Tasks</button>
+      <button class="fam-btn" (click)="activeMemberTab = activeMemberTab === 'add' ? 'all' : 'add'">
+        {{ activeMemberTab === 'add' ? 'Show All Tasks' : 'Add Task' }}
+      </button>
     </div>
     <div *ngIf="activeMemberTab === 'add'">
       <div class="task-type-buttons">
@@ -59,8 +58,8 @@
           <i class="fa-regular fa-star type-icon"></i> Other
         </button>
       </div>
-  <app-weekly-improvement (suggestAsTask)="onSuggestAsTask($event)"></app-weekly-improvement>
-  <div *ngIf="isFormVisible" class="add-task-form">
+      <app-weekly-improvement (suggestAsTask)="onSuggestAsTask($event)"></app-weekly-improvement>
+      <div *ngIf="isFormVisible" class="add-task-form">
         <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
           <h4>
             <span *ngIf="selectedTaskType === 'meeting'" class="type-icon"><i class="fa-regular fa-calendar"></i></span>
@@ -119,9 +118,9 @@
     </div>
     <div *ngIf="activeMemberTab === 'all'">
       <ul class="member-tasks" *ngIf="selectedMemberTasks().length > 0; else noTasks">
-    <li class="task" *ngFor="let task of selectedMemberTasks()"
-      [ngStyle]="{'border': '3px solid ' + getMemberColor(task.memberName), 'background': 'none'}"
-      [class.optimistic-task]="task._optimistic">
+        <li class="task" *ngFor="let task of selectedMemberTasks()"
+          [ngStyle]="{'border': '3px solid ' + getMemberColor(task.memberName), 'background': 'none'}"
+          [class.optimistic-task]="task._optimistic">
           <div class="task-content">
             <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
             <strong>{{ task.title }}</strong>

@@ -41,16 +41,16 @@ export class FamilyMembers implements OnInit {
    * Handler for AI improvement suggestion to prefill the add task form.
    * Opens the form with type 'improve' and prefilled details.
    */
-  onSuggestAsTask(event: { type: string, details: string }): void {
-    this.selectedTaskType = event.type || 'improve';
+  onSuggestAsTask(event: { type?: string, details: string }): void {
+    this.selectedTaskType = event.type ?? null;
     this.isFormVisible = true;
     this.newTaskForm.reset({
-      title: event.type.charAt(0).toUpperCase() + event.type.slice(1),
+      title: '',
       details: event.details,
       date: '',
       reminderDateTime: '',
       end: '',
-      type: event.type || 'improve',
+      type: event.type ?? '',
       weekday: '',
       time: ''
     });
@@ -132,14 +132,7 @@ export class FamilyMembers implements OnInit {
     this.tasksService.fetchFamilyMembers().subscribe({
       next: (members: FamilyMember[]) => {
         this.familyMembers.set(members);
-        // Find current user in members and select by default
-        const currentUser = this.authService.currentUser();
-        if (currentUser && currentUser.email) {
-          const match = members.find(m => m.email === currentUser.email);
-          if (match) {
-            this.selectMember(match);
-          }
-        }
+        // Do not auto-select any member; wait for user click
       }
     });
     // No need to load all tasks at once; tasks are loaded per member

@@ -20,17 +20,7 @@ import { AiService } from '../../core/aiService';
         </li>
       </ul>
     </div>
-    <div *ngIf="selectedSuggestion" class="suggest-task">
-      <strong>Suggest as Task:</strong>
-      <div class="task-type-buttons">
-        <button class="fam-btn type-btn type-meeting" (click)="suggestTask('meeting')">Meeting</button>
-        <button class="fam-btn type-btn type-class" (click)="suggestTask('class')">Class</button>
-        <button class="fam-btn type-btn type-shopping" (click)="suggestTask('shopping')">Shopping</button>
-        <button class="fam-btn type-btn type-birthday" (click)="suggestTask('birthday')">Birthday</button>
-        <button class="fam-btn type-btn type-doctor" (click)="suggestTask('doctor')">See a Doctor</button>
-        <button class="fam-btn type-btn type-other" (click)="suggestTask('other')">Other</button>
-      </div>
-    </div>
+    <!-- Suggest as Task button removed; suggestion is emitted automatically on click -->
     <div *ngIf="loading" class="loading-message">Loading suggestion...</div>
     <div *ngIf="error" class="error-message">{{ error }}</div>
   `,
@@ -44,7 +34,7 @@ export class WeeklyImprovementComponent {
   selectedSuggestion: string | null = null;
 
   @Output() improvementSaved = new EventEmitter<string>();
-  @Output() suggestAsTask = new EventEmitter<{ type: string, details: string }>();
+  @Output() suggestAsTask = new EventEmitter<{ type?: string, details: string }>();
 
   constructor(private aiService: AiService) {}
 
@@ -79,13 +69,8 @@ export class WeeklyImprovementComponent {
 
   selectSuggestion(step: string) {
     this.selectedSuggestion = step;
-  }
-
-  suggestTask(type: string) {
-    if (this.selectedSuggestion) {
-      this.suggestAsTask.emit({ type, details: this.selectedSuggestion });
-      // Optionally, clear selection after emit
-      this.selectedSuggestion = null;
-    }
+    // Immediately emit as a task with empty title and no type
+    this.suggestAsTask.emit({ details: step });
+    this.selectedSuggestion = null;
   }
 }

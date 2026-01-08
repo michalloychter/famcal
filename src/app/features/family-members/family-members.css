@@ -85,3 +85,29 @@ padding: 10px;
 .optimistic-task {
   opacity: 0.8;
 }
+
+.member-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 32px 0;
+  justify-content: flex-start;
+}
+.member-card {
+  min-width: 160px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: none !important;
+  padding: 5%;
+}
+.member-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
