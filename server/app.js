@@ -23,11 +23,7 @@ app.use('/api/members', memberRouter);
 
 // Mount the task-related routes under the /api base path
 const taskRouter = require('./routes/taskRoutes');
-app.use('/api', taskRouter);
-
-// Mount the AI improvement suggestion route under /api
-const aiRouter = require('./routes/aiRoutes');
-app.use('/api', aiRouter);
+app.use('/api', taskRouter); 
 
 // --- Start the Server ---
 // FIX 1 & 2: Use the defined PORT variable

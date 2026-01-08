@@ -6,6 +6,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { TasksService, Task} from '../../core/tasksService'; 
 import { TaskModalComponent } from './task-modal.component';
+import { AddTaskModalComponent } from './add-task-modal.component';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/authService';
 import type { familyDetails } from '../../shared/models/family';
@@ -19,7 +20,7 @@ function isEventInput(event: EventInput | null): event is EventInput {
 @Component({
   selector: 'app-family-calendar',
   standalone: true,
-  imports: [FullCalendarModule, CommonModule],
+  imports: [FullCalendarModule, CommonModule, AddTaskModalComponent],
   // We use the computed signal in the template options binding now
   templateUrl: './family-calendar.html', 
   styleUrl: './family-calendar.css'
@@ -43,8 +44,36 @@ export class FamilyCalendar implements OnInit {
       right: 'timeGridWeek,timeGridDay'
     },
     events: [], // Placeholder, will be overwritten by the computed signal
-    eventClick: this.onEventClick.bind(this)
+    eventClick: this.onEventClick.bind(this),
+    dateClick: this.onDateClick.bind(this)
   };
+
+  // Handler to open add-task modal on date click
+  onDateClick(arg: any) {
+    const dateStr = arg.dateStr;
+    const dialogRef = this.dialog.open(AddTaskModalComponent, {
+      data: { date: dateStr },
+      width: '400px',
+      autoFocus: true,
+      restoreFocus: true,
+      hasBackdrop: true,
+      closeOnNavigation: true
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result && result.title) {
+        // Add the new task
+        const currentUser = this.authService.currentUser();
+        this.tasksService.addTask({
+          title: result.title,
+          details: result.details,
+          date: new Date(result.date),
+          familyName: currentUser?.familyName || '',
+          memberName: currentUser?.familyName || '',
+          email: currentUser?.email || ''
+        }).subscribe();
+      }
+    });
+  }
 
   // Handler to open modal on event click
   onEventClick(arg: any) {
