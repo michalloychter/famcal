@@ -14,14 +14,36 @@ router.post('/register', async (req, res) => {
   const { familyName, members } = req.body;
 
   // Basic input validation
-  if (!familyName || !Array.isArray(members) || members.length === 0) {
-    const missing = [];
-    if (!familyName) missing.push('familyName');
-    if (!members || !Array.isArray(members) || members.length === 0) missing.push('members');
+  const missing = [];
+  if (!familyName) missing.push('familyName');
+  if (!Array.isArray(members) || members.length === 0) missing.push('members');
+  if (members && members.length > 0) {
+    const first = members[0];
+    if (!first.name) missing.push('first member name');
+    if (!first.username) missing.push('first member username');
+    if (!first.email) missing.push('first member email');
+    if (!first.whatsappNumber) missing.push('first member whatsappNumber');
+  }
+  if (missing.length > 0) {
     return res.status(400).json({ error: 'Missing required fields', missing });
   }
 
   try {
+    // Check for duplicate familyName
+    const existingMembersByFamily = await MemberModel.getMembersByFamilyName(familyName);
+    if (existingMembersByFamily && existingMembersByFamily.length > 0) {
+      return res.status(400).json({ error: 'Family name already exists' });
+    }
+    // Check for duplicate username or email across all members
+    const allMembers = await MemberModel.getMembersByFamilyName(''); // Get all members (empty string returns all)
+    for (const member of members) {
+      if (allMembers.some(m => m.username === member.username)) {
+        return res.status(400).json({ error: `Username '${member.username}' already exists` });
+      }
+      if (allMembers.some(m => m.email === member.email)) {
+        return res.status(400).json({ error: `Email '${member.email}' already exists` });
+      }
+    }
     // Save members (no family doc, no familyId, just familyName on each member)
     if (!members[0].name || !members[0].username || !members[0].email) {
       return res.status(400).json({ error: 'First member must have name, username, and email' });
@@ -59,6 +81,7 @@ router.post('/login', async (req, res) => {
         message: 'Login successful',
         user: {
           id: member.id,
+          name: member.name, // always return the real name
           username: member.username,
           email: member.email,
           familyId: member.familyId,

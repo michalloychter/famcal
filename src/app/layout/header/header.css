@@ -1,10 +1,30 @@
+/* Match family-members style: rounded, modern, colorful */
 .header-right a {
   border-bottom: none !important;
   text-decoration: none !important;
-  color: #333 !important;
+  color: #17a89a !important;
+  
+  margin-inline-end: 20px;
+  
 }
 .header-right a:hover {
- color: #40e0d0;; 
+  color: #40e0d0 !important;
+  background: #f0f8f8;
+}
+/* Button style for header actions */
+.header-btn, .user-menu-container button, .user-dropdown-menu li {
+  border-radius: 30px;
+  border: none;
+  color: #17a89a;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #dad5d5;
+  margin-inline-end: 20px;
+  transition: background 0.2s, color 0.2s;
+}
+.header-btn:hover, .user-menu-container button:hover, .user-dropdown-menu li:hover {
+  color: #40e0d0;
+  background: #f0f8f8;
 }
 .user-menu-container {
   position: relative;
@@ -111,16 +131,17 @@
 
 /* Create the circular turquoise logo */
 .logo-circle {
-   color: rgb(110, 109, 109);
+  color: rgb(110, 109, 109);
   width: 50px;
   height: 50px;
-  background-color: #40e0d0; /* Turquoise color */
+  background-color: #40e0d0;
   border-radius: 10%; /* Make it a circle */
   display: flex;
-  flex-direction: column; /* Stack text vertically */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-right: 1rem;
+  box-shadow: 0 2px 8px rgba(64,224,208,0.15);
 }
 .divider {
   margin: 10px;

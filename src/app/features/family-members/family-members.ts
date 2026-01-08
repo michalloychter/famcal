@@ -22,6 +22,21 @@ import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 })
 export class FamilyMembers implements OnInit {
 
+  // Color palette for member borders
+  private memberColors = [
+    '#1976d2', '#388e3c', '#fbc02d', '#e040fb', '#0097a7', '#757575', '#ff7043', '#8d6e63', '#43a047', '#c62828'
+  ];
+  // Assign a color to each member by name (deterministic)
+  getMemberColor(memberName: string): string {
+    if (!memberName) return '#bbb';
+    let hash = 0;
+    for (let i = 0; i < memberName.length; i++) {
+      hash = memberName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const idx = Math.abs(hash) % this.memberColors.length;
+    return this.memberColors[idx];
+  }
+
   /**
    * Handler for AI improvement suggestion to prefill the add task form.
    * Opens the form with type 'improve' and prefilled details.

@@ -1,3 +1,6 @@
+.fc-v-event .fc-event-main {
+  color: #000 !important;
+}
 .fc-event, .fc-event-main {
   cursor: pointer !important;
 }
@@ -7,6 +10,10 @@
 }
 .calendar-container {
   padding: 20px;
+}
+.fc-v-event .fc-event-main {
+  color: #000 !important;
+  height: 100%;
 }
 .calendar-container {
   height: 400px;

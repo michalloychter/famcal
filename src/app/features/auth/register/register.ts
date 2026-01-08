@@ -55,7 +55,7 @@ export class Register {
   }
   registerForm: FormGroup;
   members: any[] = [
-    { memberName: '', username: '', email: '', country: '', whatsappNumber: '' }
+    { memberName: '', username: '', email: '', country: '', whatsappNumber: '', color: '#1976d2' }
   ];
   loading = false;
   submitted = false;
@@ -99,7 +99,17 @@ export class Register {
   onSubmit() {
     this.submitted = true;
     this.error.set('');
+    const missing: string[] = [];
     if (this.registerForm.invalid) {
+      missing.push('familyName');
+    }
+    if (!this.members[0].memberName) missing.push('first member name');
+    if (!this.members[0].username) missing.push('first member username');
+    if (!this.members[0].email) missing.push('first member email');
+    if (!this.members[0].whatsappNumber) missing.push('first member whatsappNumber');
+    if (missing.length > 0) {
+      this.missingFields.set(missing);
+      this.error.set('Please fill all required fields');
       return;
     }
     this.loading = true;
@@ -110,7 +120,8 @@ export class Register {
         username: m.username,
         email: m.email,
         country: m.country,
-        whatsappNumber: this.formatPhoneNumber(m.whatsappNumber, m.country)
+        whatsappNumber: this.formatPhoneNumber(m.whatsappNumber, m.country),
+        color: m.color
       }))
     };
     this.missingFields.set(null);

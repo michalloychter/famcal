@@ -6,6 +6,7 @@ export interface FamilyMember {
   whatsappNumber?: string;
   familyID?: string;
   familyName?: string;
+  color?: string; // HEX color for member
 }
 
 export interface familyDetails {

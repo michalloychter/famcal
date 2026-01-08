@@ -40,7 +40,7 @@ export class AuthService {
         // Store member name and username in currentUser for greeting
         const memberUser = {
           ...response.user,
-          name: response.user.name || response.user.username || '',
+          name: response.user.name || '',
           username: response.user.username || '',
         };
         if (this.isBrowser) {

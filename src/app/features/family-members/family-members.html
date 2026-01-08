@@ -99,7 +99,9 @@
     </div>
     <div *ngIf="activeMemberTab === 'all'">
       <ul class="member-tasks" *ngIf="selectedMemberTasks().length > 0; else noTasks">
-        <li class="task" *ngFor="let task of selectedMemberTasks()" [ngClass]="'task type-' + mapTaskType(task.title)" [class.optimistic-task]="task._optimistic">
+    <li class="task" *ngFor="let task of selectedMemberTasks()"
+      [ngStyle]="{'border': '3px solid ' + getMemberColor(task.memberName), 'background': 'none'}"
+      [class.optimistic-task]="task._optimistic">
           <div class="task-content">
             <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
             <strong>{{ task.title }}</strong>

@@ -43,6 +43,10 @@
       <input type="tel" [(ngModel)]="member.whatsappNumber" name="whatsappNumber-{{i}}" placeholder="e.g., 0545766580" pattern="^0?\d{8,14}$" [ngModelOptions]="{standalone: true}">
     </div>
     <div>
+      <label>Color:</label>
+      <input type="color" [(ngModel)]="member.color" name="color-{{i}}" [ngModelOptions]="{standalone: true}">
+    </div>
+    <div>
       <button type="button" (click)="removeMember(i)">Remove</button>
     </div>
   </div>

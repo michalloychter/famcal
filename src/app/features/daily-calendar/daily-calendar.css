@@ -1,28 +1,4 @@
 /* Task type background colors (copied from family-members.css) */
-.type-meeting {
-    background: #1976d2 !important;
-    color: #fff !important;
-}
-.type-class {
-    background: #388e3c !important;
-    color: #fff !important;
-}
-.type-shopping {
-    background: #fbc02d !important;
-    color: #222 !important;
-}
-.type-birthday {
-    background: #e040fb !important;
-    color: #fff !important;
-}
-.type-doctor {
-    background: #0097a7 !important;
-    color: #fff !important;
-}
-.type-other {
-    background: #757575 !important;
-    color: #fff !important;
-}
 .main-div {
     padding: 20px;
 }

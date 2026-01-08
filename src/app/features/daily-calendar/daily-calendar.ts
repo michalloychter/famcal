@@ -17,6 +17,19 @@ import { Observable } from 'rxjs';
   styleUrl: './daily-calendar.css',
 })
 export class DailyCalendar implements OnInit {
+  // Use the same color palette and hash logic as FamilyMembers
+  private memberColors = [
+    '#1976d2', '#388e3c', '#fbc02d', '#e040fb', '#0097a7', '#757575', '#ff7043', '#8d6e63', '#43a047', '#c62828'
+  ];
+  getMemberColor(memberName: string): string {
+    if (!memberName) return '#bbb';
+    let hash = 0;
+    for (let i = 0; i < memberName.length; i++) {
+      hash = memberName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const idx = Math.abs(hash) % this.memberColors.length;
+    return this.memberColors[idx];
+  }
   // Helper to normalize task type for CSS class (copied from FamilyMembers)
   public mapTaskType(type: string | undefined | null): string {
     if (!type) return 'other';
