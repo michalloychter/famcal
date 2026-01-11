@@ -1,0 +1,27 @@
+<div class="shopping-list-container">
+  <h2>Shopping List</h2>
+  <form (ngSubmit)="addItem()" #itemForm="ngForm" autocomplete="off" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+    <input
+      type="text"
+      placeholder="Add item..."
+      [(ngModel)]="newItem"
+      name="item"
+      required
+      (keyup.enter)="addItem()"
+      style="flex: 1 1 auto;"
+    />
+    <button class="fam-btn" type="submit" [disabled]="!newItem">Add</button>
+    <button class="fam-btn" type="button" (click)="copyList()" [disabled]="!items.length">Copy List to Clipboard</button>
+  </form>
+  <ul>
+    <li *ngFor="let item of items; let i = index">
+      {{ item }}
+      <button class="fam-btn" (click)="removeItem(i)" title="Remove">&times;</button>
+    </li>
+  </ul>
+  <div class="super-links">
+    <a class="super-link" href="https://www.rami-levy.co.il/he/online/market" target="_blank" rel="noopener">Rami Levi</a>
+    <a class="super-link" href="https://www.shufersal.co.il/online/he" target="_blank" rel="noopener">Shufersal</a>
+    <a class="super-link" href="https://www.yochananof.co.il/" target="_blank" rel="noopener">Yochananof</a>
+  </div>
+</div>
