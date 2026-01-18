@@ -20,7 +20,7 @@ import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 @Component({
   selector: 'app-family-members',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe, WeeklyImprovementComponent, RequiredErrorMessageComponent, FamilyEveningComponent], 
+  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe, WeeklyImprovementComponent, RequiredErrorMessageComponent], 
   templateUrl: './family-members.html',
   styleUrl: './family-members.css',
 })

@@ -6,13 +6,14 @@ import { FilterTodayPipe } from '../../shared/filter-today.pipe';
 import { TasksService ,Task} from '../../core/tasksService'; 
 import { AuthService} from '../../core/authService';
 import { WeatherService, WeatherData } from '../../core/weather';
+import { AiService } from '../../core/aiService';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-daily-calendar',
   standalone: true,
-  imports: [CommonModule, FriendlyDateTimePipe, FilterTodayPipe], 
+  imports: [CommonModule, FriendlyDateTimePipe], 
   templateUrl: './daily-calendar.html',
   styleUrl: './daily-calendar.css',
 })
@@ -46,13 +47,15 @@ export class DailyCalendar implements OnInit {
   constructor(
     private taskService: TasksService,
     private authService: AuthService ,
-    private weatherService: WeatherService
+    private weatherService: WeatherService,
+    private aiService: AiService
   ) {}
  tasks$!: Observable<Task[]>; 
  memberEmail: string | null = null;
  weather = signal<WeatherData | null>(null);
   weatherError = signal<string | null>(null);
-  clothingAdvice = signal<string | null>(null); 
+  clothingAdvice = signal<string | null>(null);
+  clothingLoading = signal<boolean>(false); 
 
 readonly memberName = computed(() => {
   const user = this.authService.currentUser();
@@ -82,11 +85,29 @@ ngOnInit(): void {
       next: (weatherData) => {
         this.weather.set(weatherData);
         this.weatherError.set(null);
+        
+        // Once we have weather, get clothing advice
+        this.getClothingAdvice(weatherData);
       },
       error: (err) => {
         this.weatherError.set('Could not fetch weather data.');
         this.weather.set(null);
         console.error(err);
+      }
+    });
+  }
+
+  getClothingAdvice(weatherData: WeatherData): void {
+    this.clothingLoading.set(true);
+    this.aiService.getClothingSuggestion(weatherData.temp, weatherData.description, weatherData.city).subscribe({
+      next: (response) => {
+        this.clothingAdvice.set(response.advice);
+        this.clothingLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to get clothing advice:', err);
+        this.clothingAdvice.set(null);
+        this.clothingLoading.set(false);
       }
     });
   }

@@ -10,7 +10,7 @@
 }
 .daily-tasks-container ul li{background-color: #d7f2f1;
     align-self: center;
-    width: 40%;
+    width: 20%;
     border-radius: 10px;
     list-style: none;
     margin-top: 20px;
@@ -43,4 +43,44 @@ body, html, .main-app-container {
     padding-bottom: 3px;
     font-size: 1.05em;
     font-weight: 600;
+}
+
+.weather-info img {
+    width: 50px;
+    height: 50px;
+}
+
+/* Clothing advice section */
+.clothing-advice {
+    padding: 16px;
+    background: #f5f9ff;
+    border-radius: 10px;
+    border-left: 4px solid #1976d2;
+}
+
+.clothing-advice h4 {
+    color: #1976d2;
+    margin: 0 0 12px 0;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.advice-text {
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.95em;
+}
+
+.loading {
+    color: #666;
+    font-style: italic;
+}
+
+.error-message {
+    color: #a10f0f;
+    padding: 8px;
+    border-radius: 4px;
 }

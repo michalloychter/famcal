@@ -4,15 +4,15 @@
 
  <!-- Weather Forecast Section (New) -->
   <div class="weather-widget">
-    <h3>Today's Weather</h3>
+    <div><strong>Today's Weather</strong></div>
     
     <!-- FIX 1: Use the PUBLIC 'weatherData()' signal instead of the private 'weather()' -->
     <!-- FIX 2: Use an 'as weather' alias for clean access within the div -->
     <div *ngIf="weather() as weather" class="weather-info">
       <!-- Access properties directly from the 'weather' alias -->
-      <p><strong>{{ weather.city }}</strong></p>
-      <p>{{ weather.temp | number:'1.0-0' }}°C</p>
-      <p>{{ weather.description }}</p>
+      <div>{{ weather.city }}</div>
+      <div>{{ weather.temp | number:'1.0-0' }}°C</div>
+      <div>{{ weather.description }}</div>
       <!-- Use the alias here too -->
       <img [src]="weather.iconUrl" alt="{{ weather.description }} icon" />
     </div>
@@ -25,6 +25,13 @@
     <!-- Check weatherError() signal value -->
     <div *ngIf="weatherError()" class="error-message">
       {{ weatherError() }}
+    </div>
+
+    <!-- Clothing Advice Section -->
+    <div *ngIf="weather()" class="clothing-advice">
+      <h4><i class="fa-solid fa-shirt"></i> What to Wear</h4>
+      <div *ngIf="clothingLoading()" class="loading">Getting suggestions...</div>
+      <p *ngIf="clothingAdvice() && !clothingLoading()" class="advice-text">{{ clothingAdvice() }}</p>
     </div>
   </div>
 

@@ -134,4 +134,38 @@ Example response:
   }
 });
 
+// POST /api/ai-clothing-suggestion
+router.post('/ai-clothing-suggestion', async (req, res) => {
+  const { temp, description, city } = req.body;
+  console.log('[AI CLOTHING] Incoming request:', { temp, description, city });
+  if (temp === undefined || !description) {
+    return res.status(400).json({ error: 'Temperature and weather description are required.' });
+  }
+  try {
+    const prompt = `The weather today in ${city || 'your area'} is ${description} with a temperature of ${temp}°C.
+
+Give ONE sentence clothing recommendation for what to wear today. Be brief, casual and helpful.
+
+Example: "Bundle up with a warm jacket and scarf - it's cold and rainy today!"`;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: 'You are a friendly weather assistant. Give ONE sentence clothing advice only.' },
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 50,
+      temperature: 0.8
+    });
+    
+    const advice = completion.choices[0].message.content.trim();
+    console.log('[AI CLOTHING] OpenAI response:', advice);
+    
+    res.json({ advice });
+  } catch (err) {
+    console.error('[AI CLOTHING] Error:', err);
+    res.status(500).json({ error: 'Failed to get clothing suggestion from AI.' });
+  }
+});
+
 module.exports = router;

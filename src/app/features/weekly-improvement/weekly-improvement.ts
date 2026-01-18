@@ -17,6 +17,7 @@ export interface ImprovementSuggestion {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './weekly-improvement.html',
+  styleUrl: './weekly-improvement.css'
 })
 
 export class WeeklyImprovementComponent {

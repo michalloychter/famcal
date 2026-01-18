@@ -15,4 +15,8 @@ export class AiService {
   getFamilyEveningTasks(idea: string, date: string): Observable<{ tasks: any[] }> {
     return this.http.post<{ tasks: any[] }>(`${this.apiUrl}/ai-family-evening-tasks`, { idea, date });
   }
+
+  getClothingSuggestion(temp: number, description: string, city: string): Observable<{ advice: string }> {
+    return this.http.post<{ advice: string }>(`${this.apiUrl}/ai-clothing-suggestion`, { temp, description, city });
+  }
 }
