@@ -37,7 +37,7 @@
   list-style: disc inside;
   margin-bottom: 18px;
   padding-left: 0;
-  max-height: 500px;
+  max-height: 230px;
   overflow-y: auto;
 }
 .shopping-list-container li {
