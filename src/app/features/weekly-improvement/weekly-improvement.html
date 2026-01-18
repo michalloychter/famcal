@@ -1,1 +1,33 @@
-<app-weekly-improvement></app-weekly-improvement>
+
+<form (ngSubmit)="submitImprovement()" class="improvement-form">
+	<input id="improvement" name="improvement" [(ngModel)]="improvement" required placeholder="What do you want to improve this week?" />
+	<div><button class="fam-btn" type="submit" [disabled]="loading">Send</button></div>
+</form>
+
+<div *ngIf="loading" class="loading-message">Loading suggestion...</div>
+<div *ngIf="error" class="error-message">{{ error }}</div>
+
+<div *ngIf="aiSuggestions.length > 0">
+	<h4>AI Suggestions:</h4>
+	<div class="ai-suggestion-cards">
+		<div *ngFor="let step of aiSuggestions; let i = index" class="ai-card">
+			<div class="ai-card-title" *ngIf="step.title">{{ step.title }}</div>
+			<div class="ai-card-text">{{ step.details }}</div>
+			<div class="ai-card-actions" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+				<div style="display: flex; align-items: center; gap: 8px;">
+					<label style="font-weight: 500;">Date:</label>
+					<input type="date" [(ngModel)]="cardDates[i]" name="date-{{i}}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;" />
+				</div>
+				<div style="display: flex; align-items: center; gap: 8px;">
+					<label style="font-weight: 500;">Reminder:</label>
+					<input type="datetime-local" [(ngModel)]="cardReminders[i]" name="reminder-{{i}}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;" />
+				</div>
+				<button class="fam-btn" type="button" (click)="saveCardAsTask(i, step)" [disabled]="!cardDates[i]">Save</button>
+			</div>
+		</div>
+	</div>
+	<div style="margin-top: 20px; text-align: center;">
+		<button class="fam-btn close-btn" type="button" (click)="closeAndClear()">Saved & Close</button>
+	</div>
+</div>
+

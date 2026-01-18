@@ -42,6 +42,9 @@
     <div class="planner-modal" *ngIf="showAddTaskModal">
       <div class="modal-backdrop" (click)="closeAddTaskModal()"></div>
       <div class="modal-content centered">
+        <button class="close-x-btn" (click)="closeAddTaskModal()" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
         <h2>Add Task for {{ selectedMember()?.name }}</h2>
         <div class="task-type-buttons" style="margin-bottom: 1em;">
           <button class="fam-btn type-btn" (click)="openTaskForm('meeting')">
@@ -63,7 +66,6 @@
             <i class="fa-regular fa-star type-icon"></i> Other
           </button>
         </div>
-        <app-weekly-improvement class="weekly-improvement" (suggestAsTask)="onSuggestAsTask($event)"></app-weekly-improvement>
         <ng-container *ngIf="isFormVisible">
           <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
             <h4>
@@ -108,7 +110,7 @@
             </ng-container>
             <ng-template #normalTaskFields>
               <div>
-                <label for="date">Start Date/Time:</label>
+                <label for="date">Date/Time:</label>
                 <input id="date" type="datetime-local" formControlName="date" required>
                 <app-required-error-message *ngIf="newTaskForm.get('date')?.invalid && (newTaskForm.get('date')?.dirty || newTaskForm.get('date')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Start Date/Time" />
               </div>
@@ -117,15 +119,16 @@
                 <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
                 <app-required-error-message *ngIf="newTaskForm.get('reminderDateTime')?.invalid && (newTaskForm.get('reminderDateTime')?.dirty || newTaskForm.get('reminderDateTime')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Reminder Date/Time" />
               </div>
-              <div>
-                <label for="end">End Date/Time (Optional):</label>
-                <input id="end" type="datetime-local" formControlName="end">
-              </div>
+              
             </ng-template>
             <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
-            <button class="fam-btn cancel-btn" type="button" (click)="closeAddTaskModal()">Cancel</button>
+            <button class="fam-btn cancel-btn" type="button" (click)="isFormVisible = false; selectedTaskType = null">Cancel</button>
           </form>
         </ng-container>
+        
+        <div style="margin-top: 30px; width: 100%;">
+          <app-weekly-improvement class="weekly-improvement" (saveAsTask)="onSaveAsTask($event)"></app-weekly-improvement>
+        </div>
       </div>
     </div>
       <ul class="member-tasks" *ngIf="selectedMemberTasks().length > 0; else noTasks">
@@ -167,7 +170,7 @@
           <i class="fa-regular fa-star type-icon"></i> Other
         </button>
       </div>
-      <app-weekly-improvement (suggestAsTask)="onSuggestAsTask($event)"></app-weekly-improvement>
+      <app-weekly-improvement (saveAsTask)="onSaveAsTask($event)"></app-weekly-improvement>
       <div *ngIf="isFormVisible" class="add-task-form">
         <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
           <h4>
@@ -212,7 +215,7 @@
           </ng-container>
           <ng-template #normalTaskFields>
             <div>
-              <label for="date">Start Date/Time:</label>
+              <label for="date">Date/Time:</label>
               <input id="date" type="datetime-local" formControlName="date" required>
               <app-required-error-message *ngIf="newTaskForm.get('date')?.invalid && (newTaskForm.get('date')?.dirty || newTaskForm.get('date')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Start Date/Time" />
             </div>
@@ -221,10 +224,7 @@
               <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
               <app-required-error-message *ngIf="newTaskForm.get('reminderDateTime')?.invalid && (newTaskForm.get('reminderDateTime')?.dirty || newTaskForm.get('reminderDateTime')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Reminder Date/Time" />
             </div>
-            <div>
-              <label for="end">End Date/Time (Optional):</label>
-              <input id="end" type="datetime-local" formControlName="end">
-            </div>
+           
           </ng-template>
           <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
           <button class="fam-btn cancel-btn" type="button" (click)="toggleFormVisibility()">Cancel</button>

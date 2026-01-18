@@ -2,6 +2,7 @@
 import { FamilyEveningComponent } from '../family-evening/family-evening';
 import { WeeklyImprovementComponent } from '../weekly-improvement/weekly-improvement';
 import { Component, OnInit, Pipe, PipeTransform , signal, computed} from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
 import {HttpClient} from '@angular/common/http';
@@ -24,6 +25,95 @@ import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
   styleUrl: './family-members.css',
 })
 export class FamilyMembers implements OnInit {
+  // Called when user selects an AI card; saves it as a task for every day in the week
+  selectAICard(card: { title: string; details: string; type?: string }): void {
+    const member = this.selectedMember();
+    if (!member) {
+      alert('Select a member first.');
+      return;
+    }
+    const familyName = this.authService.currentUser()?.familyName || '';
+    const email = member.email;
+    const memberName = member.name;
+    // Save as a task for every day in the week (Sunday to Saturday)
+    for (let weekday = 0; weekday < 7; weekday++) {
+      const today = new Date();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      const taskDate = new Date(startOfWeek);
+      taskDate.setDate(startOfWeek.getDate() + weekday);
+      taskDate.setHours(9, 0, 0, 0); // Default time: 9:00 AM
+      const payload = {
+        title: card.title,
+        details: card.details,
+        date: taskDate,
+        familyName,
+        memberName,
+        email,
+        type: card.type || 'ai-suggestion',
+        weekday,
+        time: '09:00'
+      };
+      this.tasksService.addTask(payload).subscribe({
+        next: () => {},
+        error: (err) => {
+          console.error('Failed to save AI task:', err);
+        }
+      });
+    }
+    // Optionally, clear cards and show success
+    this.aiCards = [];
+    alert('AI suggestion saved as daily tasks for this week!');
+    this.cdr.detectChanges();
+  }
+  constructor(
+    private authService: AuthService,
+    private tasksService: TasksService,
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Fetch all members with the same familyName
+    const familyName = this.authService.currentUser()?.familyName;
+    if (familyName) {
+      this.http.get<FamilyMember[]>(`http://localhost:3000/api/members?familyName=${encodeURIComponent(familyName)}`)
+        .subscribe((members: FamilyMember[]) => this.familyMembers.set(members));
+    }
+    // Initialize the form group with validators (only once)
+    this.newTaskForm = this.fb.group({
+      title: ['', Validators.required],
+      details: [''],
+      date: [''],
+      reminderDateTime: [''],
+      end: [''],
+      type: [''],
+      weekday: [''],
+      time: ['']
+    });
+    // Add Member Form
+    this.addMemberForm = this.fb.group({
+      memberName: ['', Validators.required],
+      isUser: [false]
+    });
+  }
+
+  showAISuggestions(): void {
+    Promise.resolve().then(() => {
+      this.hideAISuggestions = false;
+      this.cdr.detectChanges();
+    });
+  }
+  setAISuggestions(suggestions: any[]): void {
+    this.aiSuggestions = suggestions;
+    Promise.resolve().then(() => {
+      this.hideAISuggestions = false;
+      this.cdr.detectChanges();
+    });
+  }
+  hideAISuggestions: boolean = false;
+  // Store AI suggestions for the view
+  aiSuggestions: any[] = [];
   showFamilyEvening = false;
 
 
@@ -47,11 +137,21 @@ export class FamilyMembers implements OnInit {
    * Opens the form with type 'improve' and prefilled details.
    */
   onSuggestAsTask(event: { type?: string, details: string }): void {
-    this.selectedTaskType = event.type ?? null;
-    this.isFormVisible = true;
+  this.selectedTaskType = event.type ?? null;
+  this.isFormVisible = true;
+  this.hideAISuggestions = true; // Hide AI list, keep task form visible
+    // Extract title from text wrapped in **, use rest as details
+    let title = '';
+    let details = event.details;
+    const match = details.match(/\*\*(.+?)\*\*/);
+    if (match) {
+      title = match[1].trim();
+      // Remove the **title** part from details
+      details = details.replace(match[0], '').trim();
+    }
     this.newTaskForm.reset({
-      title: '',
-      details: event.details,
+      title,
+      details,
       date: '',
       reminderDateTime: '',
       end: '',
@@ -60,6 +160,57 @@ export class FamilyMembers implements OnInit {
       time: ''
     });
   }
+
+  /**
+   * Handler for saving AI suggestion directly as a task without opening the form.
+   */
+  onSaveAsTask(event: { title: string; details: string; date: string; reminderDateTime?: string }): void {
+    const member = this.selectedMember();
+    if (!member) {
+      alert('Please select a member first.');
+      return;
+    }
+    
+    const familyName = this.authService.currentUser()?.familyName || '';
+    const email = member.email;
+    const memberName = member.name;
+    
+    // Parse the date string to create a proper Date object
+    const taskDate = new Date(event.date);
+    taskDate.setHours(9, 0, 0, 0); // Default time: 9:00 AM
+    
+    // Parse reminder if provided
+    let reminderDate: Date | undefined;
+    if (event.reminderDateTime) {
+      reminderDate = new Date(event.reminderDateTime);
+    }
+    
+    const payload: NewTaskPayload = {
+      title: event.title,
+      details: event.details,
+      date: taskDate,
+      familyName,
+      memberName,
+      email,
+      type: 'improvement',
+      weekday: taskDate.getDay(),
+      time: '09:00',
+      reminderDateTime: reminderDate
+    };
+    
+    this.tasksService.addTask(payload).subscribe({
+      next: () => {
+        alert(`Task "${event.title}" saved for ${memberName}!`);
+        // Reload tasks for the selected member
+        this.selectMember(member);
+      },
+      error: (err) => {
+        console.error('Failed to save task:', err);
+        alert('Failed to save task. Please try again.');
+      }
+    });
+  }
+
   selectedTaskType: string | null = null;
   activeMemberTab: 'add' | 'all' = 'all';
   selectedMember = signal<FamilyMember | null>(null);
@@ -81,40 +232,30 @@ export class FamilyMembers implements OnInit {
   showAddMemberForm: boolean = false;
   addMemberForm: FormGroup;
 
-  constructor(
-    private authService: AuthService,
-    private tasksService: TasksService,
-    private fb: FormBuilder ,
-    private dialog: MatDialog,
-    private http: HttpClient
-  ) {
-    // Fetch all members with the same familyName
-    const familyName = this.authService.currentUser()?.familyName;
-    if (familyName) {
-      this.http.get<FamilyMember[]>(`http://localhost:3000/api/members?familyName=${encodeURIComponent(familyName)}`)
-        .subscribe((members: FamilyMember[]) => this.familyMembers.set(members));
-    }
-    // Initialize the form group with validators (only once)
-    this.newTaskForm = this.fb.group({
-      title: ['', Validators.required],
-      details: [''],
-      date: [''],
-      reminderDateTime: [''],
-      end: [''],
-      type: [''],
-      weekday: [''],
-      time: ['']
-    });
+        // --- AI Suggestion Submit Logic ---
+        aiLoading = false;
+        aiError = '';
+        aiCards: { title: string; details: string; type?: string }[] = [];
 
-
-    // Add Member Form
-    this.addMemberForm = this.fb.group({
-      memberName: ['', Validators.required],
-      isUser: [false]
-    });
-
-  // Use a signal to store tasks for the selected member
-  }
+        submitAISuggestion(idea: string, date: string): void {
+          this.aiLoading = true;
+          this.aiError = '';
+          this.aiCards = [];
+          // Call the AI service (assume tasksService.getFamilyEveningTasks exists, adapt if needed)
+          this.tasksService.getFamilyEveningTasks(idea, date).subscribe({
+            next: (res: any) => {
+              // Take first 5 suggestions as cards
+              this.aiCards = (res.tasks || []).slice(0, 5);
+              this.aiLoading = false;
+              this.cdr.detectChanges();
+            },
+            error: (err: any) => {
+              this.aiError = 'Failed to get suggestions from AI.';
+              this.aiLoading = false;
+              this.cdr.detectChanges();
+            }
+          });
+        }
 
 
   showAddTaskModal = false;

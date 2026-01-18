@@ -8,8 +8,8 @@ export class AiService {
 
   constructor(private http: HttpClient) {}
 
-  getImprovementSuggestion(question: string): Observable<{ suggestion: string }> {
-    return this.http.post<{ suggestion: string }>(`${this.apiUrl}/ai-improvement-suggestion`, { question });
+  getImprovementSuggestion(question: string): Observable<{ suggestions: { title: string; details: string }[] }> {
+    return this.http.post<{ suggestions: { title: string; details: string }[] }>(`${this.apiUrl}/ai-improvement-suggestion`, { question });
   }
 
   getFamilyEveningTasks(idea: string, date: string): Observable<{ tasks: any[] }> {

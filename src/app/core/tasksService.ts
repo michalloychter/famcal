@@ -50,6 +50,13 @@ export class TasksService {
     }
   }
 
+    /**
+     * Calls the AI service to get family evening tasks (for suggestions)
+     */
+    getFamilyEveningTasks(idea: string, date: string): Observable<{ tasks: any[] }> {
+      return this.http.post<{ tasks: any[] }>('http://localhost:3000/api/ai-family-evening-tasks', { idea, date });
+    }
+
   // === Getters ===
   /**
    * Expose current family name for filtering in components

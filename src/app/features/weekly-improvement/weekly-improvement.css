@@ -1,3 +1,39 @@
+.ai-card-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+  color: #1976d2;
+}
+.weekly-improvement{
+  text-align: center;
+}
+.ai-card-text {
+  font-size: 1em;
+  color: #333;
+}
+#improvement{
+  width: 260px;
+  margin-bottom: 20px;
+}
+.ai-card {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+  border-radius: 12px;
+  background: #fff;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+}
+.ai-card:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.ai-suggestion-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 .improvement-form { display: flex; flex-direction: column; gap: 0.5rem; max-width: 350px; }
 label { font-weight: 500; }
 input { padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc; }
@@ -11,4 +47,20 @@ button { align-self: flex-start; margin-top: 0.5rem; }
    cursor: pointer;
    background-color: #dad5d5;
   margin-inline-end: 20px
+}
+
+.close-btn {
+  padding: 10px 24px;
+  font-size: 1em;
+  font-weight: 600;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #1565c0;
 }

@@ -54,23 +54,82 @@ router.post('/ai-family-evening-tasks', async (req, res) => {
 // POST /api/ai-improvement-suggestion
 router.post('/ai-improvement-suggestion', async (req, res) => {
   const { question } = req.body;
+  console.log('[AI IMPROVEMENT] Incoming request:', { question });
   if (!question) {
     return res.status(400).json({ error: 'Question is required.' });
   }
   try {
-    const prompt = `A user wants to improve: "${question}". Suggest practical, actionable steps and encouragement for this goal.`;
+    const prompt = `A user wants to improve: "${question}". 
+
+Provide 3-5 practical, actionable steps for this goal.
+
+CRITICAL: You MUST respond with ONLY a valid JSON array. Do not include any text before or after the JSON.
+
+Format:
+[
+  {
+    "title": "Short step name (3-6 words)",
+    "details": "Detailed explanation of the step and why it helps"
+  }
+]
+
+Example response:
+[
+  {"title": "Read daily in English", "details": "Dedicate 20 minutes each day to reading English books, articles, or news to expand your vocabulary and comprehension."},
+  {"title": "Practice writing regularly", "details": "Keep a daily journal in English to improve your writing skills and grammar."},
+  {"title": "Watch English content", "details": "Watch movies, TV shows, or YouTube videos in English with subtitles to improve listening skills."}
+]`;
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'You are a helpful, practical coach.' },
+        { role: 'system', content: 'You are a helpful, practical coach. You MUST respond with ONLY valid JSON arrays, no additional text.' },
         { role: 'user', content: prompt }
       ],
-      max_tokens: 200
+      max_tokens: 500,
+      temperature: 0.7
     });
-    const suggestion = completion.choices[0].message.content;
-    res.json({ suggestion });
+    
+    const aiText = completion.choices[0].message.content.trim();
+    console.log('[AI IMPROVEMENT] OpenAI response:', aiText);
+    
+    let suggestions = [];
+    try {
+      // Try to parse as-is
+      suggestions = JSON.parse(aiText);
+    } catch (e) {
+      // Fallback: try to extract JSON from text
+      const match = aiText.match(/\[[\s\S]*\]/);
+      if (match) {
+        try {
+          suggestions = JSON.parse(match[0]);
+        } catch (e2) {
+          console.error('[AI IMPROVEMENT] Failed to parse extracted JSON:', match[0]);
+          return res.status(500).json({ error: 'AI did not return valid JSON.' });
+        }
+      } else {
+        console.error('[AI IMPROVEMENT] No JSON array found in response:', aiText);
+        return res.status(500).json({ error: 'AI did not return valid suggestions.' });
+      }
+    }
+    
+    // Validate the structure
+    if (!Array.isArray(suggestions) || suggestions.length === 0) {
+      console.error('[AI IMPROVEMENT] Invalid suggestions format:', suggestions);
+      return res.status(500).json({ error: 'AI returned invalid suggestions format.' });
+    }
+    
+    // Ensure each suggestion has title and details
+    const validSuggestions = suggestions.filter(s => s.title && s.details);
+    if (validSuggestions.length === 0) {
+      console.error('[AI IMPROVEMENT] No valid suggestions with title and details:', suggestions);
+      return res.status(500).json({ error: 'AI suggestions missing required fields.' });
+    }
+    
+    console.log('[AI IMPROVEMENT] Returning valid suggestions:', validSuggestions);
+    res.json({ suggestions: validSuggestions });
   } catch (err) {
-    console.error('AI suggestion error:', err);
+    console.error('[AI IMPROVEMENT] Error:', err);
     res.status(500).json({ error: 'Failed to get suggestion from AI.' });
   }
 });

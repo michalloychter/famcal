@@ -18,7 +18,7 @@ function isEventInput(event: EventInput | null): event is EventInput {
 @Component({
 	selector: 'app-family-calendar',
 	standalone: true,
-	imports: [FullCalendarModule, CommonModule, AddTaskModalComponent, TaskModalComponent],
+	imports: [FullCalendarModule, CommonModule],
 	templateUrl: './family-calendar.html',
 	styleUrl: './family-calendar.css'
 })

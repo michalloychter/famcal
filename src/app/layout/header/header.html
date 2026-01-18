@@ -8,7 +8,7 @@
   </div>
 
   <nav class="main-nav">
-    <div class="main-nav-list">
+    <div class="main-nav-list" *ngIf="authService.currentUser()">
   <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
   <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
   <span><a [routerLink]="['/family-members']">family-members</a></span>
