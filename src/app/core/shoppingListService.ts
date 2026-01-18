@@ -13,6 +13,9 @@ export class ShoppingListService {
   private getAuthHeaders() {
     const token = this.authService.getToken();
     console.log('ShoppingListService: getAuthHeaders token', token);
+    if (!token) {
+      console.error('ShoppingListService: NO TOKEN FOUND!');
+    }
     return {
       headers: new HttpHeaders({ Authorization: token ? `Bearer ${token}` : '' })
     };
@@ -21,9 +24,18 @@ export class ShoppingListService {
   private apiUrl = 'http://localhost:3000/api/shopping-list';
 
   getShoppingList(familyId: string): Observable<string[]> {
-    console.log('ShoppingListService: getShoppingList called with familyId:', familyId);
-    return this.http.post<{ shoppingList: string[] }>(`${this.apiUrl}/get`, { familyId }, this.getAuthHeaders()).pipe(
-      map(res => res.shoppingList)
+    console.log('=== ShoppingListService.getShoppingList START ===');
+    console.log('familyId:', familyId);
+    console.log('apiUrl:', this.apiUrl);
+    const headers = this.getAuthHeaders();
+    console.log('Auth headers:', headers);
+    
+    return this.http.post<{ shoppingList: string[] }>(`${this.apiUrl}/get`, { familyId }, headers).pipe(
+      map(res => {
+        console.log('Response from server:', res);
+        console.log('Shopping list array:', res.shoppingList);
+        return res.shoppingList;
+      })
     );
   }
 

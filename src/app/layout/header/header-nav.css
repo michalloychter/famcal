@@ -1,63 +1,91 @@
 /* Navigation hamburger menu styles */
 
-/* Main nav list container */
-.main-nav-list {
-  position: relative;
-}
-
-/* Hamburger button for navigation */
+/* Hamburger button - hidden on desktop, shown on mobile */
 .nav-hamburger {
+  display: none;
   background: transparent;
   border: none;
   font-size: 24px;
   color: #17a89a;
   cursor: pointer;
   padding: 8px;
-  display: block;
 }
 
 .nav-hamburger:hover {
   color: #40e0d0;
 }
 
-/* Navigation links container - hidden by default */
+/* Navigation links - visible on desktop */
 .nav-links {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  min-width: 200px;
-  z-index: 1000;
-  flex-direction: column;
-}
-
-/* Show nav links when open class is added */
-.nav-links.open {
   display: flex;
+  flex-direction: row;
+  gap: 0;
 }
 
-/* Style for each link item */
 .nav-links span {
-  width: 100%;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.nav-links span:last-child {
-  border-bottom: none;
+  display: inline-block;
 }
 
 .nav-links a {
-  display: block;
-  padding: 15px 20px;
   text-decoration: none;
+  padding: 20px;
   color: #17a89a;
   border-bottom: none;
+  display: inline-block;
 }
 
 .nav-links a:hover {
   color: #40e0d0;
-  background: #f0f8f8;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  /* Show hamburger on mobile */
+  .nav-hamburger {
+    display: block;
+  }
+
+  /* Main nav list container */
+  .main-nav-list {
+    position: relative;
+  }
+
+  /* Navigation links - hidden by default on mobile */
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    min-width: 200px;
+    z-index: 1000;
+    flex-direction: column;
+  }
+
+  /* Show nav links when open class is added on mobile */
+  .nav-links.open {
+    display: flex;
+  }
+
+  /* Style for each link item on mobile */
+  .nav-links span {
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+    display: block;
+  }
+
+  .nav-links span:last-child {
+    border-bottom: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 15px 20px;
+  }
+
+  .nav-links a:hover {
+    background: #f0f8f8;
+  }
 }

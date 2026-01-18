@@ -11,10 +11,10 @@
       style="flex: 1 1 auto;"
     />
     <button class="fam-btn" type="submit" [disabled]="!newItem">Add</button>
-    <button class="fam-btn" type="button" (click)="copyList()" [disabled]="!items.length">Copy List to Clipboard</button>
+    <button class="fam-btn" type="button" (click)="copyList()" [disabled]="!items().length">Copy List to Clipboard</button>
   </form>
   <ul>
-    <li *ngFor="let item of items; let i = index">
+    <li *ngFor="let item of items(); let i = index">
       {{ item }}
       <button class="fam-btn" (click)="removeItem(i)" title="Remove">&times;</button>
     </li>
