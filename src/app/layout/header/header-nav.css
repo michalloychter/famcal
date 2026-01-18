@@ -1,0 +1,63 @@
+/* Navigation hamburger menu styles */
+
+/* Main nav list container */
+.main-nav-list {
+  position: relative;
+}
+
+/* Hamburger button for navigation */
+.nav-hamburger {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #17a89a;
+  cursor: pointer;
+  padding: 8px;
+  display: block;
+}
+
+.nav-hamburger:hover {
+  color: #40e0d0;
+}
+
+/* Navigation links container - hidden by default */
+.nav-links {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  min-width: 200px;
+  z-index: 1000;
+  flex-direction: column;
+}
+
+/* Show nav links when open class is added */
+.nav-links.open {
+  display: flex;
+}
+
+/* Style for each link item */
+.nav-links span {
+  width: 100%;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.nav-links span:last-child {
+  border-bottom: none;
+}
+
+.nav-links a {
+  display: block;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #17a89a;
+  border-bottom: none;
+}
+
+.nav-links a:hover {
+  color: #40e0d0;
+  background: #f0f8f8;
+}

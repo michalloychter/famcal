@@ -10,11 +10,12 @@ import { CommonModule } from '@angular/common';
   standalone: true, // Assuming standalone
   imports: [RouterLink, CommonModule], // Import RouterLink if standalone
   templateUrl: './header.html', 
-  styleUrls: ['./header.css']
+  styleUrls: ['./header.css', './header-nav.css']
 })
 export class Header implements OnInit, OnDestroy {
-  // local UI state for the hamburger menu
-  public menuOpen = signal(false);
+  // local UI state for the user menu dropdown
+  public userMenuOpen = signal(false);
+  public navMenuOpen = signal(false);
   private removeDocClickListener: (() => void) | null = null;
 
   constructor(
@@ -24,9 +25,17 @@ export class Header implements OnInit, OnDestroy {
     private renderer: Renderer2
   ) {}
 
-  toggleMenu(): void {
-    const willOpen = !this.menuOpen();
-    this.menuOpen.set(willOpen);
+  toggleNavMenu(): void {
+    this.navMenuOpen.set(!this.navMenuOpen());
+  }
+
+  closeNavMenu(): void {
+    this.navMenuOpen.set(false);
+  }
+
+  toggleUserMenu(): void {
+    const willOpen = !this.userMenuOpen();
+    this.userMenuOpen.set(willOpen);
     // If we're opening the menu, refresh the current user's profile from the server
     if (willOpen) {
       const family = this.authService.currentUser();
@@ -41,11 +50,12 @@ export class Header implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Listen for document clicks and close the menu when clicking outside the header element
+    // Listen for document clicks and close the menus when clicking outside the header element
     this.removeDocClickListener = this.renderer.listen('document', 'click', (event: Event) => {
       const target = event.target as Node;
       if (!this.hostRef.nativeElement.contains(target)) {
-        this.menuOpen.set(false);
+        this.userMenuOpen.set(false);
+        this.navMenuOpen.set(false);
       }
     });
   }

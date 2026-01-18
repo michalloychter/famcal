@@ -9,23 +9,31 @@
 
   <nav class="main-nav">
     <div class="main-nav-list" *ngIf="authService.currentUser()">
-  <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
-  <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
-  <span><a [routerLink]="['/family-members']">family-members</a></span>
-  <span><a [routerLink]="['/shopping-list']">shopping-list</a></span>
-  <span><a [routerLink]="['/family-evening']">family-evening</a></span>
+      <!-- Hamburger icon -->
+      <button class="nav-hamburger" (click)="toggleNavMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      
+      <!-- Navigation links - toggle visibility -->
+      <div class="nav-links" [class.open]="navMenuOpen()">
+        <span><a [routerLink]="['/daily-calendar']" (click)="closeNavMenu()">daily-Calendar</a></span>
+        <span><a [routerLink]="['/family-calendar']" (click)="closeNavMenu()">Calendar</a></span>
+        <span><a [routerLink]="['/family-members']" (click)="closeNavMenu()">family-members</a></span>
+        <span><a [routerLink]="['/shopping-list']" (click)="closeNavMenu()">shopping-list</a></span>
+        <span><a [routerLink]="['/family-evening']" (click)="closeNavMenu()">family-evening</a></span>
+      </div>
     </div>
     <div class="header-right">
       <span *ngIf="!authService.currentUser()"><a [routerLink]="['/register']">Register</a></span>
       <span *ngIf="!authService.currentUser()"><a [routerLink]="['/login']">Login</a></span>
       <span *ngIf="authService.currentUser()" class="user-menu-container">
-        <span class="user-icon" title="Logged in" (click)="toggleMenu()">
+        <span class="user-icon" title="Logged in" (click)="toggleUserMenu()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="8" r="4" fill="#888"/>
             <rect x="4" y="16" width="16" height="6" rx="3" fill="#888"/>
           </svg>
         </span>
-        <ul class="user-dropdown-menu" *ngIf="menuOpen()">
+        <ul class="user-dropdown-menu" *ngIf="userMenuOpen()">
           <li class="user-name">{{ authService.currentUser()?.familyName }}</li>
           <li><a class="main-nav-list" href="#" (click)="logout()">Logout</a></li>
         </ul>

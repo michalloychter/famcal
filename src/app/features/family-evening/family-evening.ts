@@ -1,5 +1,6 @@
 import { Confetti } from './confetti';
-import { Component, signal } from '@angular/core';
+import { Component, signal, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AiService } from '../../core/aiService';
@@ -34,7 +35,11 @@ export class FamilyEveningComponent {
   assignedMember: { [taskIdx: number]: string } = {};
   submitted = false;
 
-  constructor(private aiService: AiService, private tasksService: TasksService) {
+  constructor(
+    private aiService: AiService,
+    private tasksService: TasksService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     if (this.tasksService && typeof this.tasksService.familyMembers === 'function') {
       this.filteredMembers = this.tasksService.familyMembers();
     }
@@ -51,12 +56,15 @@ export class FamilyEveningComponent {
 
 
   ngOnInit(): void {
-    setTimeout(() => {
-      Confetti.start();
+    // Only run confetti in the browser (not during SSR)
+    if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => {
-        Confetti.stop(); // Stop animation after 3 seconds, but confetti remains visible
-      }, 3000);
-    }, 0);
+        Confetti.start();
+        setTimeout(() => {
+          Confetti.stop(); // Stop animation after 3 seconds, but confetti remains visible
+        }, 3000);
+      }, 0);
+    }
     this.filteredMembers = this.tasksService.familyMembers();
     this.tasksService.fetchFamilyMembers().subscribe(members => {
       this.filteredMembers = members;
