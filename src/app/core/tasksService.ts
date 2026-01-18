@@ -1,6 +1,3 @@
-  /**
-   * Adds a new family member for the current user.
-   */
 import { Injectable , model, signal} from '@angular/core';
 import { HttpClient , HttpParams} from '@angular/common/http';
 import { Observable, tap, of, throwError } from 'rxjs';
@@ -31,20 +28,11 @@ export interface Task {
 // Interface for creating a new task, where 'id' might be optional before saving
 export type NewTaskPayload = Omit<Task, 'id'>;
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class TasksService {
-  /**
-   * Fetches tasks for a specific member by email.
-   */
-  getTasksByEmail(email: string): Observable<Task[]> {
-    if (!email) return of([]);
-    const params = new HttpParams().set('email', email);
-    return this.http.get<Task[]>(this.apiUrl, { params });
-  }
-  // Assume backend API follows standard REST practices
+  // === Fields ===
   private apiUrl = 'http://localhost:3000/api/tasks';
   private _allTasks = signal<Task[]>([]);
   allTasks = this._allTasks.asReadonly();
@@ -52,6 +40,7 @@ export class TasksService {
   private _familyMembers = signal<FamilyMember[]>([]);
   familyMembers = this._familyMembers.asReadonly();
 
+  // === Constructor ===
   constructor(private authService: AuthService, private http: HttpClient) {
     // If a user was already stored (e.g., from localStorage) when the service is created,
     // pre-load tasks so UI shows data immediately.
@@ -61,6 +50,15 @@ export class TasksService {
     }
   }
 
+  // === Getters ===
+  /**
+   * Expose current family name for filtering in components
+   */
+  public get currentFamilyName(): string | undefined {
+    return this.authService.currentUser()?.familyName;
+  }
+
+  // === Family Members ===
   /**
    * Fetches family members for the current user from the backend and updates the signal.
    */
@@ -93,9 +91,39 @@ export class TasksService {
   }
 
   /**
-   * Retrieves all tasks from the API.
+   * Adds a new family member for the current user.
    */
-   getTasks(): Observable<Task[]> {
+  addMember(member: { name: string; isUser: boolean; whatsappNumber?: string }): Observable<any> {
+    const family = this.authService.currentUser();
+    if (!family) return throwError(() => new Error('No current family'));
+    const payload = {
+      name: member.name,
+      isUser: member.isUser,
+      whatsappNumber: member.whatsappNumber || '',
+      familyName: family.familyName
+    };
+    return this.http.post('http://localhost:3000/api/members', payload).pipe(
+      tap(() => {
+        // Optionally, refresh the family members list after adding
+        this.fetchFamilyMembers().subscribe();
+      })
+    );
+  }
+
+  // === Tasks ===
+  /**
+   * Fetches tasks for a specific member by email.
+   */
+  getTasksByEmail(email: string): Observable<Task[]> {
+    if (!email) return of([]);
+    const params = new HttpParams().set('email', email);
+    return this.http.get<Task[]>(this.apiUrl, { params });
+  }
+
+  /**
+   * Retrieves all tasks from the API for the current family.
+   */
+  getTasks(): Observable<Task[]> {
     const familyId = this.authService.currentUser()?.id;
     if (!familyId) {
       this._allTasks.set([]);
@@ -111,10 +139,11 @@ export class TasksService {
    * Fetches all tasks for a given family by familyID.
    */
   getTasksByFamilyId(familyID: string): Observable<Task[]> {
-  if (!familyID) return of([]);
-  const params = new HttpParams().set('familyId', familyID);
-  return this.http.get<Task[]>(this.apiUrl, { params });
+    if (!familyID) return of([]);
+    const params = new HttpParams().set('familyId', familyID);
+    return this.http.get<Task[]>(this.apiUrl, { params });
   }
+
   /**
    * Adds a new task to the backend.
    * @param taskData The data for the new task (excluding the ID).
@@ -156,14 +185,13 @@ export class TasksService {
    * @param updatedData The partial or full task data to update.
    */
   updateTask(id: string, updatedData: Partial<NewTaskPayload>): Observable<Task> {
-    console.log("update", updatedData,id);
-    
+    console.log("update", updatedData, id);
     return this.http.put<Task>(`${this.apiUrl}/${id}`, updatedData).pipe(
-            tap(() => {
-                // Update the signal by filtering out the deleted task
-                this._allTasks.update(tasks => tasks.filter(t => t.id !== id));
-            })
-        );
+      tap(() => {
+        // Update the signal by filtering out the deleted task
+        this._allTasks.update(tasks => tasks.filter(t => t.id !== id));
+      })
+    );
   }
 
   /**
@@ -179,25 +207,6 @@ export class TasksService {
         // Rollback if error
         this._allTasks.set(prevTasks);
         return throwError(() => err);
-      })
-    );
-  }
-  /**
-   * Adds a new family member for the current user.
-   */
-  addMember(member: { name: string; isUser: boolean; whatsappNumber?: string }): Observable<any> {
-    const family = this.authService.currentUser();
-    if (!family) return throwError(() => new Error('No current family'));
-    const payload = {
-      name: member.name,
-      isUser: member.isUser,
-      whatsappNumber: member.whatsappNumber || '',
-  familyName: family.familyName
-    };
-    return this.http.post('http://localhost:3000/api/members', payload).pipe(
-      tap(() => {
-        // Optionally, refresh the family members list after adding
-        this.fetchFamilyMembers().subscribe();
       })
     );
   }

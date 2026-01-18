@@ -1,0 +1,193 @@
+/* Header row for title and add button */
+.fe-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.add-btn-icon {
+  padding: 10px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.add-btn-icon:hover {
+  background: #1256a2;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.16);
+}
+/* Add button for Family Evening */
+.add-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background: #1256a2;
+}
+/* Modal centering and backdrop */
+.planner-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content.centered {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  min-width: 320px;
+  min-height: 200px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  position: fixed;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.3);
+  z-index: 999;
+}
+.family-evening-container {
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 14px;
+  
+  text-align: center;
+}
+.family-evening-container h2 {
+  margin-bottom: 12px;
+  margin: 20px;
+}
+.family-evening-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.family-evening-container input[type="date"],
+.family-evening-container input[type="text"] {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.family-evening-container button {
+  background: #4e8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.family-evening-container button:hover {
+  background: #2563eb;
+}
+/* Error message styling */
+.error-message {
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 7px 12px;
+  margin-top: 10px;
+  font-size: 1em;
+}
+/* Suggestions list as a card grid */
+.suggestions-list {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.task-card {
+  background-color: #fbd7ff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  padding: 20px 22px;
+  min-width: 200px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.task-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+  transform: translateY(-2px) scale(1.03);
+}
+.task-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.15em;
+}
+.task-type {
+  font-size: 0.98em;
+  color: #2563eb;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.member-tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.member-tag {
+  background: #e0e7ff;
+  color: #1e40af;
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 0.97em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border: 1px solid #a5b4fc;
+}
+.member-tag.assigned {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+.assigned-label {
+  margin-top: 8px;
+  font-size: 0.96em;
+  color: #059669;
+  font-weight: 500;
+}

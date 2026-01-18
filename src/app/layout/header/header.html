@@ -9,9 +9,11 @@
 
   <nav class="main-nav">
     <div class="main-nav-list">
-      <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
-      <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
-      <span><a [routerLink]="['/family-members']">family-members</a></span>
+  <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
+  <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
+  <span><a [routerLink]="['/family-members']">family-members</a></span>
+  <span><a [routerLink]="['/shopping-list']">shopping-list</a></span>
+  <span><a [routerLink]="['/family-evening']">family-evening</a></span>
     </div>
     <div class="header-right">
       <span *ngIf="!authService.currentUser()"><a [routerLink]="['/register']">Register</a></span>

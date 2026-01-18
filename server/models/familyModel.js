@@ -9,6 +9,7 @@ const FamilyDetails = (doc) => {
         familyName: data.familyName,
         whatsappNumber: data.whatsappNumber || null,
         email: data.email || null,
+        shoppingList: data.shoppingList || [],
         // Add any other family-level fields here
     };
 };

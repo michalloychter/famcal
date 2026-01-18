@@ -25,9 +25,15 @@ app.use('/api/members', memberRouter);
 const taskRouter = require('./routes/taskRoutes');
 app.use('/api', taskRouter);
 
+
 // Mount the AI improvement suggestion route
 const aiRouter = require('./routes/aiRoutes');
 app.use('/api', aiRouter);
+
+// Mount the shopping list routes under /api/shopping-list
+const shoppingListRouter = require('./routes/shoppingListRoutes');
+app.use('/api/shopping-list', shoppingListRouter);
+
 
 // --- Start the Server ---
 // FIX 1 & 2: Use the defined PORT variable

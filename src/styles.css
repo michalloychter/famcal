@@ -1,3 +1,11 @@
+/* Global required error message style */
+.required-error-message {
+	color: #eab308; /* yellow-500 */
+	font-size: 1em;
+	margin-top: 4px;
+	display: block;
+	font-weight: 500;
+}
 /* Global fam-btn style for all features */
 .fam-btn {
 	border-radius: 30px;

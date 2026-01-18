@@ -1,3 +1,5 @@
+// import { Confetti } from '../family-evening/confetti';
+import { FamilyEveningComponent } from '../family-evening/family-evening';
 import { WeeklyImprovementComponent } from '../weekly-improvement/weekly-improvement';
 import { Component, OnInit, Pipe, PipeTransform , signal, computed} from '@angular/core';
 import { CommonModule } from '@angular/common'; 
@@ -8,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService, FamilyMember } from '../../core/authService'; 
 import { TasksService, Task, NewTaskPayload } from '../../core/tasksService'; 
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
+import { RequiredErrorMessageComponent } from '../../shared/required-error-message.component';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 
 //import {FirebaseDatePipe} from '../../shared/pipes/firebase-date.pipe';
@@ -16,11 +19,13 @@ import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 @Component({
   selector: 'app-family-members',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe, WeeklyImprovementComponent], 
+  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe, WeeklyImprovementComponent, RequiredErrorMessageComponent, FamilyEveningComponent], 
   templateUrl: './family-members.html',
   styleUrl: './family-members.css',
 })
 export class FamilyMembers implements OnInit {
+  showFamilyEvening = false;
+
 
   // Color palette for member borders
   private memberColors = [
@@ -58,7 +63,7 @@ export class FamilyMembers implements OnInit {
   selectedTaskType: string | null = null;
   activeMemberTab: 'add' | 'all' = 'all';
   selectedMember = signal<FamilyMember | null>(null);
-  selectedMemberTasks: any;
+  selectedMemberTasks = signal<Task[]>([]);
   public readonly currentUserId = computed(() => {
     return this.authService?.currentUser()?.id;
   });
@@ -101,14 +106,25 @@ export class FamilyMembers implements OnInit {
       time: ['']
     });
 
+
     // Add Member Form
     this.addMemberForm = this.fb.group({
       memberName: ['', Validators.required],
       isUser: [false]
     });
 
-    // Use a signal to store tasks for the selected member
-    this.selectedMemberTasks = signal<Task[]>([]);
+  // Use a signal to store tasks for the selected member
+  }
+
+
+  showAddTaskModal = false;
+
+  openAddTaskModal() {
+    this.showAddTaskModal = true;
+  }
+
+  closeAddTaskModal() {
+    this.showAddTaskModal = false;
   }
   // Add Member logic
   submitAddMember(): void {
@@ -156,7 +172,7 @@ export class FamilyMembers implements OnInit {
   }
   
 
-  // --- New Methods for Form Visibility and Submission ---
+
 
   toggleFormVisibility(): void {
     this.isFormVisible = !this.isFormVisible;
@@ -219,13 +235,11 @@ export class FamilyMembers implements OnInit {
     });
   }
 
+  submitted = false;
   submitNewTask(): void {
-  console.log("sub", this.currentUserId());
-  const formValue = this.newTaskForm.value;
-  console.log('submitNewTask: formValue.type =', formValue.type, 'selectedTaskType =', this.selectedTaskType);
-    // Validate form and auth
+    this.submitted = true;
+    const formValue = this.newTaskForm.value;
     if (this.newTaskForm.invalid || !this.selectedMember() || !this.currentUserId()) {
-      console.log("invalid or unauthenticated");
       if (!this.currentUserId()) {
         alert('You must be logged in to add a task.');
       }
@@ -268,23 +282,26 @@ export class FamilyMembers implements OnInit {
       id: tempId,
       _optimistic: true
     } as Task;
-  this.selectedMemberTasks.update((tasks: Task[]) => [...tasks, optimisticTask]);
+    this.selectedMemberTasks.update((tasks: Task[]) => [...tasks, optimisticTask]);
 
     // Actually submit the task to the backend
     this.tasksService.addTask(newTaskPayload).subscribe({
       next: (response) => {
         // Replace the optimistic task with the real one
-  this.selectedMemberTasks.update((tasks: Task[]) => tasks.map((t: Task) => t.id === tempId ? response : t));
+        this.selectedMemberTasks.update((tasks: Task[]) => tasks.map((t: Task) => t.id === tempId ? response : t));
         this.toggleFormVisibility(); // Hide form on success
+        this.submitted = false;
       },
       error: (err) => {
         // Remove the optimistic task if error
-  this.selectedMemberTasks.update((tasks: Task[]) => tasks.filter((t: Task) => t.id !== tempId));
+        this.selectedMemberTasks.update((tasks: Task[]) => tasks.filter((t: Task) => t.id !== tempId));
         console.error('Error adding task:', err);
         alert('Failed to add task.');
       }
     });
   }
+
+
   // Helper to normalize task type for CSS class
   public mapTaskType(type: string | undefined | null): string {
     if (!type) return 'other';

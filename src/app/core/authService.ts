@@ -13,6 +13,28 @@ import { isPlatformBrowser } from '@angular/common'; // <-- Import this
   providedIn: 'root',
 })
 export class AuthService {
+  // Token management
+  setToken(token: string) {
+    if (this.isBrowser) {
+      localStorage.setItem('token', token);
+      console.log('AuthService: setToken', token);
+    }
+  }
+
+  getToken(): string | null {
+    if (this.isBrowser) {
+      const token = localStorage.getItem('token');
+      console.log('AuthService: getToken', token);
+      return token;
+    }
+    return null;
+  }
+
+  removeToken() {
+    if (this.isBrowser) {
+      localStorage.removeItem('token');
+    }
+  }
     private loginUrl = 'http://localhost:3000/api/login';
     private registerUrl = 'http://localhost:3000/api/register'; 
     private isBrowser: boolean; 
@@ -47,6 +69,9 @@ export class AuthService {
           localStorage.setItem('currentUser', JSON.stringify(memberUser));
         }
         this._currentUser.set(memberUser);
+        if (response.token) {
+          this.setToken(response.token);
+        }
       }
     })
   );
@@ -62,6 +87,9 @@ export class AuthService {
               localStorage.setItem('currentUser', JSON.stringify(family));
             }
             this._currentUser.set(family);
+            if (response.token) {
+              this.setToken(response.token);
+            }
           }
         })
       );
@@ -97,6 +125,9 @@ export class AuthService {
               localStorage.setItem('currentUser', JSON.stringify(family));
             }
             this._currentUser.set(family); 
+            if (response.token) {
+              this.setToken(response.token);
+            }
           }
         })
       );

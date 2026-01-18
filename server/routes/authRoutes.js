@@ -44,14 +44,14 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: `Email '${member.email}' already exists` });
       }
     }
-    // Save members (no family doc, no familyId, just familyName on each member)
-    if (!members[0].name || !members[0].username || !members[0].email) {
-      return res.status(400).json({ error: 'First member must have name, username, and email' });
-    }
-    // Add familyName to each member before saving
-    const membersWithFamilyName = members.map(m => ({ ...m, familyName }));
-    await MemberModel.addMembers(membersWithFamilyName, null);
-    res.status(201).json({ message: 'Family registered successfully and members added' });
+  // Save family document with name and empty shoppingList, get familyId
+  const FamilyModel = require('../models/familyModel');
+  const familyDoc = await FamilyModel.registerFamily({ familyName, shoppingList: [] });
+  const familyId = familyDoc.id;
+  // Add familyId to each member before saving (use familyId, not familyID for consistency)
+  const membersWithFamily = members.map(m => ({ ...m, familyName, familyId }));
+  await MemberModel.addMembers(membersWithFamily, familyId);
+  res.status(201).json({ message: 'Family registered successfully and members added', familyId });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'An error occurred during registration: ' + error.message });
@@ -85,9 +85,9 @@ router.post('/login', async (req, res) => {
           username: member.username,
           email: member.email,
           familyId: member.familyId,
-          familyName: member.familyName,
-          token: token
-        }
+          familyName: member.familyName
+        },
+        token: token
       });
     } catch (error) {
       console.error("Login error:", error);
