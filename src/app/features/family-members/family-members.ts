@@ -8,6 +8,7 @@ import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
 import {HttpClient} from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 import { AuthService, FamilyMember } from '../../core/authService'; 
 import { TasksService, Task, NewTaskPayload } from '../../core/tasksService'; 
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
@@ -77,7 +78,7 @@ export class FamilyMembers implements OnInit {
     // Fetch all members with the same familyName
     const familyName = this.authService.currentUser()?.familyName;
     if (familyName) {
-      this.http.get<FamilyMember[]>(`http://localhost:3000/api/members?familyName=${encodeURIComponent(familyName)}`)
+      this.http.get<FamilyMember[]>(`${environment.apiUrl}/members?familyName=${encodeURIComponent(familyName)}`)
         .subscribe((members: FamilyMember[]) => this.familyMembers.set(members));
     }
     // Initialize the form group with validators (only once)

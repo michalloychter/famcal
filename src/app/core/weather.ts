@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators'; // Import switchMap
+import { environment } from '../../environments/environment';
 
 // Define the type for the weather data you care about
 export interface WeatherData {
@@ -78,10 +79,9 @@ export class WeatherService {
   }
   getClothingAdvice(temp: number, description: string, city: string): Observable<{ advice: string }> {
     // We POST the weather data to OUR backend server, which handles the OpenAI call securely
-    const backendUrl = 'http://localhost:3000/api/clothing-advice';
+    const backendUrl = `${environment.apiUrl}/clothing-advice`;
     const body = { temp, description, city };
 
-    // The backend URL is http://localhost:3000 now, not the openweathermap URL
     return this.http.post<{ advice: string }>(backendUrl, body).pipe(
       catchError(this.handleError)
     );

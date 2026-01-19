@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './authService';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ShoppingListService {
@@ -21,7 +22,7 @@ export class ShoppingListService {
     };
   }
 
-  private apiUrl = 'http://localhost:3000/api/shopping-list';
+  private apiUrl = `${environment.apiUrl}/shopping-list`;
 
   getShoppingList(familyId: string): Observable<string[]> {
     console.log('=== ShoppingListService.getShoppingList START ===');

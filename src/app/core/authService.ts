@@ -6,6 +6,7 @@ import { FamilyMember, familyDetails, FamilyRegistrationPayload } from '../share
 export type { FamilyMember } from '../shared/models/family';
 export type { familyDetails } from '../shared/models/family';
 import { isPlatformBrowser } from '@angular/common'; // <-- Import this
+import { environment } from '../../environments/environment';
 
 // FamilyMember and familyDetails now imported from family.ts
 // MemberRegistration and UserRegistrationPayload removed; use FamilyRegistrationPayload from family.ts
@@ -35,8 +36,8 @@ export class AuthService {
       localStorage.removeItem('token');
     }
   }
-    private loginUrl = 'http://localhost:3000/api/login';
-    private registerUrl = 'http://localhost:3000/api/register'; 
+    private loginUrl = `${environment.apiUrl}/login`;
+    private registerUrl = `${environment.apiUrl}/register`; 
     private isBrowser: boolean; 
   private _currentUser= signal<familyDetails | null>(null);
   currentUser=this._currentUser.asReadonly()
@@ -100,7 +101,7 @@ export class AuthService {
      */
     fetchFamilyById(familyId: number | string) {
       if (!familyId) throw new Error('familyId is required');
-      return this.http.get<familyDetails>(`http://localhost:3000/api/families/${familyId}`).pipe(
+      return this.http.get<familyDetails>(`${environment.apiUrl}/families/${familyId}`).pipe(
         tap(family => {
           if (family) {
             if (this.isBrowser) { localStorage.setItem('currentUser', JSON.stringify(family)); }

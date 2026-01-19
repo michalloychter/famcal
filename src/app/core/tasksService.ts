@@ -3,6 +3,7 @@ import { HttpClient , HttpParams} from '@angular/common/http';
 import { Observable, tap, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService, FamilyMember } from './authService';
+import { environment } from '../../environments/environment';
 
 
 export interface Task {
@@ -33,7 +34,7 @@ export type NewTaskPayload = Omit<Task, 'id'>;
 })
 export class TasksService {
   // === Fields ===
-  private apiUrl = 'http://localhost:3000/api/tasks';
+  private apiUrl = `${environment.apiUrl}/tasks`;
   private _allTasks = signal<Task[]>([]);
   allTasks = this._allTasks.asReadonly();
 
@@ -54,7 +55,7 @@ export class TasksService {
      * Calls the AI service to get family evening tasks (for suggestions)
      */
     getFamilyEveningTasks(idea: string, date: string): Observable<{ tasks: any[] }> {
-      return this.http.post<{ tasks: any[] }>('http://localhost:3000/api/ai-family-evening-tasks', { idea, date });
+      return this.http.post<{ tasks: any[] }>(`${environment.apiUrl}/ai-family-evening-tasks`, { idea, date });
     }
 
   // === Getters ===
@@ -76,7 +77,7 @@ export class TasksService {
       this._familyMembers.set([]);
       return of([]);
     }
-    const url = `http://localhost:3000/api/members?familyName=${encodeURIComponent(familyName)}`;
+    const url = `${environment.apiUrl}/members?familyName=${encodeURIComponent(familyName)}`;
     return this.http.get<FamilyMember[]>(url).pipe(
       tap(members => {
         // Add the main user as a member at the start of the array
@@ -109,7 +110,7 @@ export class TasksService {
       whatsappNumber: member.whatsappNumber || '',
       familyName: family.familyName
     };
-    return this.http.post('http://localhost:3000/api/members', payload).pipe(
+    return this.http.post(`${environment.apiUrl}/members`, payload).pipe(
       tap(() => {
         // Optionally, refresh the family members list after adding
         this.fetchFamilyMembers().subscribe();

@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const OpenAI = require('openai');
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+
+// Lazy initialization of OpenAI client
+let openai;
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+  }
+  return openai;
+}
 
 // POST /api/ai-family-evening-tasks
 router.post('/ai-family-evening-tasks', async (req, res) => {
@@ -16,7 +24,7 @@ router.post('/ai-family-evening-tasks', async (req, res) => {
   try {
     const prompt = `A family wants to organize a family evening with the idea: "${idea}" on ${date}.\nGenerate 2 creative food-related tasks and 2 equipment-related tasks needed for this event.\nReturn the result as a JSON array of objects, each with: title, type (food or equipment), and a short details field. Example: [{"title": "Make popcorn", "type": "food", "details": "Prepare fresh popcorn for everyone."}, ...]`;
     console.log('[AI TASKS] Sending prompt to OpenAI:', prompt);
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: 'You are a helpful assistant for planning family events.' },
@@ -80,7 +88,7 @@ Example response:
   {"title": "Watch English content", "details": "Watch movies, TV shows, or YouTube videos in English with subtitles to improve listening skills."}
 ]`;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: 'You are a helpful, practical coach. You MUST respond with ONLY valid JSON arrays, no additional text.' },
@@ -148,7 +156,7 @@ Give ONE sentence clothing recommendation for what to wear today. Be brief, casu
 
 Example: "Bundle up with a warm jacket and scarf - it's cold and rainy today!"`;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: 'You are a friendly weather assistant. Give ONE sentence clothing advice only.' },
