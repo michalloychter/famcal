@@ -20,8 +20,12 @@ export class Login {
 
   onLogin() {
     this.errorMessage.set(null);
+    // Trim whitespace from inputs (mobile keyboards often add extra spaces)
+    const trimmedEmail = this.email.trim();
+    const trimmedUsername = this.username.trim();
+    
     // Login with username and email only
-    this.authService.loginWithEmail(this.email, this.username).subscribe({
+    this.authService.loginWithEmail(trimmedEmail, trimmedUsername).subscribe({
       next: (response: any) => {
         this.router.navigate(['/daily-calendar']);
       },

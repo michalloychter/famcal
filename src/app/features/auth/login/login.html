@@ -2,11 +2,11 @@
   <h2>Login</h2>
   <div>
     <label for="username">Username:</label>
-    <input id="username" [(ngModel)]="username" name="username" required type="text">
+    <input id="username" [(ngModel)]="username" name="username" required type="text" autocomplete="username" autocapitalize="none">
   </div>
   <div>
     <label for="email">Email:</label>
-    <input id="email" [(ngModel)]="email" name="email" required type="email">
+    <input id="email" [(ngModel)]="email" name="email" required type="email" autocomplete="email" autocapitalize="none">
   </div>
   <button class="fam-btn" (click)="onLogin()">Login</button>
   <!-- Display error message if present -->
