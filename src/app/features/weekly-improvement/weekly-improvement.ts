@@ -1,5 +1,5 @@
 // ...existing imports...
-import { Component, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AiService } from '../../core/aiService';
@@ -27,6 +27,9 @@ export class WeeklyImprovementComponent {
   error: string | null = null;
   cardDates: { [idx: number]: string } = {};
   cardReminders: { [idx: number]: string } = {};
+  savedCards: { [idx: number]: boolean } = {}; // Track which cards are saved
+
+  @Input() memberColor: string = '#1976d2'; // Receive color from parent
 
   @Output() improvementSaved = new EventEmitter<string>();
   @Output() saveAsTask = new EventEmitter<{ title: string; details: string; date: string; reminderDateTime?: string }>();
@@ -81,14 +84,16 @@ export class WeeklyImprovementComponent {
       date: date,
       reminderDateTime: reminder
     });
-    this.cardDates[idx] = '';
-    this.cardReminders[idx] = '';
+    // Mark card as saved
+    this.savedCards[idx] = true;
+    // Don't clear the dates/reminders, keep them visible but show saved state
   }
 
   closeAndClear() {
     this.aiSuggestions = [];
     this.cardDates = {};
     this.cardReminders = {};
+    this.savedCards = {};
     this.error = null;
   }
 }

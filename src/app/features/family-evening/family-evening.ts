@@ -1,5 +1,5 @@
 import { Confetti } from './confetti';
-import { Component, signal, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, signal, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -22,7 +22,7 @@ interface FamilyEveningTask {
   styleUrls: ['./family-evening.css'],
 })
 
-export class FamilyEveningComponent {
+export class FamilyEveningComponent implements OnDestroy {
 
   showPlanner = false;
   groupedEvenings = signal<{ title: string, tasks: Task[] }[]>([]);
@@ -156,5 +156,12 @@ export class FamilyEveningComponent {
         this.loading.set(false);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    // Clear confetti when leaving the component
+    if (isPlatformBrowser(this.platformId)) {
+      Confetti.clear();
+    }
   }
 }

@@ -95,6 +95,11 @@ export class FamilyMembers implements OnInit {
     // Add Member Form
     this.addMemberForm = this.fb.group({
       memberName: ['', Validators.required],
+      memberColor: ['#1976d2'],
+      username: [''],
+      email: [''],
+      country: ['Israel (+972)'], // Default to Israel
+      whatsappNumber: [''],
       isUser: [false]
     });
   }
@@ -201,7 +206,7 @@ export class FamilyMembers implements OnInit {
     
     this.tasksService.addTask(payload).subscribe({
       next: () => {
-        alert(`Task "${event.title}" saved for ${memberName}!`);
+        // Task saved successfully - no alert needed, visual feedback in card
         // Reload tasks for the selected member
         this.selectMember(member);
       },
@@ -268,14 +273,77 @@ export class FamilyMembers implements OnInit {
   closeAddTaskModal() {
     this.showAddTaskModal = false;
   }
+
+  // Add Member Modal methods
+  openAddMemberModal() {
+    this.showAddMemberForm = true;
+  }
+
+  closeAddMemberModal() {
+    this.showAddMemberForm = false;
+    this.addMemberForm.reset({ memberColor: '#1976d2', country: 'Israel (+972)' });
+  }
+
+  // Helper to format phone numbers with country code
+  formatPhoneNumber(phone: string, country: string): string {
+    if (!phone) return '';
+    let formatted = phone.trim();
+    
+    // Remove leading zero
+    if (formatted.startsWith('0')) {
+      formatted = formatted.substring(1);
+    }
+    
+    let code = '';
+    // Extract code from country string (e.g. 'Israel (+972)')
+    const match = country && country.match(/\((\+\d+)\)/);
+    if (match) {
+      code = match[1];
+    }
+    
+    // Only add code if number is 9 digits and code exists
+    if (/^\d{9}$/.test(formatted) && code) {
+      return code + formatted;
+    }
+    
+    // Otherwise, return as is
+    return formatted;
+  }
+
   // Add Member logic
   submitAddMember(): void {
     if (this.addMemberForm.invalid) return;
-    const { memberName, isUser } = this.addMemberForm.value;
-    this.tasksService.addMember({ name: memberName, isUser }).subscribe({
+    
+    const family = this.authService.currentUser();
+    if (!family || !family.familyId) {
+      console.error('No current family found');
+      return;
+    }
+    
+    const formValue = this.addMemberForm.value;
+    
+    // Check if required fields are present when "Is User" is checked
+    if (formValue.isUser && (!formValue.username || !formValue.email)) {
+      alert('Username and email are required when "Is User?" is checked');
+      return;
+    }
+    
+    // Prepare member data for POST /api/members
+    const memberData: any = {
+      name: formValue.memberName,
+      familyId: family.familyId, // Use familyId, not id
+      familyName: family.familyName, // Include family name
+      username: formValue.username || formValue.memberName, // Use name as username if not provided
+      email: formValue.email || `${formValue.memberName}@noemail.com`, // Dummy email if not user
+      isUser: formValue.isUser || false,
+      whatsappNumber: this.formatPhoneNumber(formValue.whatsappNumber || '', formValue.country || ''),
+      color: formValue.memberColor || '#1976d2' // Include color
+    };
+    
+    // Send to members endpoint
+    this.tasksService.addMember(memberData).subscribe({
       next: () => {
-        this.addMemberForm.reset();
-        this.showAddMemberForm = false;
+        this.closeAddMemberModal(); // Close modal and reset form
         // Refresh members list
         this.tasksService.fetchFamilyMembers().subscribe();
       },

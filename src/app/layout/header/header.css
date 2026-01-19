@@ -48,6 +48,12 @@
 .user-dropdown-menu li.user-name {
   font-weight: bold;
   cursor: default;
+  background: transparent !important;
+  color: #17a89a !important;
+}
+.user-dropdown-menu li.user-name:hover {
+  background: transparent !important;
+  color: #17a89a !important;
 }
 .user-dropdown-menu li a {
   text-decoration: none;

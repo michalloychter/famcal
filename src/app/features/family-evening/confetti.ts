@@ -19,12 +19,22 @@ export class Confetti {
   static stop() {
     this.running = false;
     if (this.animationId) cancelAnimationFrame(this.animationId);
+    // Don't remove canvas - leave confetti frozen on screen as static background
+    // Just stop the animation loop
+    this.animationId = null;
+  }
+
+  static clear() {
+    // New method to fully clear confetti when needed
+    this.running = false;
+    if (this.animationId) cancelAnimationFrame(this.animationId);
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
     }
     this.canvas = null;
     this.ctx = null;
     this.particles = [];
+    this.animationId = null;
   }
 
   private static createCanvas() {

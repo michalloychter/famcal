@@ -29,11 +29,11 @@ function getApp() {
     app.use(express.json());
 
     // Dynamically import routes (after env vars are set in handler)
-    const authRouter = require("../../server/routes/authRoutes");
-    const memberRouter = require("../../server/routes/memberRoutes");
-    const taskRouter = require("../../server/routes/taskRoutes");
-    const aiRouter = require("../../server/routes/aiRoutes");
-    const shoppingListRouter = require("../../server/routes/shoppingListRoutes");
+    const authRouter = require("../server/routes/authRoutes");
+    const memberRouter = require("../server/routes/memberRoutes");
+    const taskRouter = require("../server/routes/taskRoutes");
+    const aiRouter = require("../server/routes/aiRoutes");
+    const shoppingListRouter = require("../server/routes/shoppingListRoutes");
 
     // Mount routes under /api to match the rewrite path
     app.use("/api", authRouter);

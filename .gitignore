@@ -77,3 +77,4 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+functions/server/firebase-service-account.json

@@ -101,16 +101,16 @@ export class TasksService {
   /**
    * Adds a new family member for the current user.
    */
-  addMember(member: { name: string; isUser: boolean; whatsappNumber?: string }): Observable<any> {
-    const family = this.authService.currentUser();
-    if (!family) return throwError(() => new Error('No current family'));
-    const payload = {
-      name: member.name,
-      isUser: member.isUser,
-      whatsappNumber: member.whatsappNumber || '',
-      familyName: family.familyName
-    };
-    return this.http.post(`${environment.apiUrl}/members`, payload).pipe(
+  addMember(member: { 
+    name: string; 
+    familyId: string;
+    username: string;
+    email: string;
+    isUser: boolean; 
+    whatsappNumber?: string;
+    color?: string;
+  }): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/members`, member).pipe(
       tap(() => {
         // Optionally, refresh the family members list after adding
         this.fetchFamilyMembers().subscribe();

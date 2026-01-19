@@ -6,26 +6,122 @@
       <div 
         *ngFor="let member of familyMembers()" 
         class="member-card fam-btn"
-        [ngStyle]="{'background': getMemberColor(member.name), 'color': '#fff'}"
+        [ngStyle]="{'background': member.color || getMemberColor(member.name), 'color': '#fff'}"
         (click)="selectMember(member)"
       >
         <span style="font-size:1.2em; font-weight:600;">{{ member.name }}</span>
       </div>
-    </div>
-    <ng-container *ngIf="isMainUser()">
-      <button class="fam-btn" (click)="showAddMemberForm = !showAddMemberForm">Add Member</button>
-      <div *ngIf="showAddMemberForm" class="add-member-form">
-        <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()">
-          <label for="memberName">Member Name:</label>
-          <input id="memberName" type="text" formControlName="memberName" required>
-          <label>
-            <input type="checkbox" formControlName="isUser"> Is this member a user?
-          </label>
-          <button class="fam-btn" type="submit" [disabled]="addMemberForm.invalid">Save Member</button>
-        </form>
+      
+      <!-- Add Member Card -->
+      <div 
+        class="member-card add-member-card fam-btn"
+        (click)="openAddMemberModal()"
+      >
+        <i class="fa-solid fa-plus"></i>
       </div>
-    </ng-container>
+    </div>
+    <!-- Removed old button and form below cards -->
   </ng-container>
+
+  <!-- Add Member Modal -->
+  <div *ngIf="showAddMemberForm" class="planner-modal">
+    <div class="modal-backdrop" (click)="closeAddMemberModal()"></div>
+    <div class="modal-content centered">
+      <button class="close-x-btn" (click)="closeAddMemberModal()">✕</button>
+      <h2 style="margin-bottom: 20px;">Add New Member</h2>
+      
+      <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()" style="width: 100%; max-width: 400px;">
+        <div>
+          <label>Member Name</label>
+          <input 
+            type="text" 
+            formControlName="memberName" 
+            placeholder="Enter name"
+            required
+            class="form-input"
+          >
+        </div>
+        
+        <div class="color-picker-row" style="padding: 10px 0;">
+          <label>Color:</label>
+          <input 
+            type="color" 
+            formControlName="memberColor"
+            class="color-input"
+          >
+        </div>
+        
+        <div>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isUser"> 
+            <span>Is User?</span>
+          </label>
+        </div>
+        
+        <!-- Show additional fields only if "Is User" is checked -->
+        <ng-container *ngIf="addMemberForm.get('isUser')?.value">
+          <div class="form-divider" style="margin: 10px 0;"></div>
+          
+          <div>
+            <label>Username</label>
+            <input 
+              type="text" 
+              formControlName="username" 
+              placeholder="Enter username"
+              class="form-input"
+            >
+          </div>
+          
+          <div>
+            <label>Email</label>
+            <input 
+              type="email" 
+              formControlName="email" 
+              placeholder="Enter email"
+              class="form-input"
+            >
+          </div>
+          
+          <div>
+            <label>Country</label>
+            <select formControlName="country" class="form-input">
+              <option value="">Select country</option>
+              <option value="Israel (+972)">Israel (+972)</option>
+              <option value="United States (+1)">United States (+1)</option>
+              <option value="United Kingdom (+44)">United Kingdom (+44)</option>
+              <option value="France (+33)">France (+33)</option>
+              <option value="Germany (+49)">Germany (+49)</option>
+              <option value="India (+91)">India (+91)</option>
+              <option value="Brazil (+55)">Brazil (+55)</option>
+              <option value="Russia (+7)">Russia (+7)</option>
+              <option value="China (+86)">China (+86)</option>
+              <option value="Japan (+81)">Japan (+81)</option>
+              <option value="Nepal (+977)">Nepal (+977)</option>
+            </select>
+          </div>
+          
+          <div>
+            <label>Phone</label>
+            <input 
+              type="tel" 
+              formControlName="whatsappNumber" 
+              placeholder="e.g., 0545766580"
+              class="form-input"
+            >
+          </div>
+        </ng-container>
+        
+        <div class="form-buttons" style="margin-top: 20px; gap: 12px;">
+          <button class="save-btn-full" type="submit" [disabled]="addMemberForm.invalid">
+            Save Member
+          </button>
+          <button class="cancel-btn-full" type="button" (click)="closeAddMemberModal()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <div *ngIf="selectedMember()" class="tasks-display">
     <button class="back-btn " (click)="selectedMember.set(null)" style="margin-bottom:16px;">
@@ -122,12 +218,16 @@
               
             </ng-template>
             <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
-            <button class="fam-btn cancel-btn" type="button" (click)="isFormVisible = false; selectedTaskType = null">Cancel</button>
+            <button class="fam-btn" type="button" (click)="isFormVisible = false; selectedTaskType = null">Cancel</button>
           </form>
         </ng-container>
         
         <div style="margin-top: 30px; width: 100%;">
-          <app-weekly-improvement class="weekly-improvement" (saveAsTask)="onSaveAsTask($event)"></app-weekly-improvement>
+          <app-weekly-improvement 
+            class="weekly-improvement" 
+            [memberColor]="selectedMember()?.color || getMemberColor(selectedMember()?.name || '')"
+            (saveAsTask)="onSaveAsTask($event)">
+          </app-weekly-improvement>
         </div>
       </div>
     </div>
@@ -227,7 +327,7 @@
            
           </ng-template>
           <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
-          <button class="fam-btn cancel-btn" type="button" (click)="toggleFormVisibility()">Cancel</button>
+          <button class="fam-btn " type="button" (click)="toggleFormVisibility()">Cancel</button>
         </form>
       </div>
     </div>

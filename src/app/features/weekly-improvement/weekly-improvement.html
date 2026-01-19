@@ -10,19 +10,24 @@
 <div *ngIf="aiSuggestions.length > 0">
 	<h4>AI Suggestions:</h4>
 	<div class="ai-suggestion-cards">
-		<div *ngFor="let step of aiSuggestions; let i = index" class="ai-card">
+		<div *ngFor="let step of aiSuggestions; let i = index" 
+		     class="ai-card" 
+		     [class.saved-card]="savedCards[i]"
+		     [ngStyle]="savedCards[i] ? {'border': '3px solid ' + memberColor} : {}">
 			<div class="ai-card-title" *ngIf="step.title">{{ step.title }}</div>
 			<div class="ai-card-text">{{ step.details }}</div>
 			<div class="ai-card-actions" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
 				<div style="display: flex; align-items: center; gap: 8px;">
 					<label style="font-weight: 500;">Date:</label>
-					<input type="date" [(ngModel)]="cardDates[i]" name="date-{{i}}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;" />
+					<input type="date" [(ngModel)]="cardDates[i]" name="date-{{i}}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;" [disabled]="savedCards[i]" />
 				</div>
 				<div style="display: flex; align-items: center; gap: 8px;">
 					<label style="font-weight: 500;">Reminder:</label>
-					<input type="datetime-local" [(ngModel)]="cardReminders[i]" name="reminder-{{i}}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;" />
+					<input type="datetime-local" [(ngModel)]="cardReminders[i]" name="reminder-{{i}}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;" [disabled]="savedCards[i]" />
 				</div>
-				<button class="fam-btn" type="button" (click)="saveCardAsTask(i, step)" [disabled]="!cardDates[i]">Save</button>
+				<button class="fam-btn" type="button" (click)="saveCardAsTask(i, step)" [disabled]="!cardDates[i] || savedCards[i]">
+					{{ savedCards[i] ? 'Saved ✓' : 'Save' }}
+				</button>
 			</div>
 		</div>
 	</div>
