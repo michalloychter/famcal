@@ -55,7 +55,7 @@ export class Register {
   }
   registerForm: FormGroup;
   members: any[] = [
-    { memberName: '', username: '', email: '', country: '', whatsappNumber: '', color: '#1976d2' }
+    { memberName: '', username: '', email: '', country: '', whatsappNumber: '', color: '#1976d2', isParent: false }
   ];
   loading = false;
   submitted = false;
@@ -84,7 +84,7 @@ export class Register {
 
   // Helper to get members FormArray
   addMember() {
-    this.members.push({ memberName: '', username: '', email: '', country: '', whatsappNumber: '' });
+    this.members.push({ memberName: '', username: '', email: '', country: '', whatsappNumber: '', color: '#1976d2', isParent: false });
   }
 
   removeMember(index: number) {
@@ -121,7 +121,8 @@ export class Register {
         email: m.email,
         country: m.country,
         whatsappNumber: this.formatPhoneNumber(m.whatsappNumber, m.country),
-        color: m.color
+        color: m.color,
+        isParent: m.isParent || false
       }))
     };
     this.missingFields.set(null);

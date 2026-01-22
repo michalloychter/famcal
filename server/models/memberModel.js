@@ -52,7 +52,8 @@ const MemberModel = {
           whatsappNumber: data.whatsappNumber || '',
           email: data.email || '',
           familyId: data.familyId || null,
-          color: data.color || '#1976d2' // Return color or default
+          color: data.color || '#1976d2', // Return color or default
+          isParent: data.isParent || false // Return isParent field
         };
       });
       return membersList;
@@ -76,7 +77,8 @@ const MemberModel = {
           email: member.email,
           familyId: String(familyId),
           familyName: member.familyName || '',
-          color: member.color || '#1976d2' // Store color with default
+          color: member.color || '#1976d2', // Store color with default
+          isParent: member.isParent || false // Store isParent field
         });
       }
       await batch.commit();

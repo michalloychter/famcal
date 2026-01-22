@@ -211,8 +211,8 @@
                 <app-required-error-message *ngIf="newTaskForm.get('date')?.invalid && (newTaskForm.get('date')?.dirty || newTaskForm.get('date')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Start Date/Time" />
               </div>
               <div>
-                <label for="reminderDateTime">Reminder Date/Time:</label>
-                <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
+                <label for="reminderDateTime">Reminder Date/Time (optional):</label>
+                <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime">
                 <app-required-error-message *ngIf="newTaskForm.get('reminderDateTime')?.invalid && (newTaskForm.get('reminderDateTime')?.dirty || newTaskForm.get('reminderDateTime')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Reminder Date/Time" />
               </div>
               
@@ -233,16 +233,26 @@
     </div>
       <ul class="member-tasks" *ngIf="selectedMemberTasks().length > 0; else noTasks">
         <li class="task" *ngFor="let task of selectedMemberTasks()"
-          [ngStyle]="{'border': '3px solid ' + getMemberColor(task.memberName), 'background': 'none'}"
-          [class.optimistic-task]="task._optimistic">
+          [ngStyle]="{'border': '3px solid ' + (selectedMember()?.color || getMemberColor(task.memberName)), 'background': 'none'}"
+          [class.optimistic-task]="task._optimistic"
+          [class.task-done]="task.done">
           <div class="task-content">
             <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
-            <strong>{{ task.title }}</strong>
+            <strong [class.task-title-done]="task.done">{{ task.title }}</strong>
             <span *ngIf="task._optimistic" class="optimistic">Saving...</span>
-            <p>{{ task.details }}</p>
-            <small>{{ task.date | friendlyDateTime }}</small>
+            <p [class.task-text-done]="task.done">{{ task.details }}</p>
+            <small [class.task-text-done]="task.done">{{ task.date | friendlyDateTime }}</small>
+            <div class="task-actions-row">
+              <button 
+                class="done-tag" 
+                [class.done-active]="task.done"
+                (click)="toggleTaskDone(task)"
+              >
+                Done
+              </button>
+              <button (click)="deleteTask(task.id!)" class="delete-button fam-btn" color="primary">Delete</button>
+            </div>
           </div>
-          <button (click)="deleteTask(task.id!)" class="delete-button fam-btn " color="primary">Delete</button>
         </li>
       </ul>
       <ng-template #noTasks>
@@ -320,8 +330,8 @@
               <app-required-error-message *ngIf="newTaskForm.get('date')?.invalid && (newTaskForm.get('date')?.dirty || newTaskForm.get('date')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Start Date/Time" />
             </div>
             <div>
-              <label for="reminderDateTime">Reminder Date/Time:</label>
-              <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime" required>
+              <label for="reminderDateTime">Reminder Date/Time (optional):</label>
+              <input id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime">
               <app-required-error-message *ngIf="newTaskForm.get('reminderDateTime')?.invalid && (newTaskForm.get('reminderDateTime')?.dirty || newTaskForm.get('reminderDateTime')?.touched || submitted) && newTaskForm.get('type')?.value !== 'class'" fieldName="Reminder Date/Time" />
             </div>
            

@@ -34,6 +34,10 @@ app.use('/api', aiRouter);
 const shoppingListRouter = require('./routes/shoppingListRoutes');
 app.use('/api/shopping-list', shoppingListRouter);
 
+// Mount the family routes under /api/families
+const familyRouter = require('./routes/familyRoutes');
+app.use('/api/families', familyRouter);
+
 
 // --- Start the Server ---
 // FIX 1 & 2: Use the defined PORT variable

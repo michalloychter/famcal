@@ -4,6 +4,8 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .add-btn-icon {
@@ -82,10 +84,12 @@
   z-index: 999;
 }
 .family-evening-container {
+  position: relative;
   margin: 32px auto;
   background: #fff;
   border-radius: 14px;
-  
+  min-height: calc(100vh - 200px);
+  overflow: hidden;
   text-align: center;
 }
 .family-evening-container h2 {
@@ -134,11 +138,15 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   justify-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .task-card {
   background-color: #fbd7ff;
   border-radius: 12px;
+  position: relative;
+  z-index: 1;
   box-shadow: 0 2px 12px rgba(0,0,0,0.10);
   padding: 20px 22px;
   min-width: 200px;

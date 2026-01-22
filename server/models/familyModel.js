@@ -10,6 +10,7 @@ const FamilyDetails = (doc) => {
         whatsappNumber: data.whatsappNumber || null,
         email: data.email || null,
         shoppingList: data.shoppingList || [],
+        loveNotes: data.loveNotes || [],
         // Add any other family-level fields here
     };
 };
@@ -44,6 +45,51 @@ const FamilyModel = {
         } catch (error) {
             console.error('Database error in getFamilyByName:', error);
             throw new Error('Failed to get family by name from database.');
+        }
+    },
+    
+    async addLoveNote(familyId, note) {
+        try {
+            const docRef = FamilyCollection.doc(String(familyId));
+            const doc = await docRef.get();
+            if (!doc.exists) throw new Error('Family not found');
+            
+            const currentNotes = doc.data().loveNotes || [];
+            const newNote = {
+                id: Date.now().toString(),
+                message: note.message,
+                date: new Date().toISOString(),
+                author: note.author
+            };
+            
+            await docRef.update({
+                loveNotes: [newNote, ...currentNotes]
+            });
+            
+            return newNote;
+        } catch (error) {
+            console.error('Database error in addLoveNote:', error);
+            throw new Error('Failed to add love note to database.');
+        }
+    },
+    
+    async deleteLoveNote(familyId, noteId) {
+        try {
+            const docRef = FamilyCollection.doc(String(familyId));
+            const doc = await docRef.get();
+            if (!doc.exists) throw new Error('Family not found');
+            
+            const currentNotes = doc.data().loveNotes || [];
+            const updatedNotes = currentNotes.filter(note => note.id !== noteId);
+            
+            await docRef.update({
+                loveNotes: updatedNotes
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('Database error in deleteLoveNote:', error);
+            throw new Error('Failed to delete love note from database.');
         }
     },
 };

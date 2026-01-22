@@ -1,5 +1,5 @@
 import { Confetti } from './confetti';
-import { Component, signal, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
+import { Component, signal, PLATFORM_ID, Inject, OnDestroy, ElementRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -38,7 +38,8 @@ export class FamilyEveningComponent implements OnDestroy {
   constructor(
     private aiService: AiService,
     private tasksService: TasksService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private elementRef: ElementRef
   ) {
     if (this.tasksService && typeof this.tasksService.familyMembers === 'function') {
       this.filteredMembers = this.tasksService.familyMembers();
@@ -59,7 +60,8 @@ export class FamilyEveningComponent implements OnDestroy {
     // Only run confetti in the browser (not during SSR)
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => {
-        Confetti.start();
+        const container = this.elementRef.nativeElement.querySelector('.family-evening-container');
+        Confetti.start(container);
         setTimeout(() => {
           Confetti.stop(); // Stop animation after 3 seconds, but confetti remains visible
         }, 3000);

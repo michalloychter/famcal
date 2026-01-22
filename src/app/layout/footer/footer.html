@@ -1,1 +1,39 @@
-<div class="main-footer">Family Calendar - Keeping your family connected</div>
+<footer class="main-footer">
+  <!-- Desktop footer -->
+  <div class="desktop-footer">
+    Family Calendar - Keeping your family connected
+  </div>
+  
+  <!-- Mobile bottom navigation -->
+  <div class="mobile-footer" *ngIf="authService.currentUser()">
+    <nav class="mobile-nav">
+      <a [routerLink]="['/daily-calendar']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-calendar-day"></i>
+        <span>Today</span>
+      </a>
+      <a [routerLink]="['/family-calendar']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-calendar"></i>
+        <span>Calendar</span>
+      </a>
+      <a [routerLink]="['/family-members']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-users"></i>
+        <span>Members</span>
+      </a>
+      <a [routerLink]="['/shopping-list']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Shopping</span>
+      </a>
+      <a [routerLink]="['/family-evening']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-moon"></i>
+        <span>Evening</span>
+      </a>
+      <a *ngIf="authService.currentUser()?.isParent" [routerLink]="['/parent-settings']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-heart"></i>
+        <span>Couple</span>
+      </a>
+    </nav>
+    <div class="mobile-footer-text">
+      Family Calendar - Keeping your family connected
+    </div>
+  </div>
+</footer>

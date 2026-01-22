@@ -1,0 +1,65 @@
+<div class="parent-settings-container main-div">
+  <div class="header-with-icon">
+    <h2>Couple Time</h2>
+    <div class="letter-icon-top" (click)="openLoveNotes()" matTooltip="Love Notes" matTooltipPosition="left">
+      <i class="fa-solid fa-envelope-open-text"></i>
+    </div>
+  </div>
+  
+  <!-- All Icons in One Row -->
+  <div class="all-icons-row">
+    <div class="date-icon" (click)="getDateSuggestions('coffee', $event)">
+      <i class="fa-solid fa-mug-hot" matTooltip="Coffee Date" matTooltipPosition="above"></i>
+    </div>
+    <div class="date-icon" (click)="getDateSuggestions('restaurant', $event)">
+      <i class="fa-solid fa-utensils" matTooltip="Restaurant Date" matTooltipPosition="above"></i>
+    </div>
+    <div class="date-icon" (click)="getDateSuggestions('picnic', $event)">
+      <i class="fa-solid fa-basket-shopping" matTooltip="Picnic Date" matTooltipPosition="above"></i>
+    </div>
+    <div class="date-icon" (click)="getDateSuggestions('movie', $event)">
+      <i class="fa-solid fa-film" matTooltip="Movie Night" matTooltipPosition="above"></i>
+    </div>
+    <div class="date-icon" (click)="openOurCalendar()">
+      <i class="fa-solid fa-calendar-heart" matTooltip="View Our Calendar" matTooltipPosition="above"></i>
+    </div>
+  </div>
+  
+  <!-- Upcoming Dates - One Card Per Date -->
+  <div class="settings-sections">
+    @if (upcomingDates().length === 0) {
+      <div class="settings-card no-dates-card">
+        <p class="no-dates">No upcoming dates yet. Click an icon above to plan your first date!</p>
+      </div>
+    } @else {
+      @for (date of upcomingDates(); track date.id) {
+        <div class="settings-card date-card">
+          <div class="date-card-header">
+            <i [class]="getIconForDate(date)"></i>
+            <h3>{{ formatTitle(date.title) }}</h3>
+          </div>
+          <div class="date-card-content">
+            <p class="date-time">
+              <i class="fa-solid fa-clock"></i>
+              {{ date.date | date:'EEEE, MMM d, yyyy' }}
+            </p>
+            <p class="date-time-hour">
+              <i class="fa-solid fa-calendar-check"></i>
+              {{ date.date | date:'h:mm a' }}
+            </p>
+            @if (date.details) {
+              <a [href]="getWazeLink(date.details)" target="_blank" class="waze-link">
+                <i class="fa-brands fa-waze"></i>
+                Navigate to {{ cleanPlaceName(date.details) }}
+              </a>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+  
+  <div class="info-box">
+    <p>Relationships are the fertilizer on which children grow.</p>
+  </div>
+</div>

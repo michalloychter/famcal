@@ -9,6 +9,7 @@ import { FamilyMembers } from './features/family-members/family-members';
 import { DailyCalendar } from './features/daily-calendar/daily-calendar';
 import { ShoppingListComponent } from './features/shopping-list/shopping-list';
 import { FamilyEveningComponent } from './features/family-evening/family-evening';
+import { ParentSettings } from './features/parent-settings/parent-settings';
 export const routes: Routes = [
   // Redirect the default path to the login page
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -22,6 +23,9 @@ export const routes: Routes = [
   },
   {
     path: 'family-evening',component: FamilyEveningComponent,
+  },
+  {
+    path: 'parent-settings', component: ParentSettings,
   }
  
 ];

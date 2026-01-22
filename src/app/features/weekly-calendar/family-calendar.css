@@ -28,3 +28,22 @@
   height: 400px;
   overflow-x: scroll;
 }
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.google-calendar-controls button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.google-calendar-controls mat-icon {
+  margin: 0;
+}

@@ -7,6 +7,7 @@ export interface FamilyMember {
   familyID?: string;
   familyName?: string;
   color?: string; // HEX color for member
+  isParent?: boolean; // Whether this member is a parent with admin privileges
 }
 
 export interface familyDetails {
@@ -19,6 +20,7 @@ export interface familyDetails {
   username?: string;
   name?: string;
   email?: string;
+  isParent?: boolean; // Whether the logged-in user is a parent
 }
 
 export interface FamilyRegistrationPayload {

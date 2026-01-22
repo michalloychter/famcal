@@ -1,31 +1,71 @@
-   .login-container{ display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: #d7f2f1;
-    align-self: center;
-    width: 60%;
-    border-radius: 10px;
-     list-style: none;
-     padding: 20px;
-     margin: auto;
-     margin-top: 50px;
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #d7f2f1;
+  align-self: center;
+  width: 60%;
+  border-radius: 10px;
+  list-style: none;
+  padding: 40px;
+  margin: auto;
+  margin-top: 50px;
+  min-height: 300px;
 }
 
-.login-container div{
-    padding: 20px;
+.welcome-screen {
+  text-align: center;
+  width: 100%;
 }
-.fam-btn {
- border-radius: 30px;
-    border: 1px;
-   color: #17a89a;
-   padding: 5px 10px;
-   cursor: pointer;
-   background-color: #dad5d5;
+
+.welcome-screen h1 {
+  font-size: 2.5rem;
+  color: #17a89a;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
-label {
-padding: 10px;
+
+.welcome-subtitle {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 40px;
 }
-input {
-    padding: 5px;
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.action-buttons button {
+  padding: 12px 30px;
+  font-size: 1rem;
+  border-radius: 30px;
+}
+
+.use-btn {
+  background-color: #17a89a !important;
+}
+
+.register-btn {
+  background-color: #dad5d5 !important;
+  color: #17a89a !important;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    width: 90%;
+    padding: 30px 20px;
+  }
+  
+  .welcome-screen h1 {
+    font-size: 2rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 1rem;
+  }
 }

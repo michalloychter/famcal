@@ -7,10 +7,12 @@ export class Confetti {
   private static particles: any[] = [];
   private static animationId: number | null = null;
   private static running = false;
+  private static container: HTMLElement | null = null;
 
-  static start() {
+  static start(containerElement?: HTMLElement) {
     if (this.running) return;
     this.running = true;
+    this.container = containerElement || null;
     this.createCanvas();
     this.particles = this.createParticles(120);
     this.animate();
@@ -35,20 +37,25 @@ export class Confetti {
     this.ctx = null;
     this.particles = [];
     this.animationId = null;
+    this.container = null;
   }
 
   private static createCanvas() {
     if (this.canvas) return;
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'confetti-canvas';
-    this.canvas.style.position = 'fixed';
+    this.canvas.style.position = 'absolute';
     this.canvas.style.top = '0';
     this.canvas.style.left = '0';
-    this.canvas.style.width = '100vw';
-    this.canvas.style.height = '100vh';
+    this.canvas.style.width = '100%';
+    this.canvas.style.height = '100%';
     this.canvas.style.pointerEvents = 'none';
-    this.canvas.style.zIndex = '2000';
-    document.body.appendChild(this.canvas);
+    this.canvas.style.zIndex = '0';
+    
+    // Append to container if provided, otherwise to body
+    const parent = this.container || document.body;
+    parent.appendChild(this.canvas);
+    
     this.resizeCanvas();
     window.addEventListener('resize', this.resizeCanvas.bind(this));
     this.ctx = this.canvas.getContext('2d');
@@ -56,17 +63,24 @@ export class Confetti {
 
   private static resizeCanvas() {
     if (!this.canvas) return;
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    if (this.container) {
+      this.canvas.width = this.container.offsetWidth;
+      this.canvas.height = this.container.offsetHeight;
+    } else {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
   }
 
   private static createParticles(count: number) {
     const colors = ['#fbbf24', '#f472b6', '#60a5fa', '#34d399', '#f87171', '#a78bfa', '#facc15'];
     const particles = [];
+    const width = this.container ? this.container.offsetWidth : window.innerWidth;
+    const height = this.container ? this.container.offsetHeight : window.innerHeight;
     for (let i = 0; i < count; i++) {
       particles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * -window.innerHeight,
+        x: Math.random() * width,
+        y: Math.random() * -height,
         r: 6 + Math.random() * 8,
         d: Math.random() * count,
         color: colors[Math.floor(Math.random() * colors.length)],
@@ -97,14 +111,16 @@ export class Confetti {
   }
 
   private static updateParticles() {
+    const height = this.container ? this.container.offsetHeight : window.innerHeight;
+    const width = this.container ? this.container.offsetWidth : window.innerWidth;
     for (let i = 0; i < this.particles.length; i++) {
       const p = this.particles[i];
       p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
       p.x += Math.sin(0.01 * p.d);
       p.tiltAngle += p.tiltAngleIncremental;
       p.tilt = Math.sin(p.tiltAngle) * 15;
-      if (p.y > window.innerHeight) {
-        p.x = Math.random() * window.innerWidth;
+      if (p.y > height) {
+        p.x = Math.random() * width;
         p.y = -10;
       }
     }

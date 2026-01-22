@@ -46,6 +46,10 @@
       <label>Color:</label>
       <input type="color" [(ngModel)]="member.color" name="color-{{i}}" [ngModelOptions]="{standalone: true}">
     </div>
+    <div class="checkbox-container">
+      <input type="checkbox" [(ngModel)]="member.isParent" name="isParent-{{i}}" id="isParent-{{i}}" [ngModelOptions]="{standalone: true}">
+      <label for="isParent-{{i}}">Parent (can access parent settings)</label>
+    </div>
     <div>
       <button type="button" (click)="removeMember(i)">Remove</button>
     </div>

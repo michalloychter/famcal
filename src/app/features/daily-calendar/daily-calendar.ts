@@ -136,4 +136,18 @@ ngOnInit(): void {
   getWeekdayName(weekday: number): string {
     return weekdayToString(weekday);
   }
+
+  toggleTaskDone(task: Task): void {
+    if (!task.id) return;
+    const newDoneStatus = !task.done;
+    this.taskService.toggleTaskDone(task.id, newDoneStatus).subscribe({
+      next: () => {
+        console.log(`Task ${task.id} marked as ${newDoneStatus ? 'done' : 'not done'}`);
+      },
+      error: (err) => {
+        console.error('Failed to toggle task status:', err);
+        alert('Failed to update task status. Please try again.');
+      }
+    });
+  }
 }

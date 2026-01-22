@@ -24,6 +24,7 @@ export interface Task {
   type?: string; // Add type for class/meeting/etc.
   weekday?: number; // 0 (Sunday) - 6 (Saturday)
   time?: string;    // 'HH:mm'
+  done?: boolean;   // Mark task as completed
 }
 
 // Interface for creating a new task, where 'id' might be optional before saving
@@ -80,16 +81,8 @@ export class TasksService {
     const url = `${environment.apiUrl}/members?familyName=${encodeURIComponent(familyName)}`;
     return this.http.get<FamilyMember[]>(url).pipe(
       tap(members => {
-        // Add the main user as a member at the start of the array
-        const userAsMember: FamilyMember = {
-          id: family.id,
-          name: family.familyName,
-          username: '', // No username at family level
-          email: '',    // No email at family level
-          familyName: family.familyName,
-          whatsappNumber: '', // Not present on familyDetails
-        };
-        this._familyMembers.set([userAsMember, ...members]);
+        // Set only actual family members (no fake family name member)
+        this._familyMembers.set(members);
       }),
       catchError(err => {
         this._familyMembers.set([]);
@@ -211,6 +204,33 @@ export class TasksService {
     const prevTasks = this._allTasks();
     this._allTasks.update(tasks => tasks.filter(t => t.id !== id));
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        // Rollback if error
+        this._allTasks.set(prevTasks);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  /**
+   * Toggles the 'done' status of a task.
+   * @param id The ID of the task to toggle.
+   * @param done The new done status.
+   */
+  toggleTaskDone(id: string, done: boolean): Observable<Task> {
+    // Optimistic update: update the task in the signal immediately
+    const prevTasks = this._allTasks();
+    this._allTasks.update(tasks => 
+      tasks.map(t => t.id === id ? { ...t, done } : t)
+    );
+    
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, { done }).pipe(
+      tap((updatedTask) => {
+        // Update with the actual response from server
+        this._allTasks.update(tasks => 
+          tasks.map(t => t.id === id ? updatedTask : t)
+        );
+      }),
       catchError(err => {
         // Rollback if error
         this._allTasks.set(prevTasks);

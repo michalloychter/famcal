@@ -75,12 +75,6 @@ export class FamilyMembers implements OnInit {
     private http: HttpClient,
     private cdr: ChangeDetectorRef
   ) {
-    // Fetch all members with the same familyName
-    const familyName = this.authService.currentUser()?.familyName;
-    if (familyName) {
-      this.http.get<FamilyMember[]>(`${environment.apiUrl}/members?familyName=${encodeURIComponent(familyName)}`)
-        .subscribe((members: FamilyMember[]) => this.familyMembers.set(members));
-    }
     // Initialize the form group with validators (only once)
     this.newTaskForm = this.fb.group({
       title: ['', Validators.required],
@@ -230,7 +224,7 @@ export class FamilyMembers implements OnInit {
     // Heuristic: if user has a familyMembers array, treat as main user; if not, treat as member
     return !!user && Array.isArray(user.familyMembers);
   });
-  public readonly familyMembers = signal<FamilyMember[]>([]);
+  public readonly familyMembers = computed(() => this.tasksService.familyMembers());
   isFormVisible: boolean = false;
   newTaskForm: FormGroup;
 
@@ -354,13 +348,8 @@ export class FamilyMembers implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load family members from backend
-    this.tasksService.fetchFamilyMembers().subscribe({
-      next: (members: FamilyMember[]) => {
-        this.familyMembers.set(members);
-        // Do not auto-select any member; wait for user click
-      }
-    });
+    // Load family members from backend - this will update the tasksService signal
+    this.tasksService.fetchFamilyMembers().subscribe();
     // No need to load all tasks at once; tasks are loaded per member
   }
 
@@ -402,18 +391,34 @@ export class FamilyMembers implements OnInit {
   }
 
   openTaskForm(type: string): void {
-  this.selectedTaskType = type;
-  this.isFormVisible = true;
-  this.newTaskForm.reset({
-    title: type,
-    details: '',
-    date: '',
-    reminderDateTime: '',
-    end: '',
-    type: type,
-    weekday: '',
-    time: ''
-  });
+    this.selectedTaskType = type;
+    this.isFormVisible = true;
+    this.newTaskForm.reset({
+      title: type,
+      details: '',
+      date: '',
+      reminderDateTime: '',
+      end: '',
+      type: type,
+      weekday: '',
+      time: ''
+    });
+    
+    // Set validators based on task type
+    if (type === 'class') {
+      this.newTaskForm.get('weekday')?.setValidators([Validators.required]);
+      this.newTaskForm.get('time')?.setValidators([Validators.required]);
+      this.newTaskForm.get('date')?.clearValidators();
+    } else {
+      this.newTaskForm.get('date')?.setValidators([Validators.required]);
+      this.newTaskForm.get('weekday')?.clearValidators();
+      this.newTaskForm.get('time')?.clearValidators();
+    }
+    
+    // Update validation state
+    this.newTaskForm.get('date')?.updateValueAndValidity();
+    this.newTaskForm.get('weekday')?.updateValueAndValidity();
+    this.newTaskForm.get('time')?.updateValueAndValidity();
   }
 
   deleteTask(taskId: string): void {
@@ -441,6 +446,20 @@ export class FamilyMembers implements OnInit {
             this.selectedMemberTasks.set(prevTasks);
           }
         });
+      }
+    });
+  }
+
+  toggleTaskDone(task: Task): void {
+    if (!task.id) return;
+    
+    this.tasksService.toggleTaskDone(task.id, !task.done).subscribe({
+      next: () => {
+        console.log('Task done status updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating task status:', err);
+        alert('Failed to update task status.');
       }
     });
   }

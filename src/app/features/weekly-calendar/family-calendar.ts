@@ -10,6 +10,9 @@ import { TaskModalComponent } from './task-modal.component';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/authService';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
+import { GoogleCalendarService, GoogleCalendarEvent } from '../../core/googleCalendarService';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 function isEventInput(event: EventInput | null): event is EventInput {
 	return event !== null;
@@ -18,11 +21,16 @@ function isEventInput(event: EventInput | null): event is EventInput {
 @Component({
 	selector: 'app-family-calendar',
 	standalone: true,
-	imports: [FullCalendarModule, CommonModule],
+	imports: [FullCalendarModule, CommonModule, MatButtonModule, MatIconModule],
 	templateUrl: './family-calendar.html',
 	styleUrl: './family-calendar.css'
 })
 export class FamilyCalendar implements OnInit {
+	googleCalendarEvents = signal<GoogleCalendarEvent[]>([]);
+	isGoogleCalendarConnected = signal<boolean>(false);
+	isLoadingGoogleCalendar = signal<boolean>(false);
+	googleCalendarInitialized = signal<boolean>(false);
+	
 	// Helper to get color for a member name
 	getMemberColor(memberName: string): string {
 		const colors = [
@@ -39,7 +47,8 @@ export class FamilyCalendar implements OnInit {
 	constructor(
 		private tasksService: TasksService,
 		private authService: AuthService,
-		private dialog: MatDialog
+		private dialog: MatDialog,
+		private googleCalendarService: GoogleCalendarService
 	) {}
 
 	// Handler to open add-task modal on date click
@@ -91,24 +100,63 @@ export class FamilyCalendar implements OnInit {
 	currentUser = computed(() => this.authService.currentUser());
 
 		calendarEvents = computed(() => {
-			const mappedEvents = this.tasksService.allTasks()
+			const familyMembers = this.tasksService.familyMembers();
+			
+			// Map FamCal tasks
+			const famCalEvents = this.tasksService.allTasks()
 				.map(task => {
 					const startDate = convertAnyDateToJSDate(task.date);
 					const endDate = convertAnyDateToJSDate(task.end);
 					if (!startDate || isNaN(startDate.getTime())) { return null; }
-						// Use member color for background
-						const backgroundColor = this.getMemberColor(task.memberName);
+						// Find member by name to get their color
+						const member = familyMembers.find(m => m.name === task.memberName);
+						const backgroundColor = member?.color || this.getMemberColor(task.memberName);
 						return {
 							id: task.id,
 							title: `${task.memberName}: ${task.title}`,
 							start: startDate,
 							end: endDate ? endDate : undefined,
-							extendedProps: { details: task.details },
+							extendedProps: { details: task.details, source: 'famcal' },
 							backgroundColor,
 							borderColor: 'transparent'
 						} as EventInput;
-				});
-			return mappedEvents.filter(isEventInput);
+				})
+				.filter(isEventInput);
+			
+			// Map Google Calendar events
+			const googleEvents = this.googleCalendarEvents()
+				.map(event => {
+					const startDate = event.start.dateTime 
+						? new Date(event.start.dateTime) 
+						: event.start.date 
+							? new Date(event.start.date) 
+							: null;
+					const endDate = event.end.dateTime 
+						? new Date(event.end.dateTime) 
+						: event.end.date 
+							? new Date(event.end.date) 
+							: null;
+					
+					if (!startDate) return null;
+					
+					return {
+						id: `google-${event.id}`,
+						title: `📅 ${event.summary}`,
+						start: startDate,
+						end: endDate || undefined,
+						extendedProps: { 
+							details: event.description || '', 
+							location: event.location || '',
+							source: 'google' 
+						},
+						backgroundColor: '#4285f4', // Google blue
+						borderColor: '#1967d2',
+						textColor: '#ffffff'
+					} as EventInput;
+				})
+				.filter(isEventInput);
+			
+			return [...famCalEvents, ...googleEvents];
 		});
 
 	private baseCalendarOptions: CalendarOptions = {
@@ -134,6 +182,68 @@ export class FamilyCalendar implements OnInit {
 	ngOnInit() {
 		if (this.currentUser()) {
 			this.tasksService.getTasksByFamilyId(String(this.currentUser()?.familyId || '')).subscribe();
+		}
+		
+		// Initialize Google Calendar service
+		this.initializeGoogleCalendar();
+	}
+	
+	async initializeGoogleCalendar() {
+		try {
+			await this.googleCalendarService.initialize();
+			this.googleCalendarInitialized.set(true);
+			// Check if already signed in (including from localStorage)
+			if (this.googleCalendarService.isSignedIn()) {
+				this.isGoogleCalendarConnected.set(true);
+				await this.loadGoogleCalendarEvents();
+			}
+		} catch (error) {
+			console.error('Error initializing Google Calendar:', error);
+			this.googleCalendarInitialized.set(false);
+		}
+	}
+	
+	async connectGoogleCalendar() {
+		if (!this.googleCalendarInitialized()) {
+			alert('Google Calendar is still initializing. Please wait a moment and try again.');
+			return;
+		}
+		
+		this.isLoadingGoogleCalendar.set(true);
+		try {
+			await this.googleCalendarService.authorize();
+			this.isGoogleCalendarConnected.set(true);
+			await this.loadGoogleCalendarEvents();
+		} catch (error: any) {
+			console.error('Error connecting to Google Calendar:', error);
+			
+			if (error.error === 'access_denied') {
+				alert('Access denied. Please make sure your email is added as a test user in the Google Cloud Console OAuth consent screen.');
+			} else {
+				alert('Failed to connect to Google Calendar. Please try again.');
+			}
+		} finally {
+			this.isLoadingGoogleCalendar.set(false);
+		}
+	}
+	
+	async disconnectGoogleCalendar() {
+		this.googleCalendarService.signOut();
+		this.isGoogleCalendarConnected.set(false);
+		this.googleCalendarEvents.set([]);
+	}
+	
+	async loadGoogleCalendarEvents() {
+		try {
+			// Get events for the next 30 days
+			const today = new Date();
+			const futureDate = new Date();
+			futureDate.setDate(today.getDate() + 30);
+			
+			const events = await this.googleCalendarService.getCalendarEvents(today, futureDate);
+			this.googleCalendarEvents.set(events);
+		} catch (error) {
+			console.error('Error loading Google Calendar events:', error);
 		}
 	}
 }

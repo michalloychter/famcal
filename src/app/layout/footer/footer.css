@@ -1,14 +1,128 @@
 .main-footer {
-  /* Position the footer at a fixed location relative to the viewport */
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-
-  /* Set the height and other styles */
-  height: 10%; /* The desired height */
-   background-color: #40e0d0;;
+  background-color: #40e0d0;
   color: rgb(110, 109, 109);
+}
+
+/* Desktop footer - hidden on mobile */
+.desktop-footer {
   text-align: center;
-  padding: 1rem 0; /* Add padding for content inside the footer */
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10%;
+}
+
+/* Mobile navigation - hidden on desktop */
+.mobile-nav {
+  display: none;
+}
+
+.mobile-footer {
+  display: none;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .main-footer {
+    height: auto;
+  }
+  
+  .desktop-footer {
+    display: none;
+  }
+  
+  .mobile-footer {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    background-color: #40e0d0;
+    z-index: 1000;
+  }
+  
+  .mobile-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #666;
+    font-size: 12px;
+    padding: 5px 10px;
+    min-width: 60px;
+    transition: all 0.3s ease;
+  }
+  
+  .mobile-nav .nav-item i {
+    font-size: 22px;
+    margin-bottom: 4px;
+    color: #555;
+  }
+  
+  .mobile-nav .nav-item span {
+    font-size: 10px;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .mobile-nav .nav-item.active {
+    color: #17a89a;
+  }
+  
+  .mobile-nav .nav-item.active i,
+  .mobile-nav .nav-item.active span {
+    color: #17a89a;
+    font-weight: 600;
+  }
+  
+  .mobile-nav .nav-item:active {
+    transform: scale(0.95);
+  }
+  
+  .mobile-footer-text {
+    text-align: center;
+    padding: 6px 0;
+    font-size: 10px;
+    color: #555;
+    background-color: #40e0d0;
+  }
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.footer-content p {
+  margin: 0;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.social-links a {
+  color: #fff;
+  font-size: 24px;
+  transition: color 0.3s, transform 0.2s;
+  text-decoration: none;
+}
+
+.social-links a:hover {
+  color: #17a89a;
+  transform: scale(1.2);
 }

@@ -17,7 +17,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
         </div>
         <div style="margin-bottom: 20px;">
           <label style="margin-inline-end: 10px;">Details:</label>
-          <textarea formControlName="details"></textarea>
+          <textarea formControlName="details" placeholder="Optional details..."></textarea>
         </div>
         <div style="margin-bottom: 20px;">
           <label style="margin-inline-end: 10px;">Date:</label>
@@ -26,6 +26,19 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
         <div style="margin-bottom: 20px;">
           <label style="margin-inline-end: 10px;">Time:</label>
           <input type="time" formControlName="time" required />
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Type:</label>
+          <select formControlName="type" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="">Select type (optional)</option>
+            <option value="parents">💑 Parents / Date Night</option>
+            <option value="meeting">Meeting</option>
+            <option value="class">Class</option>
+            <option value="shopping">Shopping</option>
+            <option value="birthday">Birthday</option>
+            <option value="doctor">Doctor</option>
+            <option value="other">Other</option>
+          </select>
         </div>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
@@ -44,17 +57,23 @@ export class AddTaskModalComponent {
   ) {
     // Split the ISO date string into date and time
     let datePart = '';
-    let timePart = '';
+    let timePart = '19:00'; // Default to 7:00 PM for date nights
     if (data.date) {
       const d = new Date(data.date);
       datePart = d.toISOString().slice(0, 10);
-      timePart = d.toTimeString().slice(0, 5);
+      // Only use the provided time if it's not midnight (which indicates date-only selection)
+      const hours = d.getHours();
+      const minutes = d.getMinutes();
+      if (hours !== 0 || minutes !== 0) {
+        timePart = d.toTimeString().slice(0, 5);
+      }
     }
     this.form = this.fb.group({
       title: ['', Validators.required],
       details: [''],
       date: [datePart, Validators.required],
-      time: [timePart, Validators.required]
+      time: [timePart, Validators.required],
+      type: ['']
     });
   }
   submit() {

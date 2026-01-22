@@ -7,15 +7,14 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  standalone: true, // Assuming standalone
-  imports: [RouterLink, CommonModule], // Import RouterLink if standalone
+  standalone: true,
+  imports: [RouterLink, CommonModule],
   templateUrl: './header.html', 
   styleUrls: ['./header.css', './header-nav.css']
 })
 export class Header implements OnInit, OnDestroy {
   // local UI state for the user menu dropdown
   public userMenuOpen = signal(false);
-  public navMenuOpen = signal(false);
   private removeDocClickListener: (() => void) | null = null;
 
   constructor(
@@ -24,14 +23,6 @@ export class Header implements OnInit, OnDestroy {
     private hostRef: ElementRef,
     private renderer: Renderer2
   ) {}
-
-  toggleNavMenu(): void {
-    this.navMenuOpen.set(!this.navMenuOpen());
-  }
-
-  closeNavMenu(): void {
-    this.navMenuOpen.set(false);
-  }
 
   toggleUserMenu(): void {
     const willOpen = !this.userMenuOpen();
@@ -55,7 +46,6 @@ export class Header implements OnInit, OnDestroy {
       const target = event.target as Node;
       if (!this.hostRef.nativeElement.contains(target)) {
         this.userMenuOpen.set(false);
-        this.navMenuOpen.set(false);
       }
     });
   }

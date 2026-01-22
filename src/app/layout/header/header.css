@@ -3,14 +3,13 @@
   border-bottom: none !important;
   text-decoration: none !important;
   color: #17a89a !important;
-  
   margin-inline-end: 20px;
-  
 }
 .header-right a:hover {
   color: #40e0d0 !important;
   background: #f0f8f8;
 }
+
 /* Button style for header actions */
 .header-btn, .user-menu-container button, .user-dropdown-menu li {
   border-radius: 30px;
@@ -25,9 +24,11 @@
   color: #40e0d0;
   background: #f0f8f8;
 }
+
 .user-menu-container {
   position: relative;
 }
+
 .user-dropdown-menu {
   position: absolute;
   top: 36px;
@@ -41,90 +42,60 @@
   min-width: 160px;
   z-index: 1000;
 }
+
 .user-dropdown-menu li {
   padding: 8px 16px;
   cursor: pointer;
 }
+
 .user-dropdown-menu li.user-name {
   font-weight: bold;
   cursor: default;
   background: transparent !important;
   color: #17a89a !important;
 }
+
 .user-dropdown-menu li.user-name:hover {
   background: transparent !important;
   color: #17a89a !important;
 }
+
 .user-dropdown-menu li a {
-  text-decoration: none;
   text-decoration: none;
   color: #333;
 }
+
 .user-dropdown-menu li a:hover {
   color: var(--primary-color, #1976d2);
 }
+
 /* Update the main header styles */
 .main-header {
-   font-family: "Gochi Hand";
-  background-color: white; /* White background */
+  font-family: "Gochi Hand";
+  background-color: white;
   padding: 1rem 2rem;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Right-side shadow */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-left: auto;
+  padding-right: 16px;
 }
+
 .user-icon {
   display: flex;
   align-items: center;
   margin-right: 0.5rem;
-}
-  align-items: center;
-  position: sticky; /* Keep header visible at the top */
-  top: 0;
-  z-index: 1000;
-}
-
-/* Hamburger menu styles */
-.header-right{
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  padding-right: 16px;
-}
-.hamburger{
-  background: transparent;
-  border: none;
-  font-size: 20px;
   cursor: pointer;
-}
-.hamburger-menu{
-  position: absolute;
-  right: 0;
-  top: 36px;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-  list-style: none;
-  padding: 8px 0;
-  margin: 0;
-  min-width: 160px;
-  z-index: 1000;
-}
-.hamburger-menu li{
-  padding: 8px 16px;
-}
-.hamburger-menu li a{
-  text-decoration: none;
-  text-decoration: none;
-  color: #333;
-}
-.hamburger-menu li a:hover{
-  color: var(--primary-color, #1976d2);
 }
 
 /* Style the logo container */
@@ -139,7 +110,7 @@
   width: 50px;
   height: 50px;
   background-color: #40e0d0;
-  border-radius: 10%; /* Make it a circle */
+  border-radius: 10%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -147,12 +118,13 @@
   margin-right: 1rem;
   box-shadow: 0 2px 8px rgba(64,224,208,0.15);
 }
+
 .divider {
   margin: 10px;
   width: 100%;
-  height: 1px; /* Adjust height of the line */
-  background-color: #ddd; /* Color of the line */
-  margin: 0 1rem; /* Space around the line */
+  height: 1px;
+  background-color: #ddd;
+  margin: 0 1rem;
 }
 
 /* Style the text inside the logo */
@@ -160,24 +132,46 @@
   color: white;
   font-weight: bold;
   font-size: 0.8rem;
-  line-height: 1; /* Adjust line height for closer text */
+  line-height: 1;
   text-transform: uppercase;
 }
+
 .main-nav {
-  margin-top:20px;
+  margin-top: 20px;
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
 }
-.main-nav-list a {
+
+/* Desktop navigation */
+.desktop-nav-links {
+  display: flex;
+  gap: 10px;
+}
+
+.desktop-nav-links a {
   text-decoration: none;
   padding: 20px;
   color: inherit;
   border-bottom: none;
 }
 
-/* Add an effect for hover */
-.main-nav-list a:hover {
-  color: #40e0d0;; /* Example: change color on hover */
+.desktop-nav-links a:hover {
+  color: #40e0d0;
+}
+
+/* Mobile - hide desktop nav */
+@media (max-width: 768px) {
+  .desktop-nav-links {
+    display: none;
+  }
+  
+  .main-header {
+    padding: 0.5rem 1rem;
+  }
+  
+  .main-nav {
+    margin-top: 10px;
+  }
 }

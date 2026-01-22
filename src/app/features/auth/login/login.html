@@ -1,14 +1,15 @@
 <div class="login-container main-div">
-  <h2>Login</h2>
-  <div>
-    <label for="username">Username:</label>
-    <input id="username" [(ngModel)]="username" name="username" required type="text" autocomplete="username" autocapitalize="none">
+  <div class="welcome-screen">
+    <h1>Hi, good to see you!</h1>
+    <p class="welcome-subtitle">Ready to organize your family life?</p>
+    
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" class="use-btn" (click)="openLoginForm()">
+        User
+      </button>
+      <button mat-raised-button color="accent" class="register-btn" (click)="goToRegister()">
+        Not yet? Register
+      </button>
+    </div>
   </div>
-  <div>
-    <label for="email">Email:</label>
-    <input id="email" [(ngModel)]="email" name="email" required type="email" autocomplete="email" autocapitalize="none">
-  </div>
-  <button class="fam-btn" (click)="onLogin()">Login</button>
-  <!-- Display error message if present -->
-  <p *ngIf="errorMessage()" class="error-message">{{ errorMessage() }}</p>
 </div>

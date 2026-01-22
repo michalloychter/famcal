@@ -1,0 +1,367 @@
+.parent-settings-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 5% 10% 5% 10%;
+  background: #f6ebf2;
+  min-height: calc(100vh - 140px);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Falling roses animation */
+.parent-settings-container::before,
+.parent-settings-container::after {
+  content: '🌹';
+  position: absolute;
+  top: -50px;
+  font-size: 2rem;
+  opacity: 0.6;
+  animation: fall 10s linear infinite;
+}
+
+.parent-settings-container::before {
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.parent-settings-container::after {
+  left: 70%;
+  animation-delay: 5s;
+}
+
+@keyframes fall {
+  0% {
+    top: -50px;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 100%;
+    transform: rotate(360deg);
+  }
+}
+
+.header-with-icon {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: black;
+  text-align: center;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.letter-icon-top {
+  position: absolute;
+  right: 10px;
+  top: -15px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.letter-icon-top i {
+  font-size: 2rem;
+  color: #9f3939;
+  transition: color 0.3s ease;
+}
+
+.letter-icon-top:hover {
+  transform: scale(1.1);
+}
+
+.letter-icon-top:hover i {
+  color: #722f37;
+}
+
+.heart-icon {
+  color: #9f3939;
+}
+
+.welcome-text {
+  text-align: center;
+  color: #9f3939;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.all-icons-row {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.settings-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.settings-card {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  width: 20%;
+  min-width: 200px;
+}
+
+.settings-card h3 {
+  color: black;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.settings-card p {
+  color: black;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.date-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.date-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(159, 57, 57, 0.3);
+}
+
+.date-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f6ebf2;
+}
+
+.date-card-header i {
+  font-size: 1.5rem;
+  color: #9f3939;
+}
+
+.date-card-header h3 {
+  margin: 0;
+  color: #722f37;
+  font-size: 1.2rem;
+}
+
+.date-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-time,
+.date-time-hour {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.date-time i,
+.date-time-hour i {
+  color: #9f3939;
+  font-size: 0.9rem;
+}
+
+.waze-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #33ccff;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.waze-link:hover {
+  background: #29b3e6;
+}
+
+.waze-link i {
+  font-size: 1.2rem;
+}
+
+.no-dates-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px;
+}
+
+.no-dates-card .no-dates {
+  font-size: 1.1rem;
+  color: #9f3939;
+  font-style: italic;
+}
+
+.plan-date-icons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.plan-date-icons i {
+  font-size: 1.8rem;
+  color: black;
+}
+
+.date-ideas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.date-icons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.date-icon {
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.date-icon i {
+  font-size: 1.8rem;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.date-icon:hover {
+  transform: scale(1.05);
+}
+
+.date-icon:hover i {
+  color: #9f3939;
+}
+
+.dates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #f6ebf2;
+  border-radius: 8px;
+  border-left: 3px solid #9f3939;
+}
+
+.date-item i {
+  color: #9f3939;
+  font-size: 1rem;
+}
+
+.date-title {
+  flex: 1;
+  font-weight: 500;
+  color: #333;
+}
+
+.date-time {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.no-dates {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.fam-btn {
+  background: linear-gradient(135deg, #722f37 0%, #5c1f29 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
+}
+
+.fam-btn:hover {
+  background: linear-gradient(135deg, #5c1f29 0%, #4a1721 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(114, 47, 55, 0.4);
+}
+
+.info-box {
+  background: white;
+  border-left: 4px solid #722f37;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.info-box p {
+  margin: 0;
+  color: #9f3939;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .parent-settings-container {
+    padding: 15px;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .welcome-text {
+    font-size: 1rem;
+  }
+  
+  .settings-sections {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-card {
+    padding: 15px;
+  }
+  
+  .settings-card h3 {
+    font-size: 1.1rem;
+  }
+}
