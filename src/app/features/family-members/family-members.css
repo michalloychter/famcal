@@ -1,3 +1,49 @@
+.task {
+  position: relative;
+  border-radius: var(--fam-radius);
+  margin: 10px;
+  padding: 20px;
+  width: 20%;
+  max-width: 30%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  list-style: none;
+}
+
+:root {
+  --fam-radius: 18px;
+  --fam-btn-radius: 30px;
+  --fam-main: #1976d2;
+  --fam-danger: #e53935;
+  --fam-danger-bg: #ffcdd2;
+  --fam-success: #4caf50;
+  --fam-success-bg: #e8f5e9;
+  --fam-border: #ddd;
+  --fam-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.delete-task-icon-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  color: var(--fam-danger);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.delete-task-icon-btn:hover {
+  background: var(--fam-danger-bg);
+  color: #b71c1c;
+}
+/* Removed unused member delete button styles */
 .task-actions-row {
   display: flex;
   gap: 10px;
@@ -268,6 +314,8 @@ padding: 10px;
   display: flex;
   flex-wrap: wrap;
 }
+
+@media(max-width:600px){.task{width:80%!important;max-width:80%!important}.member-tasks{display:block}.task-actions-row{display:flex;flex-direction:column;gap:6px;margin-top:10px}.task-actions-row .done-tag,.task-actions-row .delete-button{flex:none;width:100%;min-width:0;max-width:none;margin:0;white-space:normal;padding:10px 12px;font-size:.95rem}}
 
 /* Optimistic task styling */
 .optimistic {
@@ -561,7 +609,9 @@ li.task-done {
 }
 
 .task-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: space-between;
 }

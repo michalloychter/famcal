@@ -27,36 +27,31 @@
   
   <!-- Upcoming Dates - One Card Per Date -->
   <div class="settings-sections">
-    @if (upcomingDates().length === 0) {
-      <div class="settings-card no-dates-card">
-        <p class="no-dates">No upcoming dates yet. Click an icon above to plan your first date!</p>
-      </div>
-    } @else {
-      @for (date of upcomingDates(); track date.id) {
-        <div class="settings-card date-card">
-          <div class="date-card-header">
-            <i [class]="getIconForDate(date)"></i>
-            <h3>{{ formatTitle(date.title) }}</h3>
-          </div>
-          <div class="date-card-content">
-            <p class="date-time">
-              <i class="fa-solid fa-clock"></i>
-              {{ date.date | date:'EEEE, MMM d, yyyy' }}
-            </p>
-            <p class="date-time-hour">
-              <i class="fa-solid fa-calendar-check"></i>
-              {{ date.date | date:'h:mm a' }}
-            </p>
-            @if (date.details) {
-              <a [href]="getWazeLink(date.details)" target="_blank" class="waze-link">
-                <i class="fa-brands fa-waze"></i>
-                Navigate to {{ cleanPlaceName(date.details) }}
-              </a>
-            }
-          </div>
+    <div *ngIf="upcomingDates().length === 0" class="settings-card no-dates-card">
+      <p class="no-dates">No upcoming dates yet. Click an icon above to plan your first date!</p>
+    </div>
+    <ng-container *ngIf="upcomingDates().length > 0">
+      <div *ngFor="let date of upcomingDates(); trackBy: trackById" class="settings-card date-card">
+        <div class="date-card-header">
+          <i [class]="getIconForDate(date)"></i>
+          <h3>{{ formatTitle(date.title) }}</h3>
         </div>
-      }
-    }
+        <div class="date-card-content">
+          <p class="date-time">
+            <i class="fa-solid fa-clock"></i>
+            {{ date.date | date:'EEEE, MMM d, yyyy' }}
+          </p>
+          <p class="date-time-hour">
+            <i class="fa-solid fa-calendar-check"></i>
+            {{ date.date | date:'h:mm a' }}
+          </p>
+          <a *ngIf="date.details" [href]="getWazeLink(date.details)" target="_blank" class="waze-link">
+            <i class="fa-brands fa-waze"></i>
+            Navigate to {{ cleanPlaceName(date.details) }}
+          </a>
+        </div>
+      </div>
+    </ng-container>
   </div>
   
   <div class="info-box">

@@ -1,3 +1,5 @@
+
+
 import { Component, OnInit, signal, Inject, ChangeDetectorRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -38,6 +40,11 @@ export class ParentSettings implements OnInit {
       });
   });
 
+  // For *ngFor trackBy
+  trackById(index: number, item: any) {
+    return item.id;
+  }
+
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -47,13 +54,13 @@ export class ParentSettings implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Check if user is a parent, redirect if not
+    // Debug: log currentUser to help diagnose production issue
     const currentUser = this.authService.currentUser();
+    console.log('[ParentSettings] ngOnInit currentUser:', currentUser);
     if (!currentUser?.isParent) {
       alert('Access denied. This page is only for parents.');
       this.router.navigate(['/daily-calendar']);
     }
-    
     // Load tasks to get parent dates
     this.tasksService.getTasks().subscribe();
   }

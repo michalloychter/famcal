@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/authService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { HouseTasksService } from '../../../core/houseTasksService';
 
 @Component({
   selector: 'app-login',
@@ -95,18 +96,24 @@ export class LoginFormModal {
   errorMessage = signal<string | null>(null);
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private houseTasksService: HouseTasksService
   ) {}
 
   onLogin() {
     this.errorMessage.set(null);
     const trimmedEmail = this.email.trim();
     const trimmedUsername = this.username.trim();
-    
     this.authService.loginWithEmail(trimmedEmail, trimmedUsername).subscribe({
       next: (response: any) => {
+        // After login, load house tasks for the user's family
+        const user = response?.user;
+        const familyId = user?.familyId || user?.familyID;
+        if (familyId) {
+          this.houseTasksService.loadTasksForFamily(familyId);
+        }
         this.dialog.closeAll();
         this.router.navigate(['/daily-calendar']);
       },

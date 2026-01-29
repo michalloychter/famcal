@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FriendlyDateTimePipe], 
   templateUrl: './daily-calendar.html',
-  styleUrl: './daily-calendar.css',
+  styleUrls: ['./daily-calendar.css', './daily-calendar.mobile.css'],
 })
 export class DailyCalendar implements OnInit {
   // Use the same color palette and hash logic as FamilyMembers
@@ -32,6 +32,8 @@ export class DailyCalendar implements OnInit {
     return this.memberColors[idx];
   }
   // Helper to normalize task type for CSS class (copied from FamilyMembers)
+
+
   public mapTaskType(type: string | undefined | null): string {
     if (!type) return 'other';
     const t = type.trim().toLowerCase();

@@ -1,6 +1,3 @@
-
-
-
 import { Routes } from '@angular/router';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
@@ -10,6 +7,7 @@ import { DailyCalendar } from './features/daily-calendar/daily-calendar';
 import { ShoppingListComponent } from './features/shopping-list/shopping-list';
 import { FamilyEveningComponent } from './features/family-evening/family-evening';
 import { ParentSettings } from './features/parent-settings/parent-settings';
+import { HouseTasksTableComponent } from './features/house-tasks-table/house-tasks-table.component';
 export const routes: Routes = [
   // Redirect the default path to the login page
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -26,6 +24,10 @@ export const routes: Routes = [
   },
   {
     path: 'parent-settings', component: ParentSettings,
+  },
+  {
+    path: 'house-tasks-table',
+    component: HouseTasksTableComponent,
   }
  
 ];

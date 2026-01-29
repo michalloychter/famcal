@@ -1,0 +1,89 @@
+<main class="house-tasks-main">
+  <div *ngIf="showModal" class="modal-backdrop">
+    <div class="modal-card" style="position:relative;">
+      <button class="modal-close-btn" (click)="closeTaskModal()" aria-label="Close">
+        <i class="fa fa-times"></i>
+      </button>
+      <h3>Add/Edit Task</h3>
+      <input
+        type="text"
+        [(ngModel)]="modalTaskTitle"
+        placeholder="Task title"
+        class="modal-task-input"
+        autofocus
+      />
+      <textarea
+        [(ngModel)]="modalTaskDetails"
+        placeholder="Task details (optional)"
+        class="modal-task-details-input"
+        rows="2"
+      ></textarea>
+      <label class="modal-task-color-label">
+        <span class="modal-task-color-circle" [style.background]="modalTaskColor" title="Choose color" (click)="openColorPicker()"></span>
+        <input
+          #hiddenColorInput
+          type="color"
+          [value]="modalTaskColor"
+          (input)="onColorPicked($event)"
+          style="display:none;"
+        />
+      </label>
+      <div class="modal-actions">
+        <button class="fam-btn" (click)="saveTaskFromModal()">Save</button>
+      </div>
+    </div>
+  </div>
+  <div class="house-tasks-table-wrapper">
+  <table class="house-tasks-table">
+    <thead>
+      <tr>
+        <th>Member \ Day</th>
+        <th *ngFor="let day of days">{{ day }}</th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr *ngFor="let member of members()">
+        <td class="member-name">{{ member }}</td>
+        <td
+          *ngFor="let day of days; let dayIdx = index"
+          (click)="openTaskModal(member, day)"
+          style="cursor:pointer;"
+        >
+          <ng-container *ngIf="tasksMap[member] && tasksMap[member][day] as cell">
+            <div
+              class="table-task-card"
+              [style.background]="cell.color"
+              style="position:relative;"
+            >
+              <div class="task-title">{{ cell.title }}</div>
+              <ng-container *ngIf="cell.details">
+                <span
+                  class="star-icon"
+                  (click)="$event.stopPropagation(); openDetailsModal(cell.title, cell.details)"
+                  title="Show details"
+                  style="cursor:pointer; user-select:none; margin-left: 6px;"
+                >
+                  ★
+                </span>
+                <ng-container *ngIf="showDetailsModal && detailsModalTitle === cell.title && detailsModalText === cell.details">
+                  <div class="modal-card details-modal-card local"
+                    [style.background]="cell.color"
+                    style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:10; min-width:240px;"
+                    (click)="$event.stopPropagation()">
+                    <div style="position:relative; width:100%; min-height:32px;">
+                      <button class="details-modal-close" (click)="closeDetailsModal()">
+                        <i class="fa fa-times"></i>
+                      </button>
+                    </div>
+                    <h3 style="margin:24px 0 0 0; font-size:1.1em; text-align:left;">{{ detailsModalTitle }}</h3>
+                    <div class="details-modal-content" style="padding:5px; margin-top:8px;">{{ detailsModalText }}</div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

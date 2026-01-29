@@ -60,11 +60,12 @@ export class AuthService {
   return this.http.post<any>(this.loginUrl, { email, username }).pipe(
     tap(response => {
       if (response && response.user) {
-        // Store member name and username in currentUser for greeting
+        // Ensure isParent is always present (default to false if missing)
         const memberUser = {
           ...response.user,
           name: response.user.name || '',
           username: response.user.username || '',
+          isParent: typeof response.user.isParent === 'boolean' ? response.user.isParent : false,
         };
         if (this.isBrowser) {
           localStorage.setItem('currentUser', JSON.stringify(memberUser));
@@ -79,22 +80,22 @@ export class AuthService {
     }
 
     // Admin login: for the main user (not a member) by username and password
-    loginAsAdmin(password: string, userName: string): Observable<any> {
-      return this.http.post<any>(this.loginUrl, { password, userName }).pipe(
-        tap(response => {
-          if (response && response.user) {
-            const family: familyDetails = response.user;
-            if (this.isBrowser) {
-              localStorage.setItem('currentUser', JSON.stringify(family));
-            }
-            this._currentUser.set(family);
-            if (response.token) {
-              this.setToken(response.token);
-            }
-          }
-        })
-      );
-    }
+    // loginAsAdmin(password: string, userName: string): Observable<any> {
+    //   return this.http.post<any>(this.loginUrl, { password, userName }).pipe(
+    //     tap(response => {
+    //       if (response && response.user) {
+    //         const family: familyDetails = response.user;
+    //         if (this.isBrowser) {
+    //           localStorage.setItem('currentUser', JSON.stringify(family));
+    //         }
+    //         this._currentUser.set(family);
+    //         if (response.token) {
+    //           this.setToken(response.token);
+    //         }
+    //       }
+    //     })
+    //   );
+    // }
 
     /**
      * Refresh the current user from the server by id and update the stored signal/localStorage.

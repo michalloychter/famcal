@@ -164,16 +164,6 @@
         </div>
         <ng-container *ngIf="isFormVisible">
           <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
-            <h4>
-              <span *ngIf="selectedTaskType === 'meeting'" class="type-icon"><i class="fa-regular fa-calendar"></i></span>
-              <span *ngIf="selectedTaskType === 'class'" class="type-icon"><i class="fa-solid fa-graduation-cap"></i></span>
-              <span *ngIf="selectedTaskType === 'shopping'" class="type-icon"><i class="fa-solid fa-cart-shopping"></i></span>
-              <span *ngIf="selectedTaskType === 'birthday'" class="type-icon"><i class="fa-solid fa-gift"></i></span>
-              <span *ngIf="selectedTaskType === 'doctor'" class="type-icon"><i class="fa-solid fa-user-doctor"></i></span>
-              <span *ngIf="selectedTaskType === 'other'" class="type-icon"><i class="fa-regular fa-star"></i></span>
-              Add <span [ngClass]="'type-label type-' + selectedTaskType">{{ selectedTaskType || 'Task' }}</span> for {{ selectedMember()?.name }}
-            </h4>
-            <input type="hidden" formControlName="type">
             <div>
               <label for="title">Title:</label>
               <input id="title" type="text" formControlName="title" required>
@@ -250,7 +240,9 @@
               >
                 Done
               </button>
-              <button (click)="deleteTask(task.id!)" class="delete-button fam-btn" color="primary">Delete</button>
+              <button (click)="deleteTask(task.id!)" class="delete-task-icon-btn" title="Delete task">
+                <i class="fa-solid fa-trash"></i>
+              </button>
             </div>
           </div>
         </li>

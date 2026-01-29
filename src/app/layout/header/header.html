@@ -10,11 +10,12 @@
   <nav class="main-nav">
     <!-- Desktop navigation links -->
     <div class="desktop-nav-links" *ngIf="authService.currentUser()">
-      <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
-      <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
-      <span><a [routerLink]="['/family-members']">family-members</a></span>
-      <span><a [routerLink]="['/shopping-list']">shopping-list</a></span>
-      <span><a [routerLink]="['/family-evening']">family-evening</a></span>
+  <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
+  <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
+  <span><a [routerLink]="['/family-members']">family-members</a></span>
+  <span><a [routerLink]="['/shopping-list']">shopping-list</a></span>
+  <span><a [routerLink]="['/family-evening']">family-evening</a></span>
+  <span><a [routerLink]="['/house-tasks-table']">house-tasks-table</a></span>
       <span *ngIf="authService.currentUser()?.isParent"><a [routerLink]="['/parent-settings']">Couple Time</a></span>
     </div>
     

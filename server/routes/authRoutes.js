@@ -72,6 +72,7 @@ router.post('/login', async (req, res) => {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
       const member = members[0];
+      console.log('[LOGIN DEBUG] member object from Firestore:', member);
       const token = jwt.sign(
         { memberId: member.id, familyId: member.familyId, username: member.username },
         JWT_SECRET,

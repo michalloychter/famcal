@@ -5,6 +5,7 @@
   width: 100%;
   background-color: #40e0d0;
   color: rgb(110, 109, 109);
+  z-index: 10000;
 }
 
 /* Desktop footer - hidden on mobile */

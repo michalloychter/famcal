@@ -1,7 +1,9 @@
+
 const express = require('express');
 const cors = require('cors'); 
 const app = express();
 require('dotenv').config(); 
+// Mount the house tasks routes under /api/house-tasks
 
 // 1. Define the PORT variable (read from environment or use a default)
 const PORT = process.env.PORT || 3000;
@@ -11,7 +13,8 @@ app.use(cors());       // Allow cross-origin requests
 app.use(express.json()); // Parse JSON bodies
 
 // 3. --- Route Mounting (Applied SECOND) ---
-
+const houseTaskRouter = require('./routes/houseTaskRoutes');
+app.use('/api/house-tasks', houseTaskRouter);
 
 // Mount the authentication and user-related routes under the /api base path
 const authRouter = require('./routes/authRoutes');

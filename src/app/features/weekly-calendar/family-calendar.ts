@@ -104,6 +104,7 @@ export class FamilyCalendar implements OnInit {
 			
 			// Map FamCal tasks
 			const famCalEvents = this.tasksService.allTasks()
+				.filter(task => task.type !== 'private')
 				.map(task => {
 					const startDate = convertAnyDateToJSDate(task.date);
 					const endDate = convertAnyDateToJSDate(task.end);
