@@ -1,3 +1,94 @@
+/* Modal styles for confirm new list */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.18);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confirm-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 32px 24px 24px 24px;
+  min-width: 280px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.modal-title {
+  font-size: 1.15em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  cursor: default;
+}
+.modal-message {
+  margin-bottom: 18px;
+  color: #444;
+  text-align: center;
+}
+.modal-actions {
+  display: flex;
+  gap: 16px;
+}
+.fam-btn.danger {
+  background: #d32f2f;
+  color: #fff;
+}
+.fam-btn.danger:hover {
+  background: #b71c1c;
+}
+/* Tooltip for new list icon */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.custom-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  background: #222;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 2px 7px;
+  position: absolute;
+  z-index: 20;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78em;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+.tooltip-wrapper:hover .custom-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+/* Shopping list title row styles */
+.shopping-list-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+/* New list icon style */
+.new-list-icon {
+  color: #1976d2;
+  transition: color 0.2s;
+  margin-left: 6px;
+  cursor: pointer;
+}
+.new-list-icon:hover {
+  color: #b6d8f9;
+}
 /* Supermarket links styles (no logo) */
 .super-links {
   display: flex;

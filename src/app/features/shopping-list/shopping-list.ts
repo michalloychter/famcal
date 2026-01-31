@@ -18,6 +18,7 @@ export class ShoppingListComponent implements OnInit {
 
   items = signal<string[]>([]);
   newItem = '';
+  showDeleteModal = false;
 
   constructor(
     private shoppingListService: ShoppingListService,
@@ -28,7 +29,6 @@ export class ShoppingListComponent implements OnInit {
     effect(() => {
       const user = this.authService.currentUser();
       const familyId = this.familyId();
-      
       if (isPlatformBrowser(this.platformId) && user && familyId && familyId !== 'null') {
         console.log("Auth state changed, loading shopping list for familyId:", familyId);
         this.loadShoppingList(familyId);
@@ -36,6 +36,12 @@ export class ShoppingListComponent implements OnInit {
         console.warn("Cannot load shopping list - familyId is null or invalid:", familyId);
       }
     });
+  }
+
+  deleteListAndCloseModal() {
+    this.items.set([]);
+    this.saveList();
+    this.showDeleteModal = false;
   }
 
   readonly familyId = computed(() => {
@@ -105,5 +111,11 @@ export class ShoppingListComponent implements OnInit {
   const familyId = this.familyId();
   if (!familyId) return;
   this.shoppingListService.updateShoppingList(familyId, this.items()).subscribe();
+  }
+  confirmNewList() {
+    if (confirm('Are you sure you want to start a new list? This will delete the current list.')) {
+      this.items.set([]);
+      this.saveList();
+    }
   }
 }

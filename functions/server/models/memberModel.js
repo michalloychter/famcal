@@ -10,7 +10,8 @@ const MemberModel = {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data
+          ...data,
+          isParent: typeof data.isParent === 'boolean' ? data.isParent : false
         };
       });
     } catch (error) {
@@ -29,7 +30,8 @@ const MemberModel = {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data
+          ...data,
+          isParent: typeof data.isParent === 'boolean' ? data.isParent : false
         };
       });
     } catch (error) {
@@ -52,7 +54,8 @@ const MemberModel = {
           whatsappNumber: data.whatsappNumber || '',
           email: data.email || '',
           familyId: data.familyId || null,
-          color: data.color || '#1976d2' // Return color or default
+          color: data.color || '#1976d2', // Return color or default
+          isParent: typeof data.isParent === 'boolean' ? data.isParent : false
         };
       });
       return membersList;

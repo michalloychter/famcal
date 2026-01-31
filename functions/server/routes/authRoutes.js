@@ -85,7 +85,8 @@ router.post('/login', async (req, res) => {
           username: member.username,
           email: member.email,
           familyId: member.familyId,
-          familyName: member.familyName
+          familyName: member.familyName,
+          isParent: typeof member.isParent === 'boolean' ? member.isParent : false
         },
         token: token
       });

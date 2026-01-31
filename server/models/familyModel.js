@@ -11,7 +11,7 @@ const FamilyDetails = (doc) => {
         email: data.email || null,
         shoppingList: data.shoppingList || [],
         loveNotes: data.loveNotes || [],
-       isParent: data.isParent || false, // Default to false if not set
+        isParent: typeof data.isParent === 'boolean' ? data.isParent : false,
     };
 };
 

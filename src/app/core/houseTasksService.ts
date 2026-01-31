@@ -13,6 +13,7 @@ export interface HouseTask {
   title: string;
   details: string;
   color: string;
+  done?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,7 +35,9 @@ export class HouseTasksService {
 
 
   fetchTasks(familyId: string): Observable<HouseTask[]> {
-    return this.http.get<HouseTask[]>(`${this.apiUrl}/family/${familyId}`, {
+    console.log(familyId,"familyId");
+    
+    return this.http.post<HouseTask[]>(`${this.apiUrl}/family`, { familyId }, {
       headers: this.getAuthHeaders()
     });
   }

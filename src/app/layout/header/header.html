@@ -15,11 +15,25 @@
   <span><a [routerLink]="['/family-members']">family-members</a></span>
   <span><a [routerLink]="['/shopping-list']">shopping-list</a></span>
   <span><a [routerLink]="['/family-evening']">family-evening</a></span>
-  <span><a [routerLink]="['/house-tasks-table']">house-tasks-table</a></span>
-      <span *ngIf="authService.currentUser()?.isParent"><a [routerLink]="['/parent-settings']">Couple Time</a></span>
+  <span>
+    <a [routerLink]="['/house-tasks-table']">
+      <i class="fa fa-home" style="margin-right:6px;"></i>house-tasks-table
+    </a>
+  </span>
+      <!-- Couple Time heart icon near user menu -->
+      <span *ngIf="authService.currentUser()?.isParent" class="couple-header-icon">
+        <a [routerLink]="['/parent-settings']" title="Couple Time">
+          <i class="fa fa-heart" style="color:#d32f2f; font-size:1.3em; margin-right:8px;"></i>
+        </a>
+      </span>
     </div>
     
     <div class="header-right">
+      <span *ngIf="authService.currentUser()?.isParent" class="couple-header-icon">
+        <a [routerLink]="['/parent-settings']" title="Couple Time">
+          <i class="fa fa-heart" style="color:#d32f2f; font-size:1.3em; margin-right:12px;"></i>
+        </a>
+      </span>
       <span *ngIf="authService.currentUser()" class="user-menu-container">
         <span class="user-icon" title="Logged in" (click)="toggleUserMenu()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

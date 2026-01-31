@@ -34,6 +34,8 @@ function getApp() {
     const taskRouter = require("../server/routes/taskRoutes");
     const aiRouter = require("../server/routes/aiRoutes");
     const shoppingListRouter = require("../server/routes/shoppingListRoutes");
+  const houseTaskRouter = require("../server/routes/houseTaskRoutes");
+
 
     // Mount routes under /api to match the rewrite path
     app.use("/api", authRouter);
@@ -41,6 +43,7 @@ function getApp() {
     app.use("/api", taskRouter);
     app.use("/api", aiRouter);
     app.use("/api/shopping-list", shoppingListRouter);
+    app.use("/api/house-tasks", houseTaskRouter);
 
     cachedApp = app;
   }

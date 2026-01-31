@@ -44,11 +44,13 @@
   
   .mobile-nav {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
     padding: 8px 0;
     background-color: #40e0d0;
     z-index: 1000;
+    row-gap: 8px;
   }
   
   .mobile-nav .nav-item {

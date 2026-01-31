@@ -1,3 +1,4 @@
+
 import { Component, Input, computed, ViewChild, ElementRef, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,9 @@ export type TableTask = { title: string; details: string; color: string };
   styleUrls: ['./house-tasks-table.component.css']
 })
 export class HouseTasksTableComponent {
+  confettiArray = Array.from({ length: 18 });
+  private confettiMap = new WeakMap<HouseTask, boolean>();
+
   @ViewChild('hiddenColorInput') hiddenColorInput!: ElementRef<HTMLInputElement>;
   @Input() days: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -38,9 +42,11 @@ export class HouseTasksTableComponent {
     // Always fetch family members when component is created
     this.tasksService.fetchFamilyMembers().subscribe();
     // Load house tasks for the current family when component loads
-    const familyName = this.tasksService.currentFamilyName;
-    if (familyName) {
-      this.houseTasksService.loadTasksForFamily(familyName);
+    const familyId = this.authService.currentUser()?.familyId;
+    if (familyId) {
+        console.log("familyid",familyId);
+        
+      this.houseTasksService.loadTasksForFamily(familyId);
     }
     // Subscribe to the signal of house tasks and update tasksMap reactively
     effect(() => {
@@ -51,6 +57,13 @@ export class HouseTasksTableComponent {
         this.tasksMap[task.memberName][task.day] = task;
       }
     });
+  }
+
+  triggerConfetti(task: HouseTask) {
+    this.confettiMap.set(task, true);
+    setTimeout(() => {
+      this.confettiMap.set(task, false);
+    }, 1200);
   }
 
   openColorPicker() {
@@ -97,20 +110,25 @@ export class HouseTasksTableComponent {
 
   saveTaskFromModal() {
     if (this.modalMember && this.modalDay) {
-      const familyName = this.tasksService.currentFamilyName;
-      if (!familyName) return;
+      const familyId = this.authService.currentUser()?.familyId;
+      if (!familyId) return;
+      const existingTask = this.tasksMap[this.modalMember]?.[this.modalDay];
       const newTask: HouseTask = {
-        familyId: familyName,
+        familyId: familyId,
         memberName: this.modalMember,
         day: this.modalDay,
         title: this.modalTaskTitle,
         details: this.modalTaskDetails,
-        color: this.modalTaskColor
+        color: this.modalTaskColor,
+        done: false // Always reset done to false on edit
       };
-      this.houseTasksService.createTask(newTask).subscribe({
+      // If editing, update; if new, create
+      const obs = existingTask && existingTask.id
+        ? this.houseTasksService.updateTask(existingTask.id, newTask)
+        : this.houseTasksService.createTask(newTask);
+      obs.subscribe({
         next: () => {
-          // After creating, reload all tasks for the family so the signal updates
-          this.houseTasksService.loadTasksForFamily(familyName);
+          this.houseTasksService.loadTasksForFamily(familyId);
           this.closeTaskModal();
         },
         error: () => {
@@ -136,6 +154,21 @@ export class HouseTasksTableComponent {
     this.showDetailsModal = false;
     this.detailsModalText = '';
     this.detailsModalTitle = '';
+  }
+  markTaskDone(task: HouseTask) {
+    if (!task.id) return;
+    // Optimistically update the UI immediately
+    task.done = true;
+    this.houseTasksService.updateTask(task.id, { done: true }).subscribe({
+      error: () => {
+        // If the update fails, revert the change
+        task.done = false;
+      }
+    });
+  }
+
+  isConfettiActive(task: HouseTask): boolean {
+    return !!this.confettiMap.get(task);
   }
 }
 

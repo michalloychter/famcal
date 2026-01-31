@@ -22,6 +22,7 @@ const TaskFromDoc = (doc) => {
             weekday: data.weekday, // 0-6 (Sun-Sat)
             time: data.time,       // 'HH:mm'
             end: null,
+            done: typeof data.done === 'boolean' ? data.done : false
         };
     }
     return {
@@ -33,6 +34,7 @@ const TaskFromDoc = (doc) => {
         date: data.date ? (data.date.toDate ? data.date.toDate() : data.date) : null,
         end: data.end ? (data.end.toDate ? data.end.toDate() : data.end) : null,
         type: data.type,
+        done: typeof data.done === 'boolean' ? data.done : false
     };
 };
 

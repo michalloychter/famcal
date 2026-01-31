@@ -1,5 +1,23 @@
 <div class="shopping-list-container">
-  <h2>Shopping List</h2>
+<h2 class="shopping-list-title-row">
+  Shopping List
+  <span class="new-list-icon tooltip-wrapper" (click)="showDeleteModal = true">
+    <i class="fa fa-file-alt"></i>
+    <span class="custom-tooltip">new list</span>
+  </span>
+</h2>
+
+<!-- Modal for confirming new list (delete) -->
+<div *ngIf="showDeleteModal" class="modal-backdrop">
+  <div class="modal-card confirm-modal">
+    <div class="modal-title">Start a new list?</div>
+    <div class="modal-message">This will delete the current list.<br> Are you sure?</div>
+    <div class="modal-actions">
+      <button class="fam-btn danger" (click)="deleteListAndCloseModal()">Delete</button>
+      <button class="fam-btn" (click)="showDeleteModal = false">Cancel</button>
+    </div>
+  </div>
+</div>
   <form (ngSubmit)="addItem()" #itemForm="ngForm" autocomplete="off" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
     <input
       type="text"

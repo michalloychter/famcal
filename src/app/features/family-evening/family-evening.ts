@@ -1,5 +1,7 @@
 import { Confetti } from './confetti';
 import { Component, signal, PLATFORM_ID, Inject, OnDestroy, ElementRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { AiSuggestionEditModalComponent, AiSuggestionEditData } from './ai-suggestion-edit-modal.component';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -17,7 +19,7 @@ interface FamilyEveningTask {
 @Component({
   selector: 'app-family-evening',
   standalone: true,
-  imports: [FormsModule, CommonModule, RequiredErrorMessageComponent],
+  imports: [FormsModule, CommonModule, RequiredErrorMessageComponent, AiSuggestionEditModalComponent],
   templateUrl: './family-evening.html',
   styleUrls: ['./family-evening.css'],
 })
@@ -38,12 +40,32 @@ export class FamilyEveningComponent implements OnDestroy {
   constructor(
     private aiService: AiService,
     private tasksService: TasksService,
+    private dialog: MatDialog,
     @Inject(PLATFORM_ID) private platformId: Object,
     private elementRef: ElementRef
   ) {
     if (this.tasksService && typeof this.tasksService.familyMembers === 'function') {
       this.filteredMembers = this.tasksService.familyMembers();
     }
+  }
+
+  editSuggestion(task: any, idx: number) {
+    const dialogRef = this.dialog.open(AiSuggestionEditModalComponent, {
+      data: { title: task.title, details: task.details, type: task.type },
+      width: '400px',
+      autoFocus: true,
+      restoreFocus: true,
+      hasBackdrop: true,
+      closeOnNavigation: true
+    });
+    dialogRef.afterClosed().subscribe((result: AiSuggestionEditData | undefined) => {
+      if (result) {
+        // Update the suggestion in the tasks signal array
+        const arr = [...this.tasks()];
+        arr[idx] = { ...arr[idx], ...result };
+        this.tasks.set(arr);
+      }
+    });
   }
 
 

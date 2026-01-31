@@ -2,20 +2,56 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { Task, TasksService } from '../../core/tasksService';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-task-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatDialogModule, ReactiveFormsModule],
   template: `
     <div class="modal-header">
-      <h2 mat-dialog-title>Task Details</h2>
+      <h2 mat-dialog-title>{{ editMode ? 'Edit Task' : 'Task Details' }}</h2>
       <button class="close-x-btn" (click)="close()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <mat-dialog-content>
-      <div *ngIf="data" [class.task-done]="data.done">
+  <mat-dialog-content style="max-height: 60%; overflow: scroll;">
+      <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="save()">
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Title:</label>
+          <input type="text" formControlName="title" required />
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Details:</label>
+          <textarea formControlName="details" placeholder="Optional details..."></textarea>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Date:</label>
+          <input type="date" formControlName="date" required />
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Time:</label>
+          <input type="time" formControlName="time" required />
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="margin-inline-end: 10px;">Type:</label>
+          <select formControlName="type" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="">Select type (optional)</option>
+            <option value="parents">💑 Parents / Date Night</option>
+            <option value="meeting">Meeting</option>
+            <option value="class">Class</option>
+            <option value="shopping">Shopping</option>
+            <option value="birthday">Birthday</option>
+            <option value="doctor">Doctor</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <mat-dialog-actions align="end">
+          <button class="fam-btn" mat-button type="button" (click)="toggleEditMode()">Cancel</button>
+          <button class="fam-btn" mat-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
+        </mat-dialog-actions>
+      </form>
+      <div *ngIf="!editMode && data" [class.task-done]="data.done">
         <p><strong>Title:</strong> <span [class.task-title-done]="data.done">{{ data.title }}</span></p>
         <p><strong>Member:</strong> {{ data.memberName }}</p>
         <p><strong>Details:</strong> <span [class.task-text-done]="data.done">{{ data.details }}</span></p>
@@ -28,6 +64,7 @@ import { Task, TasksService } from '../../core/tasksService';
         >
           Done
         </button>
+        <button class="fam-btn" mat-button color="primary" (click)="toggleEditMode()">Edit</button>
       </div>
     </mat-dialog-content>
   `,
@@ -100,27 +137,96 @@ import { Task, TasksService } from '../../core/tasksService';
     }
   `]
 })
+
 export class TaskModalComponent {
+  editMode = false;
+  form: FormGroup;
+
   constructor(
     public dialogRef: MatDialogRef<TaskModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Task,
-    private tasksService: TasksService
-  ) {}
+    private tasksService: TasksService,
+    private fb: FormBuilder
+  ) {
+    // Pre-fill form with task data
+    let datePart = '';
+    let timePart = '19:00';
+    if (data.date) {
+      const d = new Date(data.date);
+      datePart = d.toISOString().slice(0, 10);
+      const hours = d.getHours();
+      const minutes = d.getMinutes();
+      if (hours !== 0 || minutes !== 0) {
+        timePart = d.toTimeString().slice(0, 5);
+      }
+    }
+    this.form = this.fb.group({
+      title: [data.title, Validators.required],
+      details: [data.details],
+      date: [datePart, Validators.required],
+      time: [timePart, Validators.required],
+      type: [data.type || '']
+    });
+    // Automatically open in edit mode for AI-generated tasks
+    if (data.type === 'ai') {
+      this.editMode = true;
+    }
+  }
 
   close() {
     this.dialogRef.close();
   }
 
+  toggleEditMode() {
+    this.editMode = !this.editMode;
+    if (this.editMode) {
+      // Reset form to current data
+      let datePart = '';
+      let timePart = '19:00';
+      if (this.data.date) {
+        const d = new Date(this.data.date);
+        datePart = d.toISOString().slice(0, 10);
+        const hours = d.getHours();
+        const minutes = d.getMinutes();
+        if (hours !== 0 || minutes !== 0) {
+          timePart = d.toTimeString().slice(0, 5);
+        }
+      }
+      this.form.setValue({
+        title: this.data.title,
+        details: this.data.details,
+        date: datePart,
+        time: timePart,
+        type: this.data.type || ''
+      });
+    }
+  }
+
+  save() {
+    if (this.form.valid && this.data.id) {
+      const { date, time, ...rest } = this.form.value;
+      const dateTime = new Date(date + 'T' + time);
+      const updatedData = { ...rest, date: dateTime, type: this.form.value.type };
+      this.tasksService.updateTask(this.data.id, updatedData).subscribe({
+        next: (updatedTask) => {
+          // Update local data for immediate UI feedback
+          Object.assign(this.data, updatedTask);
+          this.editMode = false;
+        },
+        error: (err) => {
+          alert('Failed to update task.');
+        }
+      });
+    }
+  }
+
   toggleTaskDone(): void {
     if (!this.data.id) return;
-    
     this.tasksService.toggleTaskDone(this.data.id, !this.data.done).subscribe({
       next: () => {
-        console.log('Task done status updated successfully');
-        this.data.done = !this.data.done; // Update local data
+        this.data.done = !this.data.done;
       },
       error: (err) => {
-        console.error('Error updating task status:', err);
         alert('Failed to update task status.');
       }
     });

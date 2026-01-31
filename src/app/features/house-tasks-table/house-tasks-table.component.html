@@ -58,10 +58,9 @@
               <div class="task-title">{{ cell.title }}</div>
               <ng-container *ngIf="cell.details">
                 <span
-                  class="star-icon"
+                  class="star-icon details-corner"
                   (click)="$event.stopPropagation(); openDetailsModal(cell.title, cell.details)"
                   title="Show details"
-                  style="cursor:pointer; user-select:none; margin-left: 6px;"
                 >
                   ★
                 </span>
@@ -80,6 +79,25 @@
                   </div>
                 </ng-container>
               </ng-container>
+              <span
+                class="did-it-tag"
+                *ngIf="!cell.done"
+                (click)="$event.stopPropagation(); triggerConfetti(cell); markTaskDone(cell)"
+                style="cursor:pointer; margin-left:8px; background:#e0ffe0; color:#388e3c; border-radius:12px; padding:2px 10px; font-size:0.9em; font-weight:600; position:relative; overflow:visible;"
+              >
+                Done
+                <span *ngIf="isConfettiActive(cell)" class="confetti-container">
+                  <span *ngFor="let c of confettiArray" class="confetti-piece"></span>
+                </span>
+              </span>
+              <span
+                class="crown-icon"
+                *ngIf="cell.done"
+                style="margin-left:8px; color:#bea20c; font-size:1.3em; vertical-align:middle;"
+                title="Task completed!"
+              >
+                <i class="fa fa-crown"></i>
+              </span>
             </div>
           </ng-container>
         </td>

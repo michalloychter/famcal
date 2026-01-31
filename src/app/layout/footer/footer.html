@@ -27,9 +27,9 @@
         <i class="fa-solid fa-moon"></i>
         <span>Evening</span>
       </a>
-      <a *ngIf="authService.currentUser()?.isParent" [routerLink]="['/parent-settings']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-heart"></i>
-        <span>Couple</span>
+      <a [routerLink]="['/house-tasks-table']" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Tasks</span>
       </a>
     </nav>
     <div class="mobile-footer-text">

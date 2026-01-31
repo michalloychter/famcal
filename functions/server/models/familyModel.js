@@ -10,6 +10,7 @@ const FamilyDetails = (doc) => {
         whatsappNumber: data.whatsappNumber || null,
         email: data.email || null,
         shoppingList: data.shoppingList || [],
+        isParent: typeof data.isParent === 'boolean' ? data.isParent : false,
         // Add any other family-level fields here
     };
 };

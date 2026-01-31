@@ -36,7 +36,7 @@
         <button type="button" (click)="closePlannerModal()" style="margin-left: 12px;">Cancel</button>
       </form>
       <div class="suggestions-list">
-        <div *ngFor="let task of tasks(); let i = index" class="task-card">
+  <div *ngFor="let task of tasks(); let i = index" class="task-card" (click)="editSuggestion(task, i)">
           <h4>{{ task.title }}</h4>
           <span class="task-type">{{ task.type }}</span>
           <p>{{ task.details }}</p>
@@ -45,7 +45,7 @@
                   class="member-tag"
                   [class.assigned]="assignedMember[i] === member.email"
                   [ngStyle]="{'background-color': member.color || '#e0e7ff', 'color': member.color ? '#fff' : '#1e40af'}"
-                  (click)="assignTask(task, member, i)">
+                  (click)="$event.stopPropagation(); assignTask(task, member, i)">
               {{ member.name }}
             </span>
           </div>
