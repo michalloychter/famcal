@@ -20,19 +20,19 @@ export interface AiSuggestionEditData {
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <mat-dialog-content style="max-height: 60%; overflow: scroll;">
+  <mat-dialog-content>
       <form [formGroup]="form" (ngSubmit)="save()">
-        <div style="margin-bottom: 20px;">
-          <label style="margin-inline-end: 10px;">Title:</label>
+        <div class="form-field">
+          <label>Title:</label>
           <input type="text" formControlName="title" required />
         </div>
-        <div style="margin-bottom: 20px;">
-          <label style="margin-inline-end: 10px;">Details:</label>
+        <div class="form-field">
+          <label>Details:</label>
           <textarea formControlName="details" placeholder="Optional details..."></textarea>
         </div>
-        <div style="margin-bottom: 20px;">
-          <label style="margin-inline-end: 10px;">Type:</label>
-          <select formControlName="type" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+        <div class="form-field">
+          <label>Type:</label>
+          <select formControlName="type">
             <option value="">Select type (optional)</option>
             <option value="parents">💑 Parents / Date Night</option>
             <option value="meeting">Meeting</option>
@@ -51,6 +51,48 @@ export interface AiSuggestionEditData {
     </mat-dialog-content>
   `,
   styles: [`
+    :host ::ng-deep .mat-mdc-dialog-container {
+      background-color: #ffe066 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
+      padding: 0 !important;
+      max-width: 95vw !important;
+      width: 400px !important;
+      min-width: 0 !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+    mat-dialog-content {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .form-field {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-field label {
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 1em;
+    }
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .form-field textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
     .modal-header {
       display: flex;
       align-items: center;
@@ -69,6 +111,39 @@ export interface AiSuggestionEditData {
     }
     .close-x-btn:hover {
       color: #e53935;
+    }
+    mat-dialog-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .fam-btn {
+      border-radius: 30px;
+      border: 1px;
+      color: #17a89a;
+      padding: 5px 10px;
+      cursor: pointer;
+      background-color: #dad5d5;
+    }
+    @media (max-width: 600px) {
+      :host ::ng-deep .mat-mdc-dialog-container {
+        width: 95vw !important;
+        min-width: unset !important;
+        padding: 0 !important;
+      }
+      mat-dialog-content {
+        padding: 10px;
+      }
+      .form-field label {
+        font-size: 0.95em;
+      }
+      .form-field input,
+      .form-field textarea,
+      .form-field select {
+        font-size: 0.95em;
+        padding: 8px;
+      }
     }
   `]
 })

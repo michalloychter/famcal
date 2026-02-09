@@ -178,11 +178,21 @@
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.18);
   padding: 32px 24px 24px 24px;
-  min-width: 320px;
-  max-width: 90vw;
+  min-width: 0;
+  max-width: 95vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  .modal-card {
+    max-width: 98vw;
+    width: 98vw;
+    min-width: 0;
+    padding: 18px 6vw 18px 6vw;
+  }
 }
 .modal-task-input {
   width: 220px;

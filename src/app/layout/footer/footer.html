@@ -5,8 +5,8 @@
   </div>
   
   <!-- Mobile bottom navigation -->
-  <div class="mobile-footer" *ngIf="authService.currentUser()">
-    <nav class="mobile-nav">
+  <div class="mobile-footer">
+    <nav class="mobile-nav" *ngIf="authService.currentUser()">
       <a [routerLink]="['/daily-calendar']" routerLinkActive="active" class="nav-item">
         <i class="fa-solid fa-calendar-day"></i>
         <span>Today</span>
@@ -30,6 +30,10 @@
       <a [routerLink]="['/house-tasks-table']" routerLinkActive="active" class="nav-item">
         <i class="fa-solid fa-list-check"></i>
         <span>Tasks</span>
+      </a>
+      <a *ngIf="authService.currentUser()?.isParent" [routerLink]="['/parent-settings']" routerLinkActive="active" class="nav-item heart-link-mobile">
+        <i class="fa-solid fa-heart"></i>
+        <span>Parents</span>
       </a>
     </nav>
     <div class="mobile-footer-text">

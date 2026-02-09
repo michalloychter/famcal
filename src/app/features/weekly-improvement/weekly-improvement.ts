@@ -1,10 +1,14 @@
 // ...existing imports...
+
 import { Component, EventEmitter, Output, Input, ChangeDetectorRef } from '@angular/core';
+import { SaveAsTaskPayload } from '../family-members/family-members';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AiService } from '../../core/aiService';
 import { timeout, catchError, of } from 'rxjs';
-import { lookupService } from 'node:dns/promises';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 
 export interface ImprovementSuggestion {
@@ -15,7 +19,7 @@ export interface ImprovementSuggestion {
 @Component({
   selector: 'app-weekly-improvement',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './weekly-improvement.html',
   styleUrl: './weekly-improvement.css'
 })
@@ -32,7 +36,7 @@ export class WeeklyImprovementComponent {
   @Input() memberColor: string = '#1976d2'; // Receive color from parent
 
   @Output() improvementSaved = new EventEmitter<string>();
-  @Output() saveAsTask = new EventEmitter<{ title: string; details: string; date: string; reminderDateTime?: string }>();
+  @Output() saveAsTask = new EventEmitter<SaveAsTaskPayload>();
 
   constructor(private aiService: AiService, private cdr: ChangeDetectorRef) {}
 
@@ -75,18 +79,20 @@ export class WeeklyImprovementComponent {
   }
 
   saveCardAsTask(idx: number, step: ImprovementSuggestion) {
-    const date = this.cardDates[idx];
-    if (!date) return;
-    const reminder = this.cardReminders[idx];
+    // Emit a single improvement task with repeatUntil
+    const startDate = new Date();
+    startDate.setHours(9, 0, 0, 0);
+    const repeatUntil = new Date(startDate);
+    repeatUntil.setDate(startDate.getDate() + 6);
     this.saveAsTask.emit({
       title: step.title,
       details: step.details,
-      date: date,
-      reminderDateTime: reminder
+      date: startDate.toISOString(),
+      reminderDateTime: undefined,
+      repeatUntil: repeatUntil.toISOString()
     });
     // Mark card as saved
     this.savedCards[idx] = true;
-    // Don't clear the dates/reminders, keep them visible but show saved state
   }
 
   closeAndClear() {

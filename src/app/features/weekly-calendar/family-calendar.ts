@@ -81,25 +81,21 @@ export class FamilyCalendar implements OnInit {
 			});
 	}
 
-	// Handler to open modal on event click
-		onEventClick(arg: any) {
-				const event = arg.event;
-				const task = this.tasksService.allTasks().find(t => t.id === event.id);
-				if (task) {
-					// If the task is AI-generated (e.g., has type 'ai'), open in edit mode
-					const isAIGenerated = task.type === 'ai';
-					this.dialog.open(TaskModalComponent, {
-						data: task,
-						width: '400px',
-						autoFocus: true,
-						restoreFocus: true,
-						hasBackdrop: true,
-						closeOnNavigation: true
-						// Optionally, you can pass a flag for edit mode if needed
-						// data: { ...task, editMode: isAIGenerated }
-					});
-				}
-		}
+       // Handler to open modal on event click
+       onEventClick(arg: any) {
+	       const event = arg.event;
+	       const task = this.tasksService.allTasks().find(t => t.id === event.id);
+	       if (task) {
+		       this.dialog.open(TaskModalComponent, {
+			       data: task,
+			       width: '400px',
+			       autoFocus: true,
+			       restoreFocus: true,
+			       hasBackdrop: true,
+			       closeOnNavigation: true
+		       });
+	       }
+       }
 
 	currentUser = computed(() => this.authService.currentUser());
 
@@ -108,7 +104,7 @@ export class FamilyCalendar implements OnInit {
 			
 			// Map FamCal tasks
 			const famCalEvents = this.tasksService.allTasks()
-				.filter(task => task.type !== 'private')
+				.filter(task => task.type !== 'private' && task.type !== 'improvement')
 				.map(task => {
 					const startDate = convertAnyDateToJSDate(task.date);
 					const endDate = convertAnyDateToJSDate(task.end);

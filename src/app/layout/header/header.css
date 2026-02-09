@@ -1,3 +1,8 @@
+@media (max-width: 768px) {
+  .header-right .couple-header-icon {
+    display: none !important;
+  }
+}
 /* Match family-members style: rounded, modern, colorful */
 .header-right a {
   border-bottom: none !important;

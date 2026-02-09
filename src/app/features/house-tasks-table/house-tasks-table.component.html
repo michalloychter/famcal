@@ -67,7 +67,7 @@
                 <ng-container *ngIf="showDetailsModal && detailsModalTitle === cell.title && detailsModalText === cell.details">
                   <div class="modal-card details-modal-card local"
                     [style.background]="cell.color"
-                    style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:10; min-width:240px;"
+                    style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:10; min-width:150px;"
                     (click)="$event.stopPropagation()">
                     <div style="position:relative; width:100%; min-height:32px;">
                       <button class="details-modal-close" (click)="closeDetailsModal()">

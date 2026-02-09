@@ -6,15 +6,19 @@
     </button>
   </div>
   <div class="suggestions-list">
-    <div *ngFor="let evening of groupedEvenings()" class="task-card">
-      <h4>{{ evening.title }}</h4>
+    <div *ngFor="let evening of evenings()" class="task-card" style="position: relative;">
+      <button class="delete-icon" (click)="deleteEvening(evening.id)" title="Delete Evening">
+        <i class="fa fa-times"></i>
+      </button>
+      <h4 class="familyEveningTitle">{{ evening.title }}</h4>
       <ul>
-        <li *ngFor="let task of evening.tasks">
-          <span>{{ task.memberName }}</span> - <span>{{ task.details }}</span> <span class="task-date">({{ task.date | date:'shortDate' }})</span>
+        <li style="display: flex;" *ngFor="let task of evening.tasks">
+          <span style="font-weight: bolder;">{{ task.memberName }}</span> - <div>{{ task.task }}</div>
         </li>
       </ul>
+      <div class="task-date">{{ evening.date | date:'shortDate' }}</div>
     </div>
-    <div *ngIf="groupedEvenings().length === 0" class="no-evenings">No family evenings for this week.</div>
+    <div *ngIf="evenings().length === 0" class="no-evenings">No family evenings for this week.</div>
   </div>
 
   <div class="planner-modal" *ngIf="showPlanner">
@@ -55,7 +59,7 @@
         </div>
       </div>
       <div *ngIf="tasks().length > 0" style="margin-top: 20px; text-align: center;">
-        <button type="button" class="fam-btn close-btn" (click)="closePlannerModal()">Saved & Close</button>
+        <button type="button" class="fam-btn close-btn" (click)="saveEvening()">Saved & Close</button>
       </div>
     </div>
   </div>

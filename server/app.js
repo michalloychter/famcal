@@ -1,7 +1,9 @@
-
 const express = require('express');
 const cors = require('cors'); 
 const app = express();
+// Mount the places routes under /api/places (after app is defined)
+const placesRouter = require('./routes/placesRoutes');
+app.use('/api/places', placesRouter);
 require('dotenv').config(); 
 // Mount the house tasks routes under /api/house-tasks
 
@@ -41,7 +43,14 @@ app.use('/api/shopping-list', shoppingListRouter);
 const familyRouter = require('./routes/familyRoutes');
 app.use('/api/families', familyRouter);
 
+// Mount the familyEvening routes under /api/family-evenings
+const familyEveningRouter = require('./routes/familyEveningRoutes');
+app.use('/api/family-evenings', familyEveningRouter);
+
+const http = require('http');
+const server = http.createServer(app);
+const socket = require('./socket');
+socket.init(server);
 
 // --- Start the Server ---
-// FIX 1 & 2: Use the defined PORT variable
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

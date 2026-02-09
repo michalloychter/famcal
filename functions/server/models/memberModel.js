@@ -10,8 +10,7 @@ const MemberModel = {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
-          isParent: typeof data.isParent === 'boolean' ? data.isParent : false
+          ...data
         };
       });
     } catch (error) {
@@ -30,8 +29,7 @@ const MemberModel = {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
-          isParent: typeof data.isParent === 'boolean' ? data.isParent : false
+          ...data
         };
       });
     } catch (error) {
@@ -55,7 +53,7 @@ const MemberModel = {
           email: data.email || '',
           familyId: data.familyId || null,
           color: data.color || '#1976d2', // Return color or default
-          isParent: typeof data.isParent === 'boolean' ? data.isParent : false
+          isParent: data.isParent || false // Return isParent field
         };
       });
       return membersList;
@@ -79,7 +77,8 @@ const MemberModel = {
           email: member.email,
           familyId: String(familyId),
           familyName: member.familyName || '',
-          color: member.color || '#1976d2' // Store color with default
+          color: member.color || '#1976d2', // Store color with default
+          isParent: Boolean(member.isParent) // Always store as boolean
         });
       }
       await batch.commit();

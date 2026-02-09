@@ -1,5 +1,4 @@
-
-
+import { GoogleMapsModal } from './google-maps-modal';
 import { Component, OnInit, signal, Inject, ChangeDetectorRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -8,7 +7,9 @@ import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angu
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AiService } from '../../core/aiService';
+import { PlacesService } from '../../core/placesService';
 import { TasksService, Task } from '../../core/tasksService';
+import { WeatherService } from '../../core/weather';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FamilyCalendar } from '../weekly-calendar/family-calendar';
 import { HttpClient } from '@angular/common/http';
@@ -50,7 +51,9 @@ export class ParentSettings implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private aiService: AiService,
-    public tasksService: TasksService
+    private placesService: PlacesService,
+    public tasksService: TasksService,
+    private weatherService: WeatherService
   ) {}
 
   ngOnInit() {
@@ -94,48 +97,50 @@ export class ParentSettings implements OnInit {
 
   getDateSuggestions(type: string, event: Event) {
     event.stopPropagation();
-    
-    // Get user's location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          
-          // Open modal with AI suggestions
-          this.dialog.open(DateSuggestionsModal, {
-            width: '600px',
-            maxWidth: '90vw',
-            data: { type, lat, lon }
-          });
-        },
-        (error) => {
-          alert('Please enable location services to get nearby suggestions.');
-        }
-      );
-    } else {
-      alert('Geolocation is not supported by your browser.');
-    }
+    // Use WeatherService to get user location (lat/lon) directly
+    this.weatherService.getUserLocation().subscribe({
+      next: (coords: { latitude: number, longitude: number }) => {
+        this.dialog.open(DateSuggestionsModal, {
+          width: '600px',
+          maxWidth: '90vw',
+          data: { type, lat: coords.latitude, lon: coords.longitude }
+        });
+      },
+      error: () => {
+        // Fallback: use default city coordinates (e.g., Jerusalem)
+        const defaultLat = 31.7683;
+        const defaultLon = 35.2137;
+        this.dialog.open(DateSuggestionsModal, {
+          width: '600px',
+          maxWidth: '90vw',
+          data: { type, lat: defaultLat, lon: defaultLon }
+        });
+      }
+    });
   }
 
   openDateIdeas() {
     this.dialog.open(DateIdeasModal, {
       width: '600px',
-      maxWidth: '90vw'
+      maxWidth: '90vw',
+      maxHeight: '60%',
+      panelClass: 'scrolling-dialog'
     });
   }
 
   openOurCalendar() {
     this.dialog.open(OurCalendarModal, {
       width: '600px',
-      maxWidth: '90vw'
+      maxWidth: '90vw',
+      panelClass: 'scrolling-dialog'
     });
   }
 
   openLoveNotes() {
     this.dialog.open(LoveNotesModal, {
       width: '600px',
-      maxWidth: '90vw'
+      maxWidth: '90vw',
+      panelClass: 'scrolling-dialog'
     });
   }
 }
@@ -795,15 +800,15 @@ export class LoveNotesModal implements OnInit {
         <h3>Schedule This Date</h3>
         <form [formGroup]="dateForm" (ngSubmit)="saveDate()" class="date-form">
           <div class="form-group">
-            <input type="datetime-local" formControlName="datetime" required matTooltip="Select date and time for your date" matTooltipPosition="above" />
+            <input type="datetime-local" formControlName="datetime" required />
           </div>
           <div class="form-group place-input-group">
-            <input type="text" formControlName="place" placeholder="Place (optional)" matTooltip="Enter the location name" matTooltipPosition="above" />
-            <a *ngIf="mapsUrl" [href]="mapsUrl" target="_blank" class="maps-btn" matTooltip="Search nearby places on Google Maps" matTooltipPosition="left">
+            <input type="text" formControlName="place" placeholder="Place (optional)" />
+            <button *ngIf="mapsUrl" type="button" class="maps-btn" matTooltip="Search nearby places on Google Maps" matTooltipPosition="left" (click)="openMapsModal()">
               <i class="fa-solid fa-map-location-dot"></i>
-            </a>
+            </button>
           </div>
-          <button mat-raised-button type="submit" class="save-btn" [disabled]="!dateForm.valid || saving" matTooltip="Add this date to your calendar" matTooltipPosition="above">
+            <button mat-raised-button type="submit" class="save-btn" [disabled]="!dateForm.valid || saving">
             <i class="fa-solid fa-heart"></i> {{ saving ? 'Saving...' : 'Add to Calendar' }}
           </button>
         </form>
@@ -811,14 +816,23 @@ export class LoveNotesModal implements OnInit {
       </div>
       
       <!-- Suggestions -->
-      <p>{{ loadingMessage }}</p>
       <div class="suggestions-content">
         <div *ngIf="loading" class="loading">
-          <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+          <i class="fa-solid fa-spinner fa-spin"></i> Loading suggestions...
         </div>
-        <div *ngIf="!loading && suggestions" class="suggestions-list">
+        <div *ngIf="!loading && places.length > 0" class="suggestions-list">
           <div class="tips">
-            <p [innerHTML]="formatSuggestions()"></p>
+            <div *ngFor="let place of places; let i = index" class="suggestion-item" style="margin-bottom: 12px;">
+              <b (click)="selectPlace(place.name)" style="cursor:pointer; text-decoration:underline;">
+                {{i + 1}}. {{place.name}}
+              </b><br>
+              <span style="color:#555">{{place.address}}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!loading && !places.length && suggestions" class="suggestions-list">
+          <div class="tips">
+            <p [innerHTML]="suggestions"></p>
           </div>
         </div>
       </div>
@@ -828,6 +842,8 @@ export class LoveNotesModal implements OnInit {
     .modal-content {
       padding: 20px;
       position: relative;
+      max-height: 60%;
+      overflow-y: scroll;
     }
     .close-x {
       position: absolute;
@@ -947,6 +963,8 @@ export class LoveNotesModal implements OnInit {
       background: #f6ebf2;
       border-radius: 8px;
       line-height: 1.8;
+          max-height: 150px;
+    overflow-y: scroll;
     }
     .tips {
       white-space: pre-line;
@@ -956,6 +974,11 @@ export class LoveNotesModal implements OnInit {
 export class DateSuggestionsModal implements OnInit {
   loading = true;
   suggestions = '';
+  places: any[] = [];
+
+  selectPlace(name: string) {
+    this.dateForm.patchValue({ place: name });
+  }
   mapsUrl = '';
   loadingMessage = 'Getting suggestions near you...';
   dateForm: FormGroup;
@@ -969,7 +992,9 @@ export class DateSuggestionsModal implements OnInit {
     private fb: FormBuilder,
     private tasksService: TasksService,
     private authService: AuthService,
-    private dialogRef: MatDialogRef<DateSuggestionsModal>
+  public dialog: MatDialog,
+  public dialogRef: MatDialogRef<DateSuggestionsModal>,
+  private placesService: PlacesService
   ) {
     // Initialize form with default title based on type
     const titleMap: any = {
@@ -1018,9 +1043,7 @@ export class DateSuggestionsModal implements OnInit {
         next: () => {
           this.saving = false;
           this.showHeart = true;
-          setTimeout(() => {
-            this.dialogRef.close();
-          }, 1500);
+          this.dialogRef.close();
         },
         error: (err) => {
           console.error('Error saving date:', err);
@@ -1043,10 +1066,10 @@ export class DateSuggestionsModal implements OnInit {
   
   getTitle(): string {
     const titles: any = {
-      coffee: 'Coffee Shops Near You',
-      restaurant: 'Restaurants Near You',
-      picnic: 'Picnic Spots Near You',
-      movie: 'Movies & Shows Near You'
+      coffee: 'Coffee Shops',
+      restaurant: 'Restaurants',
+      picnic: 'Picnic Spots',
+      movie: 'Movies & Shows',
     };
     return titles[this.data.type] || 'Date Ideas';
   }
@@ -1062,29 +1085,42 @@ export class DateSuggestionsModal implements OnInit {
       picnic: 'parks and picnic spots',
       movie: 'cinemas and entertainment venues'
     };
-    
-    // Create a Google Maps search URL
-    this.mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(typeMap[this.data.type])}/@${this.data.lat},${this.data.lon},14z`;
-    
-    const question = `I want to find ${typeMap[this.data.type]} for a romantic date. Please suggest 3-4 specific tips for choosing the best place and what to look for to make it a memorable romantic experience.`;
-    
+    const type = typeMap[this.data.type] || 'places';
     try {
-      const response = await this.aiService.getImprovementSuggestion(question).toPromise();
-      // Format the suggestions
-      if (response && response.suggestions) {
-        this.suggestions = '💡 Tips for choosing the perfect spot:\n\n';
-        this.suggestions += response.suggestions.map((s: any, index: number) => 
-          `${index + 1}. ${s.title}\n   ${s.details}`
-        ).join('\n\n');
+      const response = await this.placesService.getNearbyPlaces(type, this.data.lat, this.data.lon).toPromise();
+      if (response && response.places && response.places.length > 0) {
+        this.places = response.places;
+        this.suggestions = '';
       } else {
-        this.suggestions = 'Click the button above to explore options in your area!';
+        this.places = [];
+        this.suggestions = 'No places found. Try searching on Google Maps.';
       }
     } catch (error) {
-      this.suggestions = 'Click the button above to explore options in your area!';
+      this.places = [];
+      this.suggestions = 'No places found. Try searching on Google Maps.';
     } finally {
       this.loading = false;
-      this.loadingMessage = 'AI-powered tips for your romantic date';
+      this.loadingMessage = 'Nearby places for your date';
       this.cdr.detectChanges();
     }
+  }
+
+  openMapsModal() {
+    // Use the type of date to search for places near the user
+    const typeMap: any = {
+      coffee: 'coffee shops',
+      restaurant: 'romantic restaurants',
+      picnic: 'parks and picnic spots',
+      movie: 'cinemas and entertainment venues'
+    };
+    const placeType = typeMap[this.data.type] || 'places';
+    const lat = this.data.lat;
+    const lon = this.data.lon;
+    const query = `${placeType} @${lat},${lon}`;
+    this.dialog.open(GoogleMapsModal, {
+      width: '95vw',
+      maxWidth: '600px',
+      data: { place: query }
+    });
   }
 }

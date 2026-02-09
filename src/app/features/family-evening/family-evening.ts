@@ -1,14 +1,21 @@
+
 import { Confetti } from './confetti';
 import { Component, signal, PLATFORM_ID, Inject, OnDestroy, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { AiSuggestionEditModalComponent, AiSuggestionEditData } from './ai-suggestion-edit-modal.component';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AiService } from '../../core/aiService';
 import { TasksService } from '../../core/tasksService';
+import { FamilyEveningService, FamilyEvening } from '../../core/familyEveningService';
+import { AuthService } from '../../core/authService';
 import { RequiredErrorMessageComponent } from '../../shared/required-error-message.component';
+
 import { Task } from '../../core/tasksService';
+
+
 
 interface FamilyEveningTask {
   title: string;
@@ -23,33 +30,8 @@ interface FamilyEveningTask {
   templateUrl: './family-evening.html',
   styleUrls: ['./family-evening.css'],
 })
-
 export class FamilyEveningComponent implements OnDestroy {
-
-  showPlanner = false;
-  groupedEvenings = signal<{ title: string, tasks: Task[] }[]>([]);
-  filteredMembers: any[] = [];
-  idea = '';
-  date = '';
-  loading = signal(false);
-  error = signal('');
-  tasks = signal<FamilyEveningTask[]>([]);
-  assignedMember: { [taskIdx: number]: string } = {};
-  submitted = false;
-
-  constructor(
-    private aiService: AiService,
-    private tasksService: TasksService,
-    private dialog: MatDialog,
-    @Inject(PLATFORM_ID) private platformId: Object,
-    private elementRef: ElementRef
-  ) {
-    if (this.tasksService && typeof this.tasksService.familyMembers === 'function') {
-      this.filteredMembers = this.tasksService.familyMembers();
-    }
-  }
-
-  editSuggestion(task: any, idx: number) {
+  editSuggestion(task: FamilyEveningTask, idx: number) {
     const dialogRef = this.dialog.open(AiSuggestionEditModalComponent, {
       data: { title: task.title, details: task.details, type: task.type },
       width: '400px',
@@ -67,89 +49,55 @@ export class FamilyEveningComponent implements OnDestroy {
       }
     });
   }
-
-
+  assignTask(task: FamilyEveningTask, member: any, idx: number) {
+    this.assignedMember[idx] = member.email;
+  }
+  ngOnInit(): void {
+    // Show confetti when entering the component
+    if (isPlatformBrowser(this.platformId)) {
+      Confetti.start();
+      setTimeout(() => Confetti.stop(), 5000); // Stop animation after 5 seconds
+      setTimeout(() => Confetti.clear(), 5 * 60 * 1000); // Remove confetti after 5 minutes
+    }
+    const familyId = this.authService.currentUser()?.familyId;
+    if (familyId) {
+      this.familyEveningService.fetchEvenings(familyId).subscribe(evenings => {
+        console.log('Fetched evenings:', evenings);
+        this.evenings.set(evenings);
+      });
+    }
+  }
   openPlannerModal() {
     this.showPlanner = true;
   }
-
   closePlannerModal() {
     this.showPlanner = false;
   }
+  evenings = signal<FamilyEvening[]>([]);
+  showPlanner = false;
+  groupedEvenings = signal<{ title: string, tasks: Task[] }[]>([]);
+  filteredMembers: any[] = [];
+  idea = '';
+  date = '';
+  loading = signal(false);
+  error = signal('');
+  tasks = signal<FamilyEveningTask[]>([]);
+  assignedMember: { [taskIdx: number]: string } = {};
+  submitted = false;
 
-
-  ngOnInit(): void {
-    // Only run confetti in the browser (not during SSR)
-    if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => {
-        const container = this.elementRef.nativeElement.querySelector('.family-evening-container');
-        Confetti.start(container);
-        setTimeout(() => {
-          Confetti.stop(); // Stop animation after 3 seconds, but confetti remains visible
-        }, 3000);
-      }, 0);
-    }
-    this.filteredMembers = this.tasksService.familyMembers();
-    this.tasksService.fetchFamilyMembers().subscribe(members => {
-      this.filteredMembers = members;
-    });
-    // Fetch all family evening tasks for this week and group by title
-    this.tasksService.getTasks().subscribe(tasks => {
-      const now = new Date();
-      const day = now.getDay();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - day);
-      weekStart.setHours(0,0,0,0);
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      weekEnd.setHours(23,59,59,999);
-      const familyEvenings = tasks.filter(t => {
-        if (t.type !== 'family evening' || !t.date) return false;
-        const d = typeof t.date === 'string' ? new Date(t.date) : t.date;
-        return d >= weekStart && d <= weekEnd;
-      });
-      const grouped: { [title: string]: Task[] } = {};
-      for (const t of familyEvenings) {
-        if (!grouped[t.title]) grouped[t.title] = [];
-        grouped[t.title].push(t);
-      }
-      this.groupedEvenings.set(Object.entries(grouped).map(([title, tasks]) => ({ title, tasks })));
-    });
-  }
-
-  // No need to stop confetti on destroy, as we want the static confetti to remain as background
-
-
-  // (Removed duplicate property declarations)
-
-
-
-  // (Removed duplicate constructor)
-
-
-
-
-  assignTask(task: FamilyEveningTask, member: any, idx: number) {
-    this.assignedMember[idx] = member.email;
-    const payload = {
-      title: this.idea,
-      details: task.details,
-      date: new Date(this.date),
-      familyName: member.familyName || '',
-      memberName: member.name,
-      email: member.email,
-      type: 'family evening'
-    };
-    if (this.tasksService && typeof this.tasksService.addTask === 'function') {
-      this.tasksService.addTask(payload).subscribe({
-        next: () => {},
-        error: () => {
-          this.error.set('Failed to assign task.');
-        }
-      });
+  constructor(
+    private aiService: AiService,
+    private tasksService: TasksService,
+    private familyEveningService: FamilyEveningService,
+    private authService: AuthService,
+    private dialog: MatDialog,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private elementRef: ElementRef
+  ) {
+    if (this.tasksService && typeof this.tasksService.familyMembers === 'function') {
+      this.filteredMembers = this.tasksService.familyMembers();
     }
   }
-
 
   getAssignedMemberName(idx: number): string {
     const email = this.assignedMember?.[idx];
@@ -174,9 +122,55 @@ export class FamilyEveningComponent implements OnDestroy {
       next: (res) => {
         this.tasks.set(res.tasks);
         this.loading.set(false);
+        // Do not save yet; wait for user to assign and click Save & Close
       },
       error: (err) => {
         this.error.set('Failed to get tasks from AI.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  saveEvening() {
+    // Only save tasks that have an assigned member
+    const currentUser = this.authService.currentUser();
+    const familyId = currentUser?.familyId;
+    if (!familyId) return;
+    const allTasks = this.tasks();
+    const tasksArr: { memberName: string; task: string }[] = allTasks
+      .map((task: any, i: number) => {
+        const memberEmail = this.assignedMember[i];
+        const member = this.filteredMembers.find((m: any) => m.email === memberEmail);
+        if (memberEmail && member) {
+          return {
+            memberName: member.name as string,
+            task: task.details as string
+          };
+        }
+        return undefined;
+      })
+      .filter((t): t is { memberName: string; task: string } => !!t);
+    if (tasksArr.length === 0) {
+      this.error.set('Please assign at least one task to a member.');
+      return;
+    }
+    this.loading.set(true);
+    this.familyEveningService.createEvening({
+      familyId,
+      date: this.date,
+      title: this.idea,
+      tasks: tasksArr
+    }).subscribe({
+      next: () => {
+        this.loading.set(false);
+        if (isPlatformBrowser(this.platformId)) {
+          Confetti.start(); // Use document.body for maximum visibility
+          setTimeout(() => Confetti.clear(), 5000); // Clear after 5 seconds
+        }
+        this.closePlannerModal();
+      },
+      error: (err) => {
+        this.error.set('Failed to save family evening.');
         this.loading.set(false);
       }
     });
@@ -187,5 +181,24 @@ export class FamilyEveningComponent implements OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       Confetti.clear();
     }
+  }
+
+  deleteEvening(eveningId: string) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: { }
+    });
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.familyEveningService.deleteEvening(eveningId).subscribe({
+          next: () => {
+            this.evenings.set(this.evenings().filter((e: FamilyEvening) => e.id !== eveningId));
+          },
+          error: () => {
+            this.error.set('Failed to delete family evening.');
+          }
+        });
+      }
+    });
   }
 }

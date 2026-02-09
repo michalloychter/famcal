@@ -58,7 +58,7 @@ export class WeatherService {
   }
 
   // Method to get user's location via browser Geolocation API
-  private getUserLocation(): Observable<{ latitude: number, longitude: number }> {
+  public getUserLocation(): Observable<{ latitude: number, longitude: number }> {
     return new Observable(observer => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(

@@ -1,10 +1,11 @@
 
-import { Component, Input, computed, ViewChild, ElementRef, signal, effect } from '@angular/core';
+import { Component, Input, computed, ViewChild, ElementRef, signal, effect, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TasksService } from '../../core/tasksService';
 import { HouseTasksService, HouseTask } from '../../core/houseTasksService';
 import { AuthService } from '../../core/authService';
+import { SocketService } from '../../core/socket.service';
 
 export type TableTask = { title: string; details: string; color: string };
 
@@ -17,7 +18,7 @@ export type TableTask = { title: string; details: string; color: string };
   templateUrl: './house-tasks-table.component.html',
   styleUrls: ['./house-tasks-table.component.css']
 })
-export class HouseTasksTableComponent {
+export class HouseTasksTableComponent implements OnInit, OnDestroy {
   confettiArray = Array.from({ length: 18 });
   private confettiMap = new WeakMap<HouseTask, boolean>();
 
@@ -34,29 +35,40 @@ export class HouseTasksTableComponent {
   tasksMap: { [member: string]: { [day: string]: HouseTask } } = {};
   members = computed(() => (this.tasksService?.familyMembers?.() ?? []).map((m: any) => m.name));
 
+  // effect to update tasksMap when houseTasksService.tasks changes
+  private tasksMapEffect = effect(() => {
+    const tasks = this.houseTasksService.tasks?.() ?? [];
+    this.tasksMap = {};
+    for (const task of tasks) {
+      if (!this.tasksMap[task.memberName]) this.tasksMap[task.memberName] = {};
+      this.tasksMap[task.memberName][task.day] = task;
+    }
+  });
+
   constructor(
     private tasksService: TasksService,
     private houseTasksService: HouseTasksService,
-    private authService: AuthService
-  ) {
+    private authService: AuthService,
+    private socketService: SocketService
+  ) {}
+
+
+  ngOnInit() {
     // Always fetch family members when component is created
-    this.tasksService.fetchFamilyMembers().subscribe();
+    this.tasksService.fetchFamilyMembers()?.subscribe?.();
     // Load house tasks for the current family when component loads
     const familyId = this.authService.currentUser()?.familyId;
     if (familyId) {
-        console.log("familyid",familyId);
-        
       this.houseTasksService.loadTasksForFamily(familyId);
+      this.socketService.connect(familyId);
+      this.socketService.onHouseTasksUpdate(() => {
+        this.houseTasksService.loadTasksForFamily(familyId);
+      });
     }
-    // Subscribe to the signal of house tasks and update tasksMap reactively
-    effect(() => {
-      const tasks = this.houseTasksService.tasks();
-      this.tasksMap = {};
-      for (const task of tasks) {
-        if (!this.tasksMap[task.memberName]) this.tasksMap[task.memberName] = {};
-        this.tasksMap[task.memberName][task.day] = task;
-      }
-    });
+  }
+
+  ngOnDestroy() {
+    this.socketService.disconnect();
   }
 
   triggerConfetti(task: HouseTask) {
@@ -108,7 +120,7 @@ export class HouseTasksTableComponent {
     this.modalTaskColor = '#ffd54f';
   }
 
-  saveTaskFromModal() {
+  async saveTaskFromModal() {
     if (this.modalMember && this.modalDay) {
       const familyId = this.authService.currentUser()?.familyId;
       if (!familyId) return;
@@ -122,19 +134,17 @@ export class HouseTasksTableComponent {
         color: this.modalTaskColor,
         done: false // Always reset done to false on edit
       };
-      // If editing, update; if new, create
-      const obs = existingTask && existingTask.id
-        ? this.houseTasksService.updateTask(existingTask.id, newTask)
-        : this.houseTasksService.createTask(newTask);
-      obs.subscribe({
-        next: () => {
-          this.houseTasksService.loadTasksForFamily(familyId);
-          this.closeTaskModal();
-        },
-        error: () => {
-          this.closeTaskModal();
+      try {
+        if (existingTask && existingTask.id) {
+          await this.houseTasksService.updateTask(existingTask.id, newTask).toPromise();
+        } else {
+          await this.houseTasksService.createTask(newTask).toPromise();
         }
-      });
+        // No need to manually reload, socket will trigger reload
+        this.closeTaskModal();
+      } catch {
+        this.closeTaskModal();
+      }
     } else {
       this.closeTaskModal();
     }
@@ -171,7 +181,3 @@ export class HouseTasksTableComponent {
     return !!this.confettiMap.get(task);
   }
 }
-
-
-
-

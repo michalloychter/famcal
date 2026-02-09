@@ -1,3 +1,11 @@
+/* Ensure form-group fits content for login modal */
+.form-group {
+  max-width: fit-content;
+}
+/* Ensure form-group fits content for login modal */
+.form-group {
+  max-width: fit-content;
+}
 .login-container {
   display: flex;
   justify-content: center;

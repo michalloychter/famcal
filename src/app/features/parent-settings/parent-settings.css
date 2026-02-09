@@ -1,3 +1,19 @@
+/* Custom class for scrolling dialog content */
+.scrolling-dialog .mat-dialog-container {
+  overflow-y: auto !important;
+  max-height: 60vh;
+}
+@media (max-width: 768px) {
+  .header-with-icon .letter-icon-top, .header-with-icon .heart-link-header {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .parent-settings-container::before,
+  .parent-settings-container::after {
+    display: none !important;
+  }
+}
 .parent-settings-container {
   max-width: 800px;
   margin: 0 auto;
@@ -8,11 +24,13 @@
   position: relative;
   overflow: hidden;
 }
-
 /* Falling roses animation */
+
 .parent-settings-container::before,
 .parent-settings-container::after {
-  content: '🌹';
+  content: '\f004'; /* Unicode for Font Awesome heart icon */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
   position: absolute;
   top: -50px;
   font-size: 2rem;
@@ -44,7 +62,7 @@
 .header-with-icon {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 }
@@ -343,24 +361,20 @@ h2 {
 @media (max-width: 768px) {
   .parent-settings-container {
     padding: 15px;
+    padding-bottom: 110px; /* Add space for mobile footer */
   }
-  
   h2 {
     font-size: 1.5rem;
   }
-  
   .welcome-text {
     font-size: 1rem;
   }
-  
   .settings-sections {
     grid-template-columns: 1fr;
   }
-  
   .settings-card {
     padding: 15px;
   }
-  
   .settings-card h3 {
     font-size: 1.1rem;
   }

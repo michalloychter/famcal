@@ -14,6 +14,12 @@ main, .main-div, .register-container {
         margin: auto;
         margin-top: 50px;
 }
+
+@media (max-width: 768px) {
+  .register-container {
+    width: 80%;
+  }
+}
 form div {
     padding: 10px;
 }

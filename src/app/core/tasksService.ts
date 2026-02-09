@@ -25,6 +25,8 @@ export interface Task {
   weekday?: number; // 0 (Sunday) - 6 (Saturday)
   time?: string;    // 'HH:mm'
   done?: boolean;   // Mark task as completed
+  // For improvement tasks: repeatUntil is the last day to show in daily view
+  repeatUntil?: Date | string;
 }
 
 // Interface for creating a new task, where 'id' might be optional before saving

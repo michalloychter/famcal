@@ -1,3 +1,6 @@
+
+// Ensure Firebase is initialized
+require('../firebaseConfig');
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
@@ -19,7 +22,6 @@ module.exports = {
         id: doc.id,
         ...data,
         done: typeof data.done === 'boolean' ? data.done : false,
-        isParent: typeof data.isParent === 'boolean' ? data.isParent : false
       };
     });
   },

@@ -16,8 +16,15 @@ import { HouseTasksService } from '../../../core/houseTasksService';
 })
 export class Login {
   showLoginForm = signal<boolean>(false);
-  
-  constructor(private authService: AuthService, private router: Router, private dialog: MatDialog) {}
+
+  constructor(private authService: AuthService, private router: Router, private dialog: MatDialog) {
+    // On component init, check localStorage for user
+    const userString = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
+    if (userString) {
+      // User exists, route to daily-calendar
+      this.router.navigate(['/daily-calendar']);
+    }
+  }
 
   openLoginForm() {
     this.dialog.open(LoginFormModal, {
@@ -61,21 +68,43 @@ export class Login {
     .login-modal {
       padding: 20px;
       min-width: 300px;
+      max-width: 95vw;
+      box-sizing: border-box;
     }
     .form-group {
       margin-bottom: 15px;
+      max-width: fit-content;
     }
     .form-group label {
       display: block;
       margin-bottom: 5px;
       font-weight: 500;
+      padding: 15px 0 5px 0;
+      word-break: break-word;
     }
     .form-group input {
       width: 100%;
-      padding: 8px;
+      padding: 15px;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 14px;
+      box-sizing: border-box;
+    }
+    @media (max-width: 600px) {
+      .login-modal {
+        padding: 15px;
+        min-width: unset;
+        width: 95vw;
+        max-width: 100vw;
+      }
+      .form-group label {
+        padding: 15px 0 5px 0;
+        font-size: 15px;
+      }
+      .form-group input {
+        padding: 15px;
+        font-size: 16px;
+      }
     }
     .modal-actions {
       display: flex;

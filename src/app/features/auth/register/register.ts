@@ -1,15 +1,34 @@
+
+
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/authService';
 import { Router, RouterModule } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule], // Import FormsModule for ngModel support
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatButtonModule
+  ],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
@@ -54,9 +73,6 @@ export class Register {
     return formatted;
   }
   registerForm: FormGroup;
-  members: any[] = [
-    { memberName: '', username: '', email: '', country: '', whatsappNumber: '', color: '#1976d2', isParent: false }
-  ];
   loading = false;
   submitted = false;
 
@@ -66,7 +82,26 @@ export class Register {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      familyName: ['', Validators.required]
+      familyName: ['', Validators.required],
+      members: this.fb.array([
+        this.createMemberGroup()
+      ])
+    });
+  }
+
+  get members(): FormArray {
+    return this.registerForm.get('members') as FormArray;
+  }
+
+  createMemberGroup(): FormGroup {
+    return this.fb.group({
+      memberName: ['', Validators.required],
+      username: ['', Validators.required],
+      email: [''],
+      country: [''],
+      whatsappNumber: ['', [Validators.required, Validators.pattern('^0?\\d{8,14}$')]],
+      color: ['#1976d2'],
+      isParent: [false]
     });
   }
 
@@ -84,17 +119,28 @@ export class Register {
 
   // Helper to get members FormArray
   addMember() {
-    this.members.push({ memberName: '', username: '', email: '', country: '', whatsappNumber: '', color: '#1976d2', isParent: false });
+    this.members.push(this.createMemberGroup());
   }
+
 
   removeMember(index: number) {
     if (this.members.length > 1) {
-      this.members.splice(index, 1);
+      this.members.removeAt(index);
     }
+  }
+
+  editMember(index: number) {
+    // Placeholder for edit member functionality (e.g., open a modal or inline edit)
+    // For now, just log the member to be edited
+    console.log('Edit member at index', index, this.members.at(index).value);
   }
 
   // Helper getter for easy access to form fields in the template
   get f() { return this.registerForm.controls; }
+  get memberControls() {
+    return (this.registerForm.get('members') as FormArray).controls;
+  }
+
 
   onSubmit() {
     this.submitted = true;
@@ -103,10 +149,11 @@ export class Register {
     if (this.registerForm.invalid) {
       missing.push('familyName');
     }
-    if (!this.members[0].memberName) missing.push('first member name');
-    if (!this.members[0].username) missing.push('first member username');
-    if (!this.members[0].email) missing.push('first member email');
-    if (!this.members[0].whatsappNumber) missing.push('first member whatsappNumber');
+  const firstMember = this.members.at(0).value;
+  if (!firstMember.memberName) missing.push('first member name');
+  if (!firstMember.username) missing.push('first member username');
+  if (!firstMember.email) missing.push('first member email');
+  if (!firstMember.whatsappNumber) missing.push('first member whatsappNumber');
     if (missing.length > 0) {
       this.missingFields.set(missing);
       this.error.set('Please fill all required fields');
@@ -115,7 +162,7 @@ export class Register {
     this.loading = true;
     const payload = {
       familyName: this.registerForm.value.familyName,
-      members: this.members.map(m => ({
+      members: this.members.value.map((m: any) => ({
         name: m.memberName,
         username: m.username,
         email: m.email,

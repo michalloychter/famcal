@@ -1,3 +1,117 @@
+@media (max-width: 768px) {
+    .improvement-title {
+        font-weight: 500;
+        font-size: 1em;
+    }
+}
+@media (max-width: 768px) {
+    ul.suggesting-list li {
+        padding: 5px;
+        width: 70px;
+    }
+}
+/* Improvement tasks list styles */
+.improvement-tasks-list {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    margin-top: 15px;
+    list-style: none;
+}
+
+.improvement-task-li {
+    font-size: 0.92em;
+    /* max-width: 220px; */
+    width: 110px;
+    /* width: 90%; */
+    /* margin: 0 auto; */
+}
+/* Task card style for daily tasks */
+.task-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 18px 22px 12px 22px;
+    min-width: 220px;
+    max-width: 320px;
+    margin: 0 auto 12px auto;
+    transition: box-shadow 0.2s;
+}
+.task-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+/* Flex row for weather and improvement card */
+.weather-flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    /* gap removed */
+}
+
+/* Improvement task card styles */
+.improvement-task-card {
+    background: #ffe066;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 10px;
+    /* min-width removed */
+    max-width: 320px;
+    cursor: pointer;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    margin-left: auto;
+    transition: box-shadow 0.2s;
+}
+.improvement-task-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+.improvement-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.improvement-icons {
+    display: flex;
+    gap: 8px;
+}
+.small-icon {
+    font-size: 1rem;
+    color: #888;
+    cursor: pointer;
+    margin-left: 6px;
+    transition: color 0.2s;
+}
+.small-icon:hover {
+    color: #c62828;
+}
+   
+.improvement-title {
+   
+    font-weight: 700;
+    font-size: 1.08em;
+}
+.improvement-arrow {
+    
+    margin-left: 10px;
+    font-size: 1em;
+    transition: transform 0.2s;
+}
+.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+    padding-top: 0px;
+}
+.improvement-arrow.open {
+    transform: rotate(180deg);
+}
+.improvement-details {
+    margin-top: 10px;
+    color: #444;
+    font-size: 1em;
+    line-height: 1.5;
+}
 /* Task type background colors (copied from family-members.css) */
 .main-div {
     padding: 20px;
@@ -8,13 +122,12 @@
     margin: 0; 
     display: flex;           /* Removes default margin */
 }
-.daily-tasks-container ul li{
+.daily-tasks-container ul .task-li{
     background-color: #d7f2f1;
     align-self: center;
-    width: 20%;
+    width: 90vw;
     border-radius: 10px;
     list-style: none;
-    margin-top: 20px;
     padding: 20px;
     margin: 10px;
     display: flex;
@@ -89,13 +202,6 @@
 }
 /* 3. Center the entire container on the screen */
 /* Since this is a standalone component, you might need to apply the centering to a parent container like the <body> or a main app container */
-body, html, .main-app-container {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center; /* Centers horizontally */
-    align-items: center;     /* Centers vertically */
-}
 .task-member-name {
     border-bottom: 1px solid #222;
     margin-bottom: 6px;
@@ -143,3 +249,4 @@ body, html, .main-app-container {
     padding: 8px;
     border-radius: 4px;
 }
+

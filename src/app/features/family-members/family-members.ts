@@ -11,6 +11,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { AuthService, FamilyMember } from '../../core/authService'; 
 import { TasksService, Task, NewTaskPayload } from '../../core/tasksService'; 
+
+// Extend the saveAsTask event type to accept repeatUntil
+export interface SaveAsTaskPayload {
+  title: string;
+  details: string;
+  date: string;
+  reminderDateTime?: string;
+  repeatUntil?: string;
+}
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { RequiredErrorMessageComponent } from '../../shared/required-error-message.component';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
@@ -18,10 +27,25 @@ import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 //import {FirebaseDatePipe} from '../../shared/pipes/firebase-date.pipe';
 
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 @Component({
   selector: 'app-family-members',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FriendlyDateTimePipe, WeeklyImprovementComponent, RequiredErrorMessageComponent], 
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FriendlyDateTimePipe,
+    WeeklyImprovementComponent,
+    RequiredErrorMessageComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule
+  ],
   templateUrl: './family-members.html',
   styleUrl: './family-members.css',
 })
@@ -164,49 +188,38 @@ export class FamilyMembers implements OnInit {
   /**
    * Handler for saving AI suggestion directly as a task without opening the form.
    */
-  onSaveAsTask(event: { title: string; details: string; date: string; reminderDateTime?: string }): void {
+  onSaveAsTask(event: SaveAsTaskPayload): void {
     const member = this.selectedMember();
     if (!member) {
       alert('Please select a member first.');
       return;
     }
-    
     const familyName = this.authService.currentUser()?.familyName || '';
     const email = member.email;
     const memberName = member.name;
-    
-    // Parse the date string to create a proper Date object
-    const taskDate = new Date(event.date);
-    taskDate.setHours(9, 0, 0, 0); // Default time: 9:00 AM
-    
-    // Parse reminder if provided
-    let reminderDate: Date | undefined;
-    if (event.reminderDateTime) {
-      reminderDate = new Date(event.reminderDateTime);
-    }
-    
+    const startDate = new Date();
+    startDate.setHours(9, 0, 0, 0);
+    const repeatUntil = new Date(startDate);
+    repeatUntil.setDate(startDate.getDate() + 6);
     const payload: NewTaskPayload = {
       title: event.title,
       details: event.details,
-      date: taskDate,
+      date: startDate,
       familyName,
       memberName,
       email,
       type: 'improvement',
-      weekday: taskDate.getDay(),
+      weekday: startDate.getDay(),
       time: '09:00',
-      reminderDateTime: reminderDate
+      repeatUntil: event.repeatUntil || repeatUntil.toISOString()
     };
-    
     this.tasksService.addTask(payload).subscribe({
       next: () => {
-        // Task saved successfully - no alert needed, visual feedback in card
-        // Reload tasks for the selected member
         this.selectMember(member);
       },
       error: (err) => {
-        console.error('Failed to save task:', err);
-        alert('Failed to save task. Please try again.');
+        console.error('Failed to save improvement task:', err);
+        alert('Failed to save improvement task.');
       }
     });
   }
@@ -337,6 +350,8 @@ export class FamilyMembers implements OnInit {
     // Send to members endpoint
     this.tasksService.addMember(memberData).subscribe({
       next: () => {
+  
+  // Called when user selects an AI card; saves it as a single improvement task with repeatUntil
         this.closeAddMemberModal(); // Close modal and reset form
         // Refresh members list
         this.tasksService.fetchFamilyMembers().subscribe();
@@ -363,7 +378,13 @@ export class FamilyMembers implements OnInit {
     this.isFormVisible = false;
     if (member && member.email) {
       this.tasksService.getTasksByEmail(member.email).subscribe(tasks => {
-        this.selectedMemberTasks.set(tasks);
+        const now = new Date();
+        const futureTasks = tasks.filter(task => {
+          // Convert to Date if needed
+          const taskDate = (task.date instanceof Date) ? task.date : new Date(task.date as any);
+          return taskDate >= now;
+        });
+        this.selectedMemberTasks.set(futureTasks);
       });
     } else {
       this.selectedMemberTasks.set([]);

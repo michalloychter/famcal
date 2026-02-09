@@ -2,45 +2,40 @@
   <!-- Show member name as greeting -->
   <p class="userName">Hey {{ memberName() }},</p>
 
- <!-- Weather Forecast Section (New) -->
-  <div class="weather-widget">
-    <div><strong>Today's Weather</strong></div>
-    
-    <!-- FIX 1: Use the PUBLIC 'weatherData()' signal instead of the private 'weather()' -->
-    <!-- FIX 2: Use an 'as weather' alias for clean access within the div -->
-    <div *ngIf="weather() as weather" class="weather-info">
-      <!-- Access properties directly from the 'weather' alias -->
-      <div>{{ weather.city }}</div>
-      <div>{{ weather.temp | number:'1.0-0' }}°C</div>
-      <div>{{ weather.description }}</div>
-      <!-- Use the alias here too -->
-      <img [src]="weather.iconUrl" alt="{{ weather.description }} icon" />
-    </div>
 
-    <!-- FIX 3: Check weatherData() and weatherError() signals for loading/error states -->
-    <div *ngIf="!weather() && !weatherError()" class="loading">
-      Loading weather...
+  <!-- Flex row: weather and improvement tasks -->
+  <div class="weather-flex-row">
+    <div class="weather-widget">
+      <div><strong>Today's Weather</strong></div>
+      <div *ngIf="weather() as weather" class="weather-info">
+        <div>{{ weather.city }}</div>
+        <div>{{ weather.temp | number:'1.0-0' }}°C</div>
+        <div>{{ weather.description }}</div>
+        <img [src]="weather.iconUrl" alt="{{ weather.description }} icon" />
+      </div>
+      <div *ngIf="!weather() && !weatherError()" class="loading">Loading weather...</div>
+      <div *ngIf="weatherError()" class="error-message">{{ weatherError() }}</div>
+      <div *ngIf="weather()" class="clothing-advice">
+        <h4><i class="fa-solid fa-shirt"></i> What to Wear</h4>
+        <div *ngIf="clothingLoading()" class="loading">Getting suggestions...</div>
+        <p *ngIf="clothingAdvice() && !clothingLoading()" class="advice-text">{{ clothingAdvice() }}</p>
+      </div>
     </div>
-    
-    <!-- Check weatherError() signal value -->
-    <div *ngIf="weatherError()" class="error-message">
-      {{ weatherError() }}
-    </div>
-
-    <!-- Clothing Advice Section -->
-    <div *ngIf="weather()" class="clothing-advice">
-      <h4><i class="fa-solid fa-shirt"></i> What to Wear</h4>
-      <div *ngIf="clothingLoading()" class="loading">Getting suggestions...</div>
-      <p *ngIf="clothingAdvice() && !clothingLoading()" class="advice-text">{{ clothingAdvice() }}</p>
-    </div>
+    <!-- Improvement tasks for today and next 6 days -->
+    <ul class="improvement-tasks-list" *ngIf="improvementTasksForNext7Days().length > 0">
+      <li *ngFor="let item of improvementTasksForNext7Days()" class="improvement-task-li">
+        <div class="improvement-task-card" (click)="openImprovementTaskModal(item.task)">
+          <span class="improvement-title">{{ item.task.title }}</span>
+        </div>
+      </li>
+    </ul>
   </div>
 
   <h3>Tasks for Today</h3>
 
-  <ng-container *ngIf="tasks$ | async as tasks">
-    <ng-container *ngIf="tasks.length > 0; else noTasks">
-      <ul>
-        <li *ngFor="let task of filterTasksForToday(tasks)" [ngClass]="'task type-' + mapTaskType(task.type)" [class.task-done]="task.done">
+  <ng-container *ngIf="nonImprovementTasksForToday().length > 0; else noTasksToday">
+    <ul>
+      <li class="task-li" *ngFor="let task of nonImprovementTasksForToday()" [ngClass]="'task type-' + mapTaskType(task.type)" [class.task-done]="task.done">
           <div class="task-content">
             <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
             <strong [class.task-title-done]="task.done">{{ task.title }}</strong>
@@ -65,9 +60,8 @@
         </li>
       </ul>
     </ng-container>
-  </ng-container>
 
-  <ng-template #noTasks>
+  <ng-template #noTasksToday>
     <p>No tasks scheduled for today.</p>
   </ng-template>
 </div>

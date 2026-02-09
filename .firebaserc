@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "famcal-300ca"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

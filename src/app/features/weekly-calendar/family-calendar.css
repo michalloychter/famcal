@@ -1,3 +1,32 @@
+.fc .fc-toolbar-title {
+  font-size: 1em !important;
+}
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 5px;
+    height: 320px;
+    font-size: 0.85rem;
+  }
+  .fc {
+    font-size: 0.85rem;
+  }
+  .fc-toolbar-title {
+    font-size: 1.1rem !important;
+  }
+  .fc-header-toolbar {
+    margin-bottom: 8px !important;
+  }
+  .fc-daygrid-day-number, .fc-timegrid-slot-label {
+    font-size: 0.85rem !important;
+  }
+  .fc-event, .fc-event-main {
+    font-size: 0.8rem !important;
+    padding: 1px 4px !important;
+  }
+  .fc-scrollgrid, .fc-timegrid-body {
+    min-width: unset !important;
+  }
+}
  .fam-btn {
   border-radius: 30px;
   border: 1px;

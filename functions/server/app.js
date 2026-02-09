@@ -1,7 +1,11 @@
 const express = require('express');
 const cors = require('cors'); 
 const app = express();
+// Mount the places routes under /api/places (after app is defined)
+const placesRouter = require('./routes/placesRoutes');
+app.use('/api/places', placesRouter);
 require('dotenv').config(); 
+// Mount the house tasks routes under /api/house-tasks
 
 // 1. Define the PORT variable (read from environment or use a default)
 const PORT = process.env.PORT || 3000;
@@ -11,7 +15,8 @@ app.use(cors());       // Allow cross-origin requests
 app.use(express.json()); // Parse JSON bodies
 
 // 3. --- Route Mounting (Applied SECOND) ---
-
+const houseTaskRouter = require('./routes/houseTaskRoutes');
+app.use('/api/house-tasks', houseTaskRouter);
 
 // Mount the authentication and user-related routes under the /api base path
 const authRouter = require('./routes/authRoutes');
@@ -34,7 +39,18 @@ app.use('/api', aiRouter);
 const shoppingListRouter = require('./routes/shoppingListRoutes');
 app.use('/api/shopping-list', shoppingListRouter);
 
+// Mount the family routes under /api/families
+const familyRouter = require('./routes/familyRoutes');
+app.use('/api/families', familyRouter);
+
+// Mount the familyEvening routes under /api/family-evenings
+const familyEveningRouter = require('./routes/familyEveningRoutes');
+app.use('/api/family-evenings', familyEveningRouter);
+
+const http = require('http');
+const server = http.createServer(app);
+const socket = require('./socket');
+socket.init(server);
 
 // --- Start the Server ---
-// FIX 1 & 2: Use the defined PORT variable
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,3 +1,42 @@
+/* Remove list decoration from family evening cards */
+.family-evening-container .task-card ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+/* Family evening card title color */
+.familyEveningTitle {
+  color: #17a89a;
+  font-weight: bold;
+}
+
+/* Ensure delete icon button never gets generic button background */
+.family-evening-container .delete-icon {
+  background: none !important;
+  color: #581515;
+  border: none;
+  box-shadow: none;
+}
+.family-evening-container .delete-icon:hover,
+.family-evening-container .delete-icon:focus {
+  color: #a82020;
+}
+/* Delete icon button styles */
+.delete-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #581515;
+  transition: color 0.2s;
+}
+.delete-icon:hover,
+.delete-icon:focus {
+  color: #a82020;
+}
 /* Header row for title and add button */
 .fe-header-row {
   display: flex;
@@ -111,6 +150,7 @@
   border: 1px solid #ccc;
 }
 .family-evening-container button {
+  padding: 5px !important;
   background: #4e8cff;
   color: #fff;
   border: none;

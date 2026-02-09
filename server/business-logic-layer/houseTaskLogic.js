@@ -1,9 +1,14 @@
 const houseTaskModel = require('../models/houseTaskModel');
+const { emitFamilyEveningUpdate } = require('../socket');
 
 module.exports = {
   async createHouseTask(task) {
     // Add validation as needed
-    return houseTaskModel.createHouseTask(task);
+    const created = await houseTaskModel.createHouseTask(task);
+    if (task.familyId) {
+      emitFamilyEveningUpdate(task.familyId, { type: 'houseTask', action: 'created', task: created });
+    }
+    return created;
   },
 
   async getHouseTasksByFamily(familyId) {
@@ -11,7 +16,12 @@ module.exports = {
   },
 
   async updateHouseTask(id, updates) {
-    return houseTaskModel.updateHouseTask(id, updates);
+    const updated = await houseTaskModel.updateHouseTask(id, updates);
+    // Emit socket event for real-time update if familyId is present
+    if (updated.familyId) {
+      emitFamilyEveningUpdate(updated.familyId, { type: 'houseTask', action: 'updated', task: updated });
+    }
+    return updated;
   },
 
   async deleteHouseTask(id) {
