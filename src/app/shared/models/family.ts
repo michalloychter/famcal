@@ -21,6 +21,7 @@ export interface familyDetails {
   name?: string;
   email?: string;
   isParent?: boolean; // Whether the logged-in user is a parent
+  lang?: string; // User language code (optional)
 }
 
 export interface FamilyRegistrationPayload {

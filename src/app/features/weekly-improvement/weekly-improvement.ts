@@ -8,7 +8,9 @@ import { AiService } from '../../core/aiService';
 import { timeout, catchError, of } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 export interface ImprovementSuggestion {
@@ -19,7 +21,7 @@ export interface ImprovementSuggestion {
 @Component({
   selector: 'app-weekly-improvement',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslateModule],
   templateUrl: './weekly-improvement.html',
   styleUrl: './weekly-improvement.css'
 })

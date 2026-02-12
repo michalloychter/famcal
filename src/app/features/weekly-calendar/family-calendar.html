@@ -1,6 +1,6 @@
 <div class="calendar-container main-div">
   <div class="calendar-header">
-    <h2>Family Calendar</h2>
+    <h2>{{'FAMILY_CALENDAR' | translate}}</h2>
     
     <div class="google-calendar-controls">
       @if (!isGoogleCalendarConnected()) {
@@ -11,11 +11,11 @@
           [disabled]="isLoadingGoogleCalendar() || !googleCalendarInitialized()">
           <mat-icon>event</mat-icon>
           @if (!googleCalendarInitialized()) {
-            Initializing...
+            {{'INITIALIZING' | translate}}...
           } @else if (isLoadingGoogleCalendar()) {
-            Connecting...
+            {{'CONNECTING' | translate}}...
           } @else {
-            Connect Google Calendar
+            {{'CONNECT_GOOGLE_CALENDAR' | translate}}
           }
         </button>
       } @else {
@@ -24,7 +24,7 @@
           color="accent" 
           (click)="disconnectGoogleCalendar()">
           <mat-icon>event_busy</mat-icon>
-          Disconnect Google Calendar
+          {{'DISCONNECT_GOOGLE_CALENDAR' | translate}}
         </button>
       }
     </div>

@@ -4,11 +4,11 @@
       <button class="modal-close-btn" (click)="closeTaskModal()" aria-label="Close">
         <i class="fa fa-times"></i>
       </button>
-      <h3>Add/Edit Task</h3>
+      <h3>{{ 'ADD_EDIT_TASK' | translate }}</h3>
       <input
         type="text"
         [(ngModel)]="modalTaskTitle"
-        placeholder="Task title"
+        placeholder="{{ 'TASK_TITLE' | translate }}"
         class="modal-task-input"
         autofocus
       />
@@ -29,7 +29,7 @@
         />
       </label>
       <div class="modal-actions">
-        <button class="fam-btn" (click)="saveTaskFromModal()">Save</button>
+        <button class="fam-btn" (click)="saveTaskFromModal()">{{ 'SAVE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@
   <table class="house-tasks-table">
     <thead>
       <tr>
-        <th>Member \ Day</th>
+        <th>{{ 'MEMBER_DAY' | translate }}</th>
         <th *ngFor="let day of days">{{ day }}</th>
       </tr>
     </thead>
@@ -85,7 +85,7 @@
                 (click)="$event.stopPropagation(); triggerConfetti(cell); markTaskDone(cell)"
                 style="cursor:pointer; margin-left:8px; background:#e0ffe0; color:#388e3c; border-radius:12px; padding:2px 10px; font-size:0.9em; font-weight:600; position:relative; overflow:visible;"
               >
-                Done
+                {{ 'DONE' | translate }}
                 <span *ngIf="isConfettiActive(cell)" class="confetti-container">
                   <span *ngFor="let c of confettiArray" class="confetti-piece"></span>
                 </span>

@@ -7,8 +7,15 @@
     height: 320px;
     font-size: 0.85rem;
   }
+  .fc .fc-toolbar-title {
+    font-size: 15px !important;
+  }
+.fc .fc-button {
+  padding: 0px !important;
+  line-height:1 !important;
+}
   .fc {
-    font-size: 0.85rem;
+    font-size: 8px;
   }
   .fc-toolbar-title {
     font-size: 1.1rem !important;

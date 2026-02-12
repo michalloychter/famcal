@@ -1,45 +1,45 @@
 <div class="shopping-list-container">
 <h2 class="shopping-list-title-row">
-  Shopping List
+ {{ 'SHOPPING_LIST' | translate }}
   <span class="new-list-icon tooltip-wrapper" (click)="showDeleteModal = true">
     <i class="fa fa-file-alt"></i>
-    <span class="custom-tooltip">new list</span>
+    <span class="custom-tooltip">{{ 'NEW_LIST' | translate }}</span>
   </span>
 </h2>
 
 <!-- Modal for confirming new list (delete) -->
 <div *ngIf="showDeleteModal" class="modal-backdrop">
   <div class="modal-card confirm-modal">
-    <div class="modal-title">Start a new list?</div>
-    <div class="modal-message">This will delete the current list.<br> Are you sure?</div>
+    <div class="modal-title">{{ 'START_NEW_LIST' | translate }}</div>
+    <div class="modal-message">{{ 'DELETE_CURRENT_LIST_CONFIRMATION' | translate }}</div>
     <div class="modal-actions">
-      <button class="fam-btn danger" (click)="deleteListAndCloseModal()">Delete</button>
-      <button class="fam-btn" (click)="showDeleteModal = false">Cancel</button>
+      <button class="fam-btn danger" (click)="deleteListAndCloseModal()">{{ 'DELETE' | translate }}</button>
+      <button class="fam-btn" (click)="showDeleteModal = false">{{ 'CANCEL' | translate }}</button>
     </div>
   </div>
 </div>
   <form (ngSubmit)="addItem()" #itemForm="ngForm" autocomplete="off" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
     <input
       type="text"
-      placeholder="Add item..."
+      placeholder="{{ 'ADD_ITEM' | translate }}"
       [(ngModel)]="newItem"
       name="item"
       required
       (keyup.enter)="addItem()"
       style="flex: 1 1 auto;"
     />
-    <button class="fam-btn" type="submit" [disabled]="!newItem">Add</button>
-    <button class="fam-btn" type="button" (click)="copyList()" [disabled]="!items().length">Copy List to Clipboard</button>
+    <button class="fam-btn" type="submit" [disabled]="!newItem">{{ 'ADD' | translate }}</button>
+    <button class="fam-btn" type="button" (click)="copyList()" [disabled]="!items().length">{{ 'COPY_LIST' | translate }}</button>
   </form>
   <ul>
     <li *ngFor="let item of items(); let i = index">
       {{ item }}
-      <button class="fam-btn" (click)="removeItem(i)" title="Remove">&times;</button>
+      <button class="fam-btn" (click)="removeItem(i)" title="{{ 'REMOVE' | translate }}">&times;</button>
     </li>
   </ul>
   <div class="super-links">
-    <a class="super-link" href="https://www.rami-levy.co.il/he/online/market" target="_blank" rel="noopener">Rami Levi</a>
-    <a class="super-link" href="https://www.shufersal.co.il/online/he" target="_blank" rel="noopener">Shufersal</a>
-    <a class="super-link" href="https://www.yochananof.co.il/" target="_blank" rel="noopener">Yochananof</a>
+    <a class="super-link" href="https://www.rami-levy.co.il/he/online/market" target="_blank" rel="noopener">{{ 'RAMI_LEVI' | translate }}</a>
+    <a class="super-link" href="https://www.shufersal.co.il/online/he" target="_blank" rel="noopener">{{ 'SHUFERSAL' | translate }}</a>
+    <a class="super-link" href="https://www.yochananof.co.il/" target="_blank" rel="noopener">{{ 'YOCHANANOF' | translate }}</a>
   </div>
 </div>

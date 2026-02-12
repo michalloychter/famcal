@@ -101,33 +101,40 @@ router.post('/login', async (req, res) => {
 });
 // 3. Get AI Clothing Advice Route (This route was largely correct, adding basic validation)
 router.post('/clothing-advice', async (req, res) => {
-    const { temp, description, city } = req.body; 
+  const { temp, description, city, lang } = req.body; 
 
-    if (!temp || !description) {
-        return res.status(400).json({ error: "Missing temperature or description in request body." });
-    }
-    // ... (rest of the OpenAI logic) ...
-     const prompt = `Based on the current weather in ${city || 'your location'}: 
-                    Temperature: ${temp}°C, Description: ${description}. 
-                    Provide a single, friendly sentence of advice on what clothes to wear today.`;
+  if (!temp || !description) {
+    return res.status(400).json({ error: "Missing temperature or description in request body." });
+  }
+  // Adjust prompt for Hebrew if lang==='he'
+  let prompt;
+  if (lang === 'he') {
+    prompt = `בהתבסס על מזג האוויר הנוכחי ב${city || 'המיקום שלך'}:
+טמפרטורה: ${temp}°C, תיאור: ${description}.
+תן משפט ידידותי אחד בעברית עם עצה מה ללבוש היום.`;
+  } else {
+    prompt = `Based on the current weather in ${city || 'your location'}: 
+Temperature: ${temp}°C, Description: ${description}. 
+Provide a single, friendly sentence of advice on what clothes to wear today.`;
+  }
 
-    try {
-        const response = await openaiClient.chat.completions.create({
-            model: "gpt-3.5-turbo", 
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 60 
-        });
+  try {
+    const response = await openaiClient.chat.completions.create({
+      model: "gpt-3.5-turbo", 
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 60 
+    });
 
-        const adviceText = response.choices.message.content;
-        res.json({ advice: adviceText });
+    const adviceText = response.choices.message.content;
+    res.json({ advice: adviceText });
 
-    } catch (error) {
-        console.error("Error calling OpenAI:", error.message);
-        res.status(500).json({ 
-            error: "Failed to get clothing advice from AI.",
-            details: error.message
-        });
-    }
+  } catch (error) {
+    console.error("Error calling OpenAI:", error.message);
+    res.status(500).json({ 
+      error: "Failed to get clothing advice from AI.",
+      details: error.message
+    });
+  }
 });
 
 module.exports = router;

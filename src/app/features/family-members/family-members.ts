@@ -1,4 +1,4 @@
-// import { Confetti } from '../family-evening/confetti';
+
 import { FamilyEveningComponent } from '../family-evening/family-evening';
 import { WeeklyImprovementComponent } from '../weekly-improvement/weekly-improvement';
 import { Component, OnInit, Pipe, PipeTransform , signal, computed} from '@angular/core';
@@ -22,6 +22,7 @@ export interface SaveAsTaskPayload {
 }
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
 import { RequiredErrorMessageComponent } from '../../shared/required-error-message.component';
+import { TranslateModule } from '@ngx-translate/core';
 import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 
 //import {FirebaseDatePipe} from '../../shared/pipes/firebase-date.pipe';
@@ -44,12 +45,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    TranslateModule
   ],
   templateUrl: './family-members.html',
   styleUrl: './family-members.css',
 })
 export class FamilyMembers implements OnInit {
+ 
+  get dir(): 'rtl' | 'ltr' {
+    return document?.dir === 'rtl' ? 'rtl' : 'ltr';
+  }
   // Called when user selects an AI card; saves it as a task for every day in the week
   selectAICard(card: { title: string; details: string; type?: string }): void {
     const member = this.selectedMember();

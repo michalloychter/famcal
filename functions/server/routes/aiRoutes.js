@@ -15,19 +15,28 @@ function getOpenAI() {
 
 // POST /api/ai-family-evening-tasks
 router.post('/ai-family-evening-tasks', async (req, res) => {
-  const { idea, date } = req.body;
+  const { idea, date, lang } = req.body;
   console.log('[AI TASKS] Incoming request:', { idea, date });
   if (!idea || !date) {
     console.log('[AI TASKS] Missing idea or date');
     return res.status(400).json({ error: 'Idea and date are required.' });
   }
   try {
-    const prompt = `A family wants to organize a family evening with the idea: "${idea}" on ${date}.\nGenerate 2 creative food-related tasks and 2 equipment-related tasks needed for this event.\nReturn the result as a JSON array of objects, each with: title, type (food or equipment), and a short details field. Example: [{"title": "Make popcorn", "type": "food", "details": "Prepare fresh popcorn for everyone."}, ...]`;
+    let prompt, systemPrompt;
+    // Detect Hebrew: either lang param is 'he', or idea contains Hebrew characters
+    const isHebrew = lang === 'he' || /[\u0590-\u05FF]/.test(idea);
+    if (isHebrew) {
+      prompt = `משפחה רוצה לארגן ערב משפחתי עם הרעיון: "${idea}" בתאריך ${date}.\nצור 2 משימות יצירתיות שקשורות לאוכל ו-2 משימות שקשורות לציוד שצריך לאירוע.\nהחזר תוצאה כ-array של אובייקטים JSON, כל אחד עם: title, type (food או equipment), ו-details קצר. דוגמה: [{"title": "להכין פופקורן", "type": "food", "details": "להכין פופקורן טרי לכולם."}, ...]`;
+      systemPrompt = 'אתה עוזר ידידותי לתכנון ערבי משפחה. ענה בעברית בלבד.';
+    } else {
+      prompt = `A family wants to organize a family evening with the idea: "${idea}" on ${date}.\nGenerate 2 creative food-related tasks and 2 equipment-related tasks needed for this event.\nReturn the result as a JSON array of objects, each with: title, type (food or equipment), and a short details field. Example: [{"title": "Make popcorn", "type": "food", "details": "Prepare fresh popcorn for everyone."}, ...]`;
+      systemPrompt = 'You are a helpful assistant for planning family events.';
+    }
     console.log('[AI TASKS] Sending prompt to OpenAI:', prompt);
     const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'You are a helpful assistant for planning family events.' },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt }
       ],
       max_tokens: 350
@@ -88,10 +97,14 @@ Example response:
   {"title": "Watch English content", "details": "Watch movies, TV shows, or YouTube videos in English with subtitles to improve listening skills."}
 ]`;
 
+    let systemPrompt = 'You are a helpful, practical coach. You MUST respond with ONLY valid JSON arrays, no additional text.';
+    if (lang === 'he' || /[-F]/.test(question)) {
+      systemPrompt = 'אתה מאמן פרקטי ועוזר. ענה בעברית בלבד. החזר רק מערך JSON תקני, בלי טקסט נוסף.';
+    }
     const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'You are a helpful, practical coach. You MUST respond with ONLY valid JSON arrays, no additional text.' },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt }
       ],
       max_tokens: 500,
@@ -144,22 +157,27 @@ Example response:
 
 // POST /api/ai-clothing-suggestion
 router.post('/ai-clothing-suggestion', async (req, res) => {
-  const { temp, description, city } = req.body;
-  console.log('[AI CLOTHING] Incoming request:', { temp, description, city });
+  const { temp, description, city, lang } = req.body;
+  console.log('[AI CLOTHING] Incoming request:', { temp, description, city, lang });
   if (temp === undefined || !description) {
     return res.status(400).json({ error: 'Temperature and weather description are required.' });
   }
   try {
-    const prompt = `The weather today in ${city || 'your area'} is ${description} with a temperature of ${temp}°C.
-
-Give ONE sentence clothing recommendation for what to wear today. Be brief, casual and helpful.
-
-Example: "Bundle up with a warm jacket and scarf - it's cold and rainy today!"`;
+    let prompt;
+   
+    let systemPrompt;
+    if (lang === 'he') {
+      prompt = `מזג האוויר היום הוא ${description} עם טמפרטורה של ${temp}°C.\n\nתן משפט אחד בעברית עם המלצה מה ללבוש היום. תהיה ידידותי, קצר ועוזר.\n\nדוגמה: "תלבש מעיל חם וצעיף - קר וגשום היום!"`;
+      systemPrompt = 'אתה עוזר מזג אוויר ידידותי. ענה בעברית בלבד. תן משפט אחד בלבד בעברית עם המלצה מה ללבוש.';
+    } else {
+      prompt = `The weather today is ${description} with a temperature of ${temp}°C.\n\nGive ONE sentence clothing recommendation for what to wear today. Be brief, casual and helpful.\n\nExample: "Bundle up with a warm jacket and scarf - it's cold and rainy today!"`;
+      systemPrompt = 'You are a friendly weather assistant. Give ONE sentence clothing advice only.';
+    }
 
     const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'You are a friendly weather assistant. Give ONE sentence clothing advice only.' },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt }
       ],
       max_tokens: 50,

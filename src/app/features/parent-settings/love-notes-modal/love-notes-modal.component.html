@@ -1,0 +1,42 @@
+<div class="modal-content">
+  <button mat-icon-button class="close-x" mat-dialog-close matTooltip="Close" matTooltipPosition="left">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+  <h2><i class="fa-solid fa-envelope-open-text"></i> our Notes</h2>
+  <div class="chat-container">
+    <div class="chat-messages">
+      @if (notes.length === 0) {
+        <p class="no-messages">No messages yet. Start the conversation!</p>
+      } @else {
+        @for (note of notes; track note.id) {
+          <div class="message-wrapper" [class.my-message]="isMyMessage(note)">
+            <div class="message-bubble" [class.my-bubble]="isMyMessage(note)">
+              <p class="message-text">{{ note.details }}</p>
+              <div class="message-footer">
+                <span class="message-author">{{ note.memberName }}</span>
+                <span class="message-time">{{ note.date | date:'h:mm a' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+  <div class="message-input-section">
+    <form [formGroup]="noteForm">
+      <div class="message-input-container">
+        <textarea 
+          formControlName="message" 
+          placeholder="Type a message..." 
+          rows="2"
+          (keydown.enter)="onEnterPress($any($event))"
+          matTooltip="Press Enter to send, Shift+Enter for new line" 
+          matTooltipPosition="above"
+          matTooltipShowDelay="500"></textarea>
+        <button mat-icon-button type="button" (click)="sendNote()" class="send-btn" [disabled]!="noteForm.valid" matTooltip="Send message" matTooltipPosition="left">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

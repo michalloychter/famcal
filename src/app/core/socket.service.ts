@@ -5,6 +5,9 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SocketService {
+  onMessagesUpdate(callback: (msgs: any[]) => void) {
+    this.socket.on('messagesUpdated', callback);
+  }
   private socket: Socket;
 
   constructor() {

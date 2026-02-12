@@ -111,7 +111,7 @@ h2 {
 
 .all-icons-row {
   display: flex;
-  gap: 15px;
+  gap: 0px;
   justify-content: center;
   padding: 15px;
   background: rgba(255, 255, 255, 0.5);

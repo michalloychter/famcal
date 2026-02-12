@@ -1,28 +1,76 @@
-import { Component, OnInit, OnDestroy, computed, signal, ElementRef, Renderer2 } from '@angular/core';
+
+import { Component, OnInit, OnDestroy, computed, signal, ElementRef, Renderer2, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/authService';
+import { NavIconsComponent } from '../../shared/nav-icons/nav-icons.component';
 import type { familyDetails } from '../../shared/models/family';
-import { Subscription } from 'rxjs';
-import { Router, RouterLink } from '@angular/router'; // Import RouterLink for standalone component links
+import { AllMessagesModalComponent } from '../../features/all-messages-modal/all-messages-modal.component';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [ CommonModule, TranslateModule, NavIconsComponent],
   templateUrl: './header.html', 
   styleUrls: ['./header.css', './header-nav.css']
 })
 export class Header implements OnInit, OnDestroy {
-  // local UI state for the user menu dropdown
+ 
   public userMenuOpen = signal(false);
   private removeDocClickListener: (() => void) | null = null;
 
+  currentLang = signal('en');
+
   constructor(
-    public authService: AuthService,
-    private router: Router,
-    private hostRef: ElementRef,
-    private renderer: Renderer2
-  ) {}
+  public authService: AuthService,
+  private router: Router,
+  private hostRef: ElementRef,
+  private renderer: Renderer2,
+  private translate: TranslateService,
+  private dialog: MatDialog,
+  @Inject(PLATFORM_ID) private platformId: Object
+ 
+  ) {
+    this.translate.addLangs(['en', 'he']);
+    this.translate.setDefaultLang('en');
+    const browserLang = this.translate.getBrowserLang();
+    const initialLang = browserLang === 'he' ? 'he' : 'en';
+    this.currentLang.set(initialLang);
+    this.translate.use(initialLang);
+    // Set <html> dir and lang on load (browser only)
+    if (isPlatformBrowser(this.platformId)) {
+      const dir = initialLang === 'he' ? 'rtl' : 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', initialLang);
+    }
+  }
+  openAllMessages() {
+    this.dialog.open(AllMessagesModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: 'scrolling-dialog'
+    });
+  }
+  onLangChange(event: Event) {
+    const value = (event.target as HTMLSelectElement)?.value;
+    if (value) this.switchLang(value);
+  }
+
+  switchLang(lang: string) {
+    this.currentLang.set(lang);
+    this.translate.use(lang);
+    // Set <html> dir and lang attributes dynamically (browser only)
+    if (isPlatformBrowser(this.platformId)) {
+      const dir = lang === 'he' ? 'rtl' : 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', lang);
+      console.log('Switched language to:', lang, 'dir:', dir);
+    }
+  }
 
   toggleUserMenu(): void {
     const willOpen = !this.userMenuOpen();
@@ -70,5 +118,13 @@ export class Header implements OnInit, OnDestroy {
     this.authService.logout();
     // Optional: Redirect to login page or home page after logout
     this.router.navigate(['/login']); 
+  }
+
+  onLogoClick() {
+    if (this.authService.currentUser()) {
+      this.router.navigate(['/daily-calendar']);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 }

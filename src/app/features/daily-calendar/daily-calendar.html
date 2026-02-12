@@ -1,23 +1,25 @@
 <div class="daily-tasks-container main-div">
   <!-- Show member name as greeting -->
-  <p class="userName">Hey {{ memberName() }},</p>
+  <div class="whatsapp-greeting">
+    <span class="greeting-text">{{ 'Hy' | translate }} {{ memberName() }},</span>
+  </div>
 
 
   <!-- Flex row: weather and improvement tasks -->
   <div class="weather-flex-row">
     <div class="weather-widget">
-      <div><strong>Today's Weather</strong></div>
+      <div><strong>{{ 'TODAYS_WEATHER' | translate }}</strong></div>
       <div *ngIf="weather() as weather" class="weather-info">
-        <div>{{ weather.city }}</div>
+        <div *ngIf="!isHebrew">{{ weather.city }}</div>
         <div>{{ weather.temp | number:'1.0-0' }}°C</div>
-        <div>{{ weather.description }}</div>
-        <img [src]="weather.iconUrl" alt="{{ weather.description }} icon" />
+        <div>{{ ( weather.description) | translate }}</div>
+        <img [src]="weather.iconUrl" alt="{{ ('weather.' + weather.description) | translate }} icon" />
       </div>
-      <div *ngIf="!weather() && !weatherError()" class="loading">Loading weather...</div>
+      <div *ngIf="!weather() && !weatherError()" class="loading">{{ 'LOADING_WEATHER' | translate }}</div>
       <div *ngIf="weatherError()" class="error-message">{{ weatherError() }}</div>
       <div *ngIf="weather()" class="clothing-advice">
-        <h4><i class="fa-solid fa-shirt"></i> What to Wear</h4>
-        <div *ngIf="clothingLoading()" class="loading">Getting suggestions...</div>
+        <h4><i class="fa-solid fa-shirt"></i> {{ 'WHAT_TO_WEAR' | translate }}</h4>
+        <div *ngIf="clothingLoading()" class="loading">{{ 'GETTING_SUGGESTIONS' | translate }}</div>
         <p *ngIf="clothingAdvice() && !clothingLoading()" class="advice-text">{{ clothingAdvice() }}</p>
       </div>
     </div>
@@ -31,7 +33,7 @@
     </ul>
   </div>
 
-  <h3>Tasks for Today</h3>
+  <h3>{{ 'TASKS_FOR_TODAY' | translate }}</h3>
 
   <ng-container *ngIf="nonImprovementTasksForToday().length > 0; else noTasksToday">
     <ul>
@@ -54,7 +56,7 @@
               [class.done-active]="task.done"
               (click)="toggleTaskDone(task)"
             >
-              Done
+             {{ 'DONE' | translate }}
             </button>
           </div>
         </li>
@@ -62,6 +64,6 @@
     </ng-container>
 
   <ng-template #noTasksToday>
-    <p>No tasks scheduled for today.</p>
+    <p>{{ 'NO_TASKS_TODAY' | translate }}.</p>
   </ng-template>
 </div>

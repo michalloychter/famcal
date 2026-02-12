@@ -1,0 +1,92 @@
+.modal-content {
+  padding: 20px;
+  min-width: 400px;
+  position: relative;
+}
+.close-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #722f37;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  z-index: 10;
+}
+.close-x:hover {
+  color: #5c1f29;
+}
+h2 {
+  color: #722f37;
+  margin-bottom: 10px;
+}
+h2 i {
+  margin-right: 5px;
+}
+.date-form {
+  margin: 20px 0;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #722f37;
+  font-weight: 500;
+}
+.form-group label i {
+  margin-right: 5px;
+}
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #722f37;
+}
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+.save-btn {
+  background: #722f37;
+  color: white;
+  width: 100%;
+}
+.save-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.floating-heart {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  color: #722f37;
+  animation: floatUp 2s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-100px) scale(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-200px) scale(2);
+  }
+}

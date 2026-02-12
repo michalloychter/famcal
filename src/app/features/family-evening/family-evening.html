@@ -1,48 +1,53 @@
 <div class="family-evening-container">
   <div class="fe-header-row">
-    <h2>Family Evenings This Week</h2>
+    <h2>{{ 'FAMILY_EVENINGS_THIS_WEEK' | translate }}</h2>
     <button class="add-btn-icon" (click)="openPlannerModal()" title="Add Family Evening">
       <span aria-hidden="true">+</span>
     </button>
   </div>
   <div class="suggestions-list">
     <div *ngFor="let evening of evenings()" class="task-card" style="position: relative;">
-      <button class="delete-icon" (click)="deleteEvening(evening.id)" title="Delete Evening">
-        <i class="fa fa-times"></i>
-      </button>
-      <h4 class="familyEveningTitle">{{ evening.title }}</h4>
-      <ul>
+      <div class="task-card-header">
+        <h4 class="familyEveningTitle">{{ evening.title }}</h4>
+        <button class="delete-icon" (click)="deleteEvening(evening.id)" title="Delete Evening">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+      <ul style="padding-inline-start: 10px;">
+  
         <li style="display: flex;" *ngFor="let task of evening.tasks">
-          <span style="font-weight: bolder;">{{ task.memberName }}</span> - <div>{{ task.task }}</div>
+          <span style="font-weight: bolder;margin-inline-end: 5px;">{{ task.memberName }}</span> - <div style="margin-inline-start: 5px;">{{ task.task }}</div>
         </li>
       </ul>
       <div class="task-date">{{ evening.date | date:'shortDate' }}</div>
     </div>
-    <div *ngIf="evenings().length === 0" class="no-evenings">No family evenings for this week.</div>
+    <div *ngIf="evenings().length === 0" class="no-evenings">{{ 'NO_FAMILY_EVENINGS_THIS_WEEK' | translate }}</div>
   </div>
 
   <div class="planner-modal" *ngIf="showPlanner">
     <div class="modal-backdrop" (click)="closePlannerModal()"></div>
     <div class="modal-content centered">
-      <h2>Family Evening Planner</h2>
-      <form (submit)="submitIdea($event)">
+      <h2>{{ 'FAMILY_EVENING_PLANNER' | translate }}</h2>
+  <form (ngSubmit)="submitIdea($event)">
         <label>
-          Date:
+          {{ 'DATE' | translate }}:
           <input type="date" name="date" [(ngModel)]="date" required />
-          <app-required-error-message *ngIf="submitted && !date" fieldName="Date" />
+          <app-required-error-message *ngIf="submitted && !date" fieldName="{{ 'DATE' | translate }}" />
         </label>
         <label>
-          Activity:
-          <input type="text" name="activity" [(ngModel)]="idea" placeholder="e.g. Movie night, Board games" required />
-          <app-required-error-message *ngIf="submitted && !idea" fieldName="Activity" />
+          {{ 'ACTIVITY' | translate }}:
+          <input type="text" name="activity" [(ngModel)]="idea" placeholder="{{ 'ACTIVITY_PLACEHOLDER' | translate }}" required />
+          <app-required-error-message *ngIf="submitted && !idea" fieldName="{{ 'ACTIVITY' | translate }}" />
         </label>
-        <button type="submit">Suggest Family Evening</button>
-        <button type="button" (click)="closePlannerModal()" style="margin-left: 12px;">Cancel</button>
+        <button type="submit" [disabled]="loading()">
+          <span *ngIf="!loading()">{{ 'SUGGEST_FAMILY_EVENING' | translate }}</span>
+          <span *ngIf="loading()" class="loading-message">{{ 'Loading suggestion...' | translate }}</span>
+        </button>
+        <button type="button" (click)="closePlannerModal()" style="margin-left: 12px;">{{ 'CANCEL' | translate }}</button>
       </form>
       <div class="suggestions-list">
   <div *ngFor="let task of tasks(); let i = index" class="task-card" (click)="editSuggestion(task, i)">
           <h4>{{ task.title }}</h4>
-          <span class="task-type">{{ task.type }}</span>
           <p>{{ task.details }}</p>
           <div class="member-tags">
             <span *ngFor="let member of filteredMembers; let mi = index"
@@ -54,12 +59,12 @@
             </span>
           </div>
           <div *ngIf="assignedMember[i]" class="assigned-label">
-            Assigned to: {{ getAssignedMemberName(i) }}
+            {{ 'ASSIGNED_TO' | translate }}: {{ getAssignedMemberName(i) }}
           </div>
         </div>
       </div>
       <div *ngIf="tasks().length > 0" style="margin-top: 20px; text-align: center;">
-        <button type="button" class="fam-btn close-btn" (click)="saveEvening()">Saved & Close</button>
+        <button type="button" class="fam-btn close-btn" (click)="saveEvening()">{{ 'SAVED_AND_CLOSE' | translate }}</button>
       </div>
     </div>
   </div>

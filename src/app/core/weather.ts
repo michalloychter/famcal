@@ -24,16 +24,21 @@ export class WeatherService {
   /**
    * Gets weather based on a specific city name (if provided) or uses user location.
    */
-  getWeather(city?: string): Observable<WeatherData> { // Made city optional
+  /**
+   * Gets weather based on a specific city name (if provided) or uses user location.
+   * @param city Optional city name
+   * @param lang Optional language code (e.g., 'en', 'he')
+   */
+  getWeather(city?: string, lang: string = 'en'): Observable<WeatherData> {
     if (city) {
       // Use city name if provided
-      const url = `${this.apiUrl}?q=${city}&appid=${this.apiKey}&units=metric`;
+      const url = `${this.apiUrl}?q=${city}&appid=${this.apiKey}&units=metric&lang=${lang}`;
       return this.fetchWeather(url);
     } else {
       // Otherwise, get user location first and then fetch weather
       return this.getUserLocation().pipe(
         switchMap(coords => {
-          const url = `${this.apiUrl}?lat=${coords.latitude}&lon=${coords.longitude}&appid=${this.apiKey}&units=metric`;
+          const url = `${this.apiUrl}?lat=${coords.latitude}&lon=${coords.longitude}&appid=${this.apiKey}&units=metric&lang=${lang}`;
           return this.fetchWeather(url);
         }),
         catchError(this.handleError) // Handle errors in location finding or fetching
@@ -80,7 +85,9 @@ export class WeatherService {
   getClothingAdvice(temp: number, description: string, city: string): Observable<{ advice: string }> {
     // We POST the weather data to OUR backend server, which handles the OpenAI call securely
     const backendUrl = `${environment.apiUrl}/clothing-advice`;
-    const body = { temp, description, city };
+    // Accept lang as an optional fourth parameter
+    const lang = arguments[3] || 'en';
+    const body = { temp, description, city, lang };
 
     return this.http.post<{ advice: string }>(backendUrl, body).pipe(
       catchError(this.handleError)

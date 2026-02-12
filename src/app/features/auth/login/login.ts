@@ -6,11 +6,12 @@ import { AuthService } from '../../../core/authService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { HouseTasksService } from '../../../core/houseTasksService';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatButtonModule],
+  imports: [FormsModule, CommonModule, MatButtonModule, TranslateModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -45,21 +46,21 @@ export class Login {
 @Component({
   selector: 'app-login-form-modal',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatDialogModule, MatButtonModule],
+  imports: [FormsModule, CommonModule, MatDialogModule, MatButtonModule, TranslateModule],
   template: `
     <div class="login-modal">
-      <h2>Login</h2>
+      <h2>{{ 'Login' | translate }}</h2>
       <div class="form-group">
-        <label for="username">Username:</label>
+        <label for="username">{{ 'Username' | translate }}:</label>
         <input id="username" [(ngModel)]="username" name="username" required type="text" autocomplete="username" autocapitalize="none">
       </div>
       <div class="form-group">
-        <label for="email">Email:</label>
+        <label for="email">{{ 'Email' | translate }}:</label>
         <input id="email" [(ngModel)]="email" name="email" required type="email" autocomplete="email" autocapitalize="none">
       </div>
       <div class="modal-actions">
-        <button mat-button (click)="onCancel()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="onLogin()">Login</button>
+        <button mat-button (click)="onCancel()">{{ 'Cancel' | translate }}</button>
+        <button mat-raised-button color="primary" (click)="onLogin()">{{ 'Login' | translate }}</button>
       </div>
       <p *ngIf="errorMessage()" class="error-message">{{ errorMessage() }}</p>
     </div>
@@ -70,6 +71,9 @@ export class Login {
       min-width: 300px;
       max-width: 95vw;
       box-sizing: border-box;
+          display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .form-group {
       margin-bottom: 15px;
@@ -108,7 +112,7 @@ export class Login {
     }
     .modal-actions {
       display: flex;
-      justify-content: flex-end;
+     
       gap: 10px;
       margin-top: 20px;
     }

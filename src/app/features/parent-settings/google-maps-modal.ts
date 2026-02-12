@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'google-maps-modal',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="modal-content">
       <button mat-icon-button class="close-x" mat-dialog-close>

@@ -32,4 +32,11 @@ body {
 
   // Reset the user agent margin.
   margin: 0;
+  }
+
+// RTL fix for required marker in Material form fields
+[dir="rtl"] .mat-form-field-required-marker {
+  left: 0;
+  right: auto;
 }
+

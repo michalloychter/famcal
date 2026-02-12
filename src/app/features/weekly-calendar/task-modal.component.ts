@@ -1,13 +1,15 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { Task, TasksService } from '../../core/tasksService';
+import type { Task } from '../../core/tasksService';
+import { TasksService } from '../../core/tasksService';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-task-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, ReactiveFormsModule],
+  imports: [CommonModule, MatDialogModule, ReactiveFormsModule, TranslateModule],
   template: `
     <div class="modal-header">
       <h2 mat-dialog-title>{{ editMode ? 'Edit Task' : 'Task Details' }}</h2>

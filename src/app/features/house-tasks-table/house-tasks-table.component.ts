@@ -6,6 +6,7 @@ import { TasksService } from '../../core/tasksService';
 import { HouseTasksService, HouseTask } from '../../core/houseTasksService';
 import { AuthService } from '../../core/authService';
 import { SocketService } from '../../core/socket.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 export type TableTask = { title: string; details: string; color: string };
 
@@ -14,7 +15,7 @@ export type TableTask = { title: string; details: string; color: string };
 @Component({
   selector: 'app-house-tasks-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './house-tasks-table.component.html',
   styleUrls: ['./house-tasks-table.component.css']
 })

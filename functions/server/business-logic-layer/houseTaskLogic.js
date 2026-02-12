@@ -16,7 +16,12 @@ module.exports = {
   },
 
   async updateHouseTask(id, updates) {
-    return houseTaskModel.updateHouseTask(id, updates);
+    const updated = await houseTaskModel.updateHouseTask(id, updates);
+    // Emit socket event for real-time update if familyId is present
+    if (updated.familyId) {
+      emitFamilyEveningUpdate(updated.familyId, { type: 'houseTask', action: 'updated', task: updated });
+    }
+    return updated;
   },
 
   async deleteHouseTask(id) {

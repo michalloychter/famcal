@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors'); 
 const app = express();
+// Serve static files from the public directory
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../public')));
 // Mount the places routes under /api/places (after app is defined)
 const placesRouter = require('./routes/placesRoutes');
 app.use('/api/places', placesRouter);
@@ -46,6 +49,10 @@ app.use('/api/families', familyRouter);
 // Mount the familyEvening routes under /api/family-evenings
 const familyEveningRouter = require('./routes/familyEveningRoutes');
 app.use('/api/family-evenings', familyEveningRouter);
+
+// Mount the messages routes under /api/messages
+const messagesRouter = require('./routes/messagesRoutes');
+app.use('/api/messages', messagesRouter);
 
 const http = require('http');
 const server = http.createServer(app);

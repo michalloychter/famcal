@@ -1,0 +1,38 @@
+<div class="modal-content" >
+  <div class="wa-header">
+    <ng-container *ngFor="let member of members">
+      <span class="member-tag" [ngStyle]="{'background': member.color || '#eee', 'color': '#222'}">{{ member.name }}</span>
+    </ng-container>
+  </div>
+  <div class="chat-container">
+  <div class="chat-messages" id="messages-container">
+      <ng-container *ngIf="messages.length === 0">
+        <p class="no-messages">{{ 'NO_MESSAGES' | translate }}</p>
+      </ng-container>
+      <ng-container *ngFor="let msg of messages">
+        <div class="message-wrapper" [ngClass]="{'my-message': msg.memberName === (authService.currentUser()?.name || '')}">
+          <div class="message-bubble">
+            <p class="message-text">{{ msg.text }}</p>
+            <div class="message-footer">
+              <span class="message-author">{{ msg.memberName }}</span>
+              <span class="message-time">{{ msg.date | date:'h:mm a' }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="message-input-section">
+    <div class="message-input-container">
+      <input
+        [(ngModel)]="newMessage"
+        placeholder="הודעה..."
+        class="message-input wa-input"
+        (keydown.enter)="sendMessage()"
+      />
+      <button mat-icon-button type="button" (click)="sendMessage()" class="send-btn wa-send-btn" [disabled]!="newMessage.trim()" matTooltip="Send message" matTooltipPosition="left">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

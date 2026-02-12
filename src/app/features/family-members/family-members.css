@@ -22,10 +22,16 @@
   --fam-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
+/* Delete button now inline with member name */
+.task-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 6px;
+  border-bottom: 2px solid #e0e7ff;
+}
 .delete-task-icon-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   background: rgba(255,255,255,0.85);
   border: none;
   color: var(--fam-danger);
@@ -38,6 +44,7 @@
   font-size: 1em;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  margin-left: 10px;
 }
 .delete-task-icon-btn:hover {
   background: var(--fam-danger-bg);
@@ -222,7 +229,7 @@
 .member-tabs-header {
   display: flex;
   flex-direction: row;
-  border-bottom: 2px solid #e0e7ff;
+  
   margin-bottom: 16px;
 }
 .member-tabs-header .tab {
@@ -258,7 +265,7 @@
 }
 /* Style for the member name at the top of each task, with a bottom border */
 .task-member-name {
-  border-bottom: 2px solid #bbb;
+  
   margin-bottom: 4px;
   padding-bottom: 2px;
   font-size: 1.05em;

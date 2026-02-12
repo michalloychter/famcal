@@ -29,59 +29,59 @@
     <div class="modal-backdrop" (click)="closeAddMemberModal()"></div>
     <div class="modal-content centered">
       <button class="close-x-btn" (click)="closeAddMemberModal()">✕</button>
-      <h2 style="margin-bottom: 20px;">Add New Member</h2>
+      <h2 style="margin-bottom: 20px;">{{'Add New Member' | translate}}</h2>
       
       <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()" style="width: 100%; max-width: 400px;">
         <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-          <mat-label>Member Name</mat-label>
-          <input matInput type="text" formControlName="memberName" placeholder="Enter name" required />
+          <mat-label>{{'Member Name' | translate}}</mat-label>
+          <input matInput type="text" formControlName="memberName" placeholder="{{'Enter name' | translate}}" required />
         </mat-form-field>
         <div class="color-picker-row" style="padding: 10px 0;">
-          <label>Color:</label>
+          <label>{{'Color' | translate}}:</label>
           <input type="color" formControlName="memberColor" class="color-input" />
         </div>
-        <mat-checkbox formControlName="isUser" style="margin-bottom: 12px;">Is User?</mat-checkbox>
+        <mat-checkbox formControlName="isUser" style="margin-bottom: 12px;">{{'Is User?' | translate}}</mat-checkbox>
         
         <!-- Show additional fields only if "Is User" is checked -->
         <ng-container *ngIf="addMemberForm.get('isUser')?.value">
           <div class="form-divider" style="margin: 10px 0;"></div>
           <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-            <mat-label>Username</mat-label>
-            <input matInput type="text" formControlName="username" placeholder="Enter username" />
+            <mat-label>{{'Username' | translate}}</mat-label>
+            <input matInput type="text" formControlName="username" placeholder="{{'Enter username' | translate}}" />
           </mat-form-field>
           <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Enter email" />
+            <mat-label>{{'Email' | translate}}</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="{{'Enter email' | translate}}" />
           </mat-form-field>
           <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-            <mat-label>Country</mat-label>
+            <mat-label>{{'Country' | translate}}</mat-label>
             <mat-select formControlName="country">
-              <mat-option value="">Select country</mat-option>
-              <mat-option value="Israel (+972)">Israel (+972)</mat-option>
-              <mat-option value="United States (+1)">United States (+1)</mat-option>
-              <mat-option value="United Kingdom (+44)">United Kingdom (+44)</mat-option>
-              <mat-option value="France (+33)">France (+33)</mat-option>
-              <mat-option value="Germany (+49)">Germany (+49)</mat-option>
-              <mat-option value="India (+91)">India (+91)</mat-option>
-              <mat-option value="Brazil (+55)">Brazil (+55)</mat-option>
-              <mat-option value="Russia (+7)">Russia (+7)</mat-option>
-              <mat-option value="China (+86)">China (+86)</mat-option>
-              <mat-option value="Japan (+81)">Japan (+81)</mat-option>
-              <mat-option value="Nepal (+977)">Nepal (+977)</mat-option>
+              <mat-option value="">{{'Select country' | translate}}</mat-option>
+              <mat-option value="Israel (+972)">{{'Israel (+972)' | translate}}</mat-option>
+              <mat-option value="United States (+1)">{{'United States (+1)' | translate}}</mat-option>
+              <mat-option value="United Kingdom (+44)">{{'United Kingdom (+44)' | translate}}</mat-option>
+              <mat-option value="France (+33)">{{'France (+33)' | translate}}</mat-option>
+              <mat-option value="Germany (+49)">{{'Germany (+49)' | translate}}</mat-option>
+              <mat-option value="India (+91)">{{'India (+91)' | translate}}</mat-option>
+              <mat-option value="Brazil (+55)">{{'Brazil (+55)' | translate}}</mat-option>
+              <mat-option value="Russia (+7)">{{'Russia (+7)' | translate}}</mat-option>
+              <mat-option value="China (+86)">{{'China (+86)' | translate}}</mat-option>
+              <mat-option value="Japan (+81)">{{'Japan (+81)' | translate}}</mat-option>
+              <mat-option value="Nepal (+977)">{{'Nepal (+977)' | translate}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-            <mat-label>Phone</mat-label>
-            <input matInput type="tel" formControlName="whatsappNumber" placeholder="e.g., 0545766580" />
+            <mat-label>{{'Phone' | translate}}</mat-label>
+            <input matInput type="tel" formControlName="whatsappNumber" placeholder="{{'e.g., 0545766580' | translate}}" />
           </mat-form-field>
         </ng-container>
         
         <div class="form-buttons" style="margin-top: 20px; gap: 12px;">
           <button class="save-btn-full" type="submit" [disabled]="addMemberForm.invalid">
-            Save Member
+            {{'Save Member' | translate}}
           </button>
           <button class="cancel-btn-full" type="button" (click)="closeAddMemberModal()">
-            Cancel
+            {{'Cancel' | translate}}
           </button>
         </div>
       </form>
@@ -90,12 +90,12 @@
 
   <div *ngIf="selectedMember()" class="tasks-display">
     <button class="back-btn " (click)="selectedMember.set(null)" style="margin-bottom:16px;">
-      <i class="fa-solid fa-arrow-left"></i> all members
+  <i class="fa-solid" [ngClass]="dir === 'rtl' ? 'fa-arrow-right' : 'fa-arrow-left'"></i> {{'All Members' | translate}}
     </button>
    
     <div class="fe-header-row">
-      <h2 class="all-tasks-h2">{{ selectedMember()?.name }} All Tasks</h2>
-      <button class="add-btn-icon" (click)="openAddTaskModal()" title="Add Task">
+      <h2 class="all-tasks-h2">{{ selectedMember()?.name }} {{'All Tasks' | translate}}</h2>
+      <button class="add-btn-icon" (click)="openAddTaskModal()" title="{{'Add Task' | translate}}">
         <span aria-hidden="true">+</span>
       </button>
     </div>
@@ -106,70 +106,70 @@
         <button class="close-x-btn" (click)="closeAddTaskModal()" title="Close">
           <i class="fa-solid fa-xmark"></i>
         </button>
-        <h2>Add Task for {{ selectedMember()?.name }}</h2>
+        <h2>{{'Add Task for' | translate}} {{ selectedMember()?.name }}</h2>
         <div class="task-type-buttons" style="margin-bottom: 1em;">
           <button class="fam-btn type-btn" (click)="openTaskForm('meeting')">
-            <i class="fa-regular fa-calendar type-icon"></i> Meeting
+            <i class="fa-regular fa-calendar type-icon"></i> {{'Meeting' | translate}}
           </button>
           <button class="fam-btn type-btn" (click)="openTaskForm('class')">
-            <i class="fa-solid fa-graduation-cap type-icon"></i> Class
+            <i class="fa-solid fa-graduation-cap type-icon"></i> {{'Class' | translate}}
           </button>
           <button class="fam-btn type-btn" (click)="openTaskForm('shopping')">
-            <i class="fa-solid fa-cart-shopping type-icon"></i> Shopping
+            <i class="fa-solid fa-cart-shopping type-icon"></i> {{'Shopping' | translate}}
           </button>
           <button class="fam-btn type-btn" (click)="openTaskForm('birthday')">
-            <i class="fa-solid fa-gift type-icon"></i> Birthday
+            <i class="fa-solid fa-gift type-icon"></i> {{'Birthday' | translate}}
           </button>
           <button class="fam-btn type-btn" (click)="openTaskForm('doctor')">
-            <i class="fa-solid fa-user-doctor type-icon"></i> See a Doctor
+            <i class="fa-solid fa-user-doctor type-icon"></i> {{'See a Doctor' | translate}}
           </button>
           <button class="fam-btn type-btn" (click)="openTaskForm('other')">
-            <i class="fa-regular fa-star type-icon"></i> Other
+            <i class="fa-regular fa-star type-icon"></i> {{'Other' | translate}}
           </button>
         </div>
         <ng-container *ngIf="isFormVisible">
           <form [formGroup]="newTaskForm" (ngSubmit)="submitNewTask()">
             <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-              <mat-label>Title</mat-label>
+              <mat-label>{{'Title' | translate}}</mat-label>
               <input matInput id="title" type="text" formControlName="title" required>
             </mat-form-field>
-            <app-required-error-message *ngIf="newTaskForm.get('title')?.invalid && (newTaskForm.get('title')?.dirty || newTaskForm.get('title')?.touched || submitted)" fieldName="Title" />
+            <app-required-error-message *ngIf="newTaskForm.get('title')?.invalid && (newTaskForm.get('title')?.dirty || newTaskForm.get('title')?.touched || submitted)" fieldName="{{'Title' | translate}}" />
             <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-              <mat-label>Details (optional)</mat-label>
+              <mat-label>{{'Details (optional)' | translate}}</mat-label>
               <textarea matInput id="details" formControlName="details"></textarea>
             </mat-form-field>
             <!-- Show date and reminder for all except improvement -->
             <ng-container *ngIf="newTaskForm.get('type')?.value !== 'improvement' && newTaskForm.get('type')?.value !== 'class'">
               <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-                <mat-label>Date</mat-label>
+                <mat-label>{{'Date' | translate}}</mat-label>
                 <input matInput id="date" type="date" formControlName="date">
               </mat-form-field>
               <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-                <mat-label>Reminder</mat-label>
+                <mat-label>{{'Reminder' | translate}}</mat-label>
                 <input matInput id="reminderDateTime" type="datetime-local" formControlName="reminderDateTime">
               </mat-form-field>
             </ng-container>
             <!-- Class-specific fields -->
             <ng-container *ngIf="newTaskForm.get('type')?.value === 'class'">
               <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-                <mat-label>Day of Week</mat-label>
+                <mat-label>{{'Day of Week' | translate}}</mat-label>
                 <mat-select id="weekday" formControlName="weekday" required>
-                  <mat-option value="" disabled>Select day</mat-option>
-                  <mat-option [value]="0">Sunday</mat-option>
-                  <mat-option [value]="1">Monday</mat-option>
-                  <mat-option [value]="2">Tuesday</mat-option>
-                  <mat-option [value]="3">Wednesday</mat-option>
-                  <mat-option [value]="4">Thursday</mat-option>
-                  <mat-option [value]="5">Friday</mat-option>
-                  <mat-option [value]="6">Saturday</mat-option>
+                  <mat-option value="" disabled>{{'Select day' | translate}}</mat-option>
+                  <mat-option [value]="0">{{'Sunday' | translate}}</mat-option>
+                  <mat-option [value]="1">{{'Monday' | translate}}</mat-option>
+                  <mat-option [value]="2">{{'Tuesday' | translate}}</mat-option>
+                  <mat-option [value]="3">{{'Wednesday' | translate}}</mat-option>
+                  <mat-option [value]="4">{{'Thursday' | translate}}</mat-option>
+                  <mat-option [value]="5">{{'Friday' | translate}}</mat-option>
+                  <mat-option [value]="6">{{'Saturday' | translate}}</mat-option>
                 </mat-select>
               </mat-form-field>
-              <app-required-error-message *ngIf="newTaskForm.get('weekday')?.invalid && (newTaskForm.get('weekday')?.dirty || newTaskForm.get('weekday')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="Day of Week" />
+              <app-required-error-message *ngIf="newTaskForm.get('weekday')?.invalid && (newTaskForm.get('weekday')?.dirty || newTaskForm.get('weekday')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="{{'Day of Week' | translate}}" />
               <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-                <mat-label>Time</mat-label>
+                <mat-label>{{'Time' | translate}}</mat-label>
                 <input matInput id="time" type="time" formControlName="time" required>
               </mat-form-field>
-              <app-required-error-message *ngIf="newTaskForm.get('time')?.invalid && (newTaskForm.get('time')?.dirty || newTaskForm.get('time')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="Time" />
+              <app-required-error-message *ngIf="newTaskForm.get('time')?.invalid && (newTaskForm.get('time')?.dirty || newTaskForm.get('time')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="{{'Time' | translate}}" />
             </ng-container>
             <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
             <button class="fam-btn" type="button" (click)="isFormVisible = false; selectedTaskType = null">Cancel</button>
@@ -191,9 +191,14 @@
           [class.optimistic-task]="task._optimistic"
           [class.task-done]="task.done">
           <div class="task-content">
-            <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
+            <div class="task-header-flex">
+              <div class="task-member-name"><strong>{{ task.memberName }}</strong></div>
+              <button (click)="deleteTask(task.id!)" class="delete-task-icon-btn" title="{{'Delete task' | translate}}">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
             <strong [class.task-title-done]="task.done">{{ task.title }}</strong>
-            <span *ngIf="task._optimistic" class="optimistic">Saving...</span>
+            <span *ngIf="task._optimistic" class="optimistic">{{'Saving...' | translate}}</span>
             <p [class.task-text-done]="task.done">{{ task.details }}</p>
             <small [class.task-text-done]="task.done">{{ task.date | friendlyDateTime }}</small>
             <div class="task-actions-row">
@@ -202,38 +207,35 @@
                 [class.done-active]="task.done"
                 (click)="toggleTaskDone(task)"
               >
-                Done
-              </button>
-              <button (click)="deleteTask(task.id!)" class="delete-task-icon-btn" title="Delete task">
-                <i class="fa-solid fa-trash"></i>
+                {{'Done' | translate}}
               </button>
             </div>
           </div>
         </li>
       </ul>
       <ng-template #noTasks>
-        <p>No tasks found for this member.</p>
+        <p>{{'No tasks found for this member.' | translate}}</p>
       </ng-template>
     </div>
     <div class="tab-content" *ngIf="activeMemberTab === 'add'">
       <div class="task-type-buttons">
         <button class="fam-btn type-btn" (click)="openTaskForm('meeting')">
-          <i class="fa-regular fa-calendar type-icon"></i> Meeting
+          <i class="fa-regular fa-calendar type-icon"></i> {{'Meeting' | translate}}
         </button>
         <button class="fam-btn type-btn" (click)="openTaskForm('class')">
-          <i class="fa-solid fa-graduation-cap type-icon"></i> Class
+          <i class="fa-solid fa-graduation-cap type-icon"></i> {{'Class' | translate}}
         </button>
         <button class="fam-btn type-btn" (click)="openTaskForm('shopping')">
-          <i class="fa-solid fa-cart-shopping type-icon"></i> Shopping
+          <i class="fa-solid fa-cart-shopping type-icon"></i> {{'Shopping' | translate}}
         </button>
         <button class="fam-btn type-btn" (click)="openTaskForm('birthday')">
-          <i class="fa-solid fa-gift type-icon"></i> Birthday
+          <i class="fa-solid fa-gift type-icon"></i> {{'Birthday' | translate}}
         </button>
         <button class="fam-btn type-btn" (click)="openTaskForm('doctor')">
-          <i class="fa-solid fa-user-doctor type-icon"></i> See a Doctor
+          <i class="fa-solid fa-user-doctor type-icon"></i> {{'See a Doctor' | translate}}
         </button>
         <button class="fam-btn type-btn" (click)="openTaskForm('other')">
-          <i class="fa-regular fa-star type-icon"></i> Other
+          <i class="fa-regular fa-star type-icon"></i> {{'Other' | translate}}
         </button>
       </div>
       <app-weekly-improvement (saveAsTask)="onSaveAsTask($event)"></app-weekly-improvement>
@@ -246,44 +248,44 @@
             <span *ngIf="selectedTaskType === 'birthday'" class="type-icon"><i class="fa-solid fa-gift"></i></span>
             <span *ngIf="selectedTaskType === 'doctor'" class="type-icon"><i class="fa-solid fa-user-doctor"></i></span>
             <span *ngIf="selectedTaskType === 'other'" class="type-icon"><i class="fa-regular fa-star"></i></span>
-            Add <span [ngClass]="'type-label type-' + selectedTaskType">{{ selectedTaskType || 'Task' }}</span> for {{ selectedMember()?.name }}
+            {{'Add' | translate}} <span [ngClass]="'type-label type-' + selectedTaskType">{{ selectedTaskType || ('Task' | translate) }}</span> {{'for' | translate}} {{ selectedMember()?.name }}
           </h4>
           <input type="hidden" formControlName="type">
           <div>
-            <label for="title">Title:</label>
+            <label for="title">{{'Title' | translate}}:</label>
             <input id="title" type="text" formControlName="title" required>
-            <app-required-error-message *ngIf="newTaskForm.get('title')?.invalid && (newTaskForm.get('title')?.dirty || newTaskForm.get('title')?.touched || submitted)" fieldName="Title" />
+            <app-required-error-message *ngIf="newTaskForm.get('title')?.invalid && (newTaskForm.get('title')?.dirty || newTaskForm.get('title')?.touched || submitted)" fieldName="{{'Title' | translate}}" />
           </div>
           <div>
-            <label for="details">Details (optional):</label>
+            <label for="details">{{'Details' | translate}} ({{'optional' | translate}}):</label>
             <textarea id="details" formControlName="details"></textarea>
           </div>
           <ng-container *ngIf="newTaskForm.get('type')?.value === 'class'">
             <div *ngIf="newTaskForm.get('type')?.value === 'class'">
-              <label for="weekday">Day of Week:</label>
+              <label for="weekday">{{'Day of Week' | translate}}:</label>
               <select id="weekday" formControlName="weekday" required>
-                <option value="" disabled selected>Select day</option>
-                <option [ngValue]="0">Sunday</option>
-                <option [ngValue]="1">Monday</option>
-                <option [ngValue]="2">Tuesday</option>
-                <option [ngValue]="3">Wednesday</option>
-                <option [ngValue]="4">Thursday</option>
-                <option [ngValue]="5">Friday</option>
-                <option [ngValue]="6">Saturday</option>
+                <option value="" disabled selected>{{'Select day' | translate}}</option>
+                <option [ngValue]="0">{{'Sunday' | translate}}</option>
+                <option [ngValue]="1">{{'Monday' | translate}}</option>
+                <option [ngValue]="2">{{'Tuesday' | translate}}</option>
+                <option [ngValue]="3">{{'Wednesday' | translate}}</option>
+                <option [ngValue]="4">{{'Thursday' | translate}}</option>
+                <option [ngValue]="5">{{'Friday' | translate}}</option>
+                <option [ngValue]="6">{{'Saturday' | translate}}</option>
               </select>
-              <app-required-error-message *ngIf="newTaskForm.get('weekday')?.invalid && (newTaskForm.get('weekday')?.dirty || newTaskForm.get('weekday')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="Day of Week" />
+              <app-required-error-message *ngIf="newTaskForm.get('weekday')?.invalid && (newTaskForm.get('weekday')?.dirty || newTaskForm.get('weekday')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="{{'Day of Week' | translate}}" />
             </div>
             <div *ngIf="newTaskForm.get('type')?.value === 'class'">
-              <label for="time">Time:</label>
+              <label for="time">{{'Time' | translate}}:</label>
               <input id="time" type="time" formControlName="time" required>
-              <app-required-error-message *ngIf="newTaskForm.get('time')?.invalid && (newTaskForm.get('time')?.dirty || newTaskForm.get('time')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="Time" />
+              <app-required-error-message *ngIf="newTaskForm.get('time')?.invalid && (newTaskForm.get('time')?.dirty || newTaskForm.get('time')?.touched || submitted) && newTaskForm.get('type')?.value === 'class'" fieldName="{{'Time' | translate}}" />
             </div>
           </ng-container>
           <div *ngIf="newTaskForm.get('type')?.value !== 'class'">
             <!-- Only show submit/cancel for non-class (including improvement/AI) -->
           </div>
-          <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">Save Task</button>
-          <button class="fam-btn " type="button" (click)="toggleFormVisibility()">Cancel</button>
+          <button class="fam-btn" type="submit" [disabled]="newTaskForm.invalid" color="primary">{{'Save Task' | translate}}</button>
+          <button class="fam-btn " type="button" (click)="toggleFormVisibility()">{{'Cancel' | translate}}</button>
         </form>
       </div>
     </div>

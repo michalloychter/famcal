@@ -1,17 +1,106 @@
-/* Ensure form-group fits content for login modal */
-.form-group {
-  max-width: fit-content;
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 200px;
+  margin: 0 auto;
+ 
 }
-/* Ensure form-group fits content for login modal */
-.form-group {
-  max-width: fit-content;
+
+.user-bubble-btn {
+     background: #e4ce6d ;
+  color: #fff !important;
+  border-radius: 22px 22px 6px 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  margin-left: 40px;
+  align-self: flex-end;
+  transition: background 0.2s, color 0.2s;
 }
+.user-bubble-btn:hover {
+  background: #e4dcba !important;
+}
+
+.register-bubble-btn {
+     background: #e4ce6d ;
+  color: #222 !important;
+  border-radius: 22px 22px 22px 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  margin-right: 40px;
+  align-self: flex-end;
+  transition: background 0.2s, color 0.2s;
+}
+.register-bubble-btn:hover {
+ background-color: #e4dcba
+}
+
+.greeting-bubble {
+  display: inline-block;
+  background-color: white;
+  color: #222;
+  border-radius: 22px 22px 22px 6px;
+  padding: 16px 28px;
+  margin-bottom: 18px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  position: relative;
+  max-width: 200px;
+  text-align: right;
+}
+.greeting-bubble:before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-bottom-left-radius: 12px;
+  transform: translateY(50%) rotate(45deg);
+}
+
+/* LTR (English) bubbles: left-aligned, left-pointing */
+.greeting-bubble:dir(ltr) {
+  text-align: left;
+  border-radius: 22px 22px 6px 22px;
+}
+.greeting-bubble:dir(ltr):before {
+  left: 18px;
+  right: auto;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 12px;
+  background-color: #bfe6e5;
+  transform: translateY(50%) rotate(-45deg);
+}
+
+/* LTR (English) user bubble button: left side */
+.user-bubble-btn:dir(ltr) {
+ 
+  margin-left: 0;
+  margin-right: 40px;
+}
+
+/* LTR (English) register bubble button: right side */
+.register-bubble-btn:dir(ltr) {
+  align-self: flex-end;
+  margin-right: 0;
+  margin-left: 40px;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: #d7f2f1;
+  background-color: #f4eded;;
   align-self: center;
   width: 60%;
   border-radius: 10px;
@@ -55,18 +144,18 @@
 }
 
 .use-btn {
-  background-color: #17a89a !important;
+  background-color: #e4d79f !important;
 }
 
 .register-btn {
-  background-color: #dad5d5 !important;
-  color: #17a89a !important;
+  background-color: #e4d79f !important;
+
 }
 
 @media (max-width: 768px) {
   .login-container {
-    width: 90%;
-    padding: 30px 20px;
+     width: 80%;
+      padding: 30px 10px;
   }
   
   .welcome-screen h1 {

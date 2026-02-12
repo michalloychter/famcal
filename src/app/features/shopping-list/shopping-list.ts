@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ShoppingListService } from '../../core/shoppingListService';
 import { AuthService } from '../../core/authService';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-shopping-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './shopping-list.html',
   styleUrls: ['./shopping-list.css'],
   providers: [ShoppingListService]

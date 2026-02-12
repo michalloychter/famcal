@@ -12,6 +12,8 @@ import { TasksService } from '../../core/tasksService';
 import { FamilyEveningService, FamilyEvening } from '../../core/familyEveningService';
 import { AuthService } from '../../core/authService';
 import { RequiredErrorMessageComponent } from '../../shared/required-error-message.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { Task } from '../../core/tasksService';
 
@@ -26,7 +28,7 @@ interface FamilyEveningTask {
 @Component({
   selector: 'app-family-evening',
   standalone: true,
-  imports: [FormsModule, CommonModule, RequiredErrorMessageComponent, AiSuggestionEditModalComponent],
+  imports: [FormsModule, CommonModule, RequiredErrorMessageComponent, TranslateModule],
   templateUrl: './family-evening.html',
   styleUrls: ['./family-evening.css'],
 })
@@ -76,7 +78,10 @@ export class FamilyEveningComponent implements OnDestroy {
   evenings = signal<FamilyEvening[]>([]);
   showPlanner = false;
   groupedEvenings = signal<{ title: string, tasks: Task[] }[]>([]);
-  filteredMembers: any[] = [];
+  // Use a getter for reactivity
+  get filteredMembers(): any[] {
+    return this.tasksService.familyMembers();
+  }
   idea = '';
   date = '';
   loading = signal(false);
@@ -92,11 +97,11 @@ export class FamilyEveningComponent implements OnDestroy {
     private authService: AuthService,
     private dialog: MatDialog,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private translate: TranslateService
   ) {
-    if (this.tasksService && typeof this.tasksService.familyMembers === 'function') {
-      this.filteredMembers = this.tasksService.familyMembers();
-    }
+    // Always fetch family members on init
+    this.tasksService.fetchFamilyMembers().subscribe();
   }
 
   getAssignedMemberName(idx: number): string {
@@ -118,7 +123,8 @@ export class FamilyEveningComponent implements OnDestroy {
     this.error.set('');
     this.tasks.set([]);
     this.loading.set(true);
-    this.aiService.getFamilyEveningTasks(this.idea, this.date).subscribe({
+  const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'en';
+  this.aiService.getFamilyEveningTasks(this.idea, this.date, lang).subscribe({
       next: (res) => {
         this.tasks.set(res.tasks);
         this.loading.set(false);
@@ -162,12 +168,16 @@ export class FamilyEveningComponent implements OnDestroy {
       tasks: tasksArr
     }).subscribe({
       next: () => {
-        this.loading.set(false);
-        if (isPlatformBrowser(this.platformId)) {
-          Confetti.start(); // Use document.body for maximum visibility
-          setTimeout(() => Confetti.clear(), 5000); // Clear after 5 seconds
-        }
-        this.closePlannerModal();
+        // Immediately refresh evenings signal
+        this.familyEveningService.fetchEvenings(familyId).subscribe(evenings => {
+          this.evenings.set(evenings);
+          this.loading.set(false);
+          if (isPlatformBrowser(this.platformId)) {
+            Confetti.start();
+            setTimeout(() => Confetti.clear(), 5000);
+          }
+          this.closePlannerModal();
+        });
       },
       error: (err) => {
         this.error.set('Failed to save family evening.');

@@ -16,7 +16,7 @@ router.post('/', protect, async (req, res) => {
 });
 
 // Get all house tasks for a family (POST, familyId in body)
-router.post('/family', protect, async (req, res) => {
+router.post('/family', async (req, res) => {
   try {
     const { familyId } = req.body;
     console.log('[API] POST /api/house-tasks/family, familyId:', familyId);

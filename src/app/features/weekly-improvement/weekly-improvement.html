@@ -1,17 +1,17 @@
 
 <form (ngSubmit)="submitImprovement()" class="improvement-form">
 	<mat-form-field appearance="outline" style="width:100%;margin-bottom:12px;">
-		<mat-label style="white-space:normal;overflow-wrap:break-word;word-break:break-word;font-size:clamp(1rem,2.5vw,1.1em);line-height:1.3;">What do you want to improve this week?</mat-label>
-		<input matInput id="improvement" name="improvement" [(ngModel)]="improvement" required placeholder="What do you want to improve this week?">
+		<mat-label>{{ 'What do you want to improve this week?' | translate }}</mat-label>
+		<input matInput id="improvement" name="improvement" [(ngModel)]="improvement" required placeholder="{{ 'What do you want to improve this week?' | translate }}">
 	</mat-form-field>
-	<div><button class="fam-btn" type="submit" [disabled]="loading">Send</button></div>
+	<div><button class="fam-btn" type="submit" [disabled]="loading">{{ 'Send' | translate }}</button></div>
 </form>
 
-<div *ngIf="loading" class="loading-message">Loading suggestion...</div>
+<div *ngIf="loading" class="loading-message">{{ 'Loading suggestion...' | translate }}</div>
 <div *ngIf="error" class="error-message">{{ error }}</div>
 
 <div *ngIf="aiSuggestions.length > 0">
-	<h4>AI Suggestions:</h4>
+	<h4>{{ 'AI Suggestions:' | translate }}</h4>
 	<div class="ai-suggestion-cards">
 		<div *ngFor="let step of aiSuggestions; let i = index" 
 				 class="ai-card" 
@@ -21,13 +21,13 @@
 			<div class="ai-card-text">{{ step.details }}</div>
 			<div class="ai-card-actions" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
 				<button class="fam-btn" type="button" (click)="saveCardAsTask(i, step)" [disabled]="savedCards[i]">
-					{{ savedCards[i] ? 'Saved ✓' : 'Save for 7 days' }}
+					{{ savedCards[i] ? ('Saved' | translate) + ' ✓' : ('Save for 7 days' | translate) }}
 				</button>
 			</div>
 		</div>
 	</div>
 	<div style="margin-top: 20px; text-align: center;">
-		<button class="fam-btn close-btn" type="button" (click)="closeAndClear()">Saved & Close</button>
+		<button class="fam-btn close-btn" type="button" (click)="closeAndClear()">{{ 'Saved & Close' | translate }}</button>
 	</div>
 </div>
 

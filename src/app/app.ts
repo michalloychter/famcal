@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { RouterOutlet } from '@angular/router';
 import { Header} from './layout/header/header'; // Import HeaderComponent
 import { Footer } from './layout/footer/footer';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Header, Footer],
+  imports: [RouterOutlet, Header, Footer, TranslateModule],
   templateUrl: './app.html',
 })
 

@@ -6,6 +6,7 @@ import { weekdayToString } from '../../shared/weekdayToString';
 import { CommonModule } from '@angular/common';
 import { FriendlyDateTimePipe } from '../../shared/friendly-date-time.pipe';
 import { FilterTodayPipe } from '../../shared/filter-today.pipe';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TasksService ,Task} from '../../core/tasksService'; 
 import { AuthService} from '../../core/authService';
 import { WeatherService, WeatherData } from '../../core/weather';
@@ -20,17 +21,23 @@ interface ImprovementTaskSeen {
 @Component({
   selector: 'app-daily-calendar',
   standalone: true,
-  imports: [CommonModule, FriendlyDateTimePipe], 
+  imports: [CommonModule, FriendlyDateTimePipe, TranslateModule], 
   templateUrl: './daily-calendar.html',
   styleUrls: ['./daily-calendar.css', './daily-calendar.mobile.css'],
 })
 export class DailyCalendar implements OnInit {
+  private langChangeSubscription: any;
+  // Returns true if the current language is Hebrew
+  get isHebrew(): boolean {
+    return this.translate.currentLang === 'he';
+  }
   constructor(
     private taskService: TasksService,
     private authService: AuthService,
     private weatherService: WeatherService,
     private aiService: AiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   openImprovementTaskModal(task: Task): void {
@@ -172,7 +179,11 @@ readonly memberName = computed(() => {
 // Use tasks$ observable for async pipe in template. Filter for today in template or with a helper if needed.
 
 
-ngOnInit(): void {
+  ngOnInit(): void {
+    // Subscribe to language change events
+    this.langChangeSubscription = this.translate.onLangChange.subscribe(() => {
+      this.fetchWeatherAndAdvice();
+    });
   // Get the logged-in member's email from authService
   const user = this.authService.currentUser();
   this.memberEmail = user && user.email ? user.email : null;
@@ -189,7 +200,13 @@ ngOnInit(): void {
     });
   }
   this.fetchWeatherAndAdvice();
-}
+  }
+
+  ngOnDestroy(): void {
+    if (this.langChangeSubscription) {
+      this.langChangeSubscription.unsubscribe();
+    }
+  }
 
   // Find the improvement task for today (only one)
   private setImprovementTaskForToday(): void {
@@ -222,36 +239,38 @@ ngOnInit(): void {
   }
 
     fetchWeatherAndAdvice(): void {
-    // Get weather data first
-    this.weatherService.getWeather().subscribe({
-      next: (weatherData) => {
-        this.weather.set(weatherData);
-        this.weatherError.set(null);
-        
-        // Once we have weather, get clothing advice
-        this.getClothingAdvice(weatherData);
-      },
-      error: (err) => {
-        this.weatherError.set('Could not fetch weather data.');
-        this.weather.set(null);
-        console.error(err);
-      }
-    });
-  }
+      // Get weather data first, passing current language
+      const lang = this.translate.currentLang || 'en';
+      this.weatherService.getWeather(undefined, lang).subscribe({
+        next: (weatherData) => {
+          this.weather.set(weatherData);
+          this.weatherError.set(null);
+          // Once we have weather, get clothing advice
+          this.getClothingAdvice(weatherData);
+        },
+        error: (err) => {
+          this.weatherError.set('Could not fetch weather data.');
+          this.weather.set(null);
+          console.error(err);
+        }
+      });
+    }
 
   getClothingAdvice(weatherData: WeatherData): void {
-    this.clothingLoading.set(true);
-    this.aiService.getClothingSuggestion(weatherData.temp, weatherData.description, weatherData.city).subscribe({
-      next: (response) => {
-        this.clothingAdvice.set(response.advice);
-        this.clothingLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Failed to get clothing advice:', err);
-        this.clothingAdvice.set(null);
-        this.clothingLoading.set(false);
-      }
-    });
+  this.clothingLoading.set(true);
+  const lang = this.translate.currentLang || 'en';
+  this.aiService.getClothingSuggestion(weatherData.temp, weatherData.description, weatherData.city, lang).subscribe({
+    next: (response) => {
+      console.log('[DAILY] Received clothing advice:', response.advice);
+      this.clothingAdvice.set(response.advice);
+      this.clothingLoading.set(false);
+    },
+    error: (err) => {
+      console.error('Failed to get clothing advice:', err);
+      this.clothingAdvice.set(null);
+      this.clothingLoading.set(false);
+    }
+  });
   }
   
 
@@ -309,4 +328,5 @@ ngOnInit(): void {
       }
     });
   }
+
 }

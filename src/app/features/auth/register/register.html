@@ -1,80 +1,80 @@
 <div class="register-container main-div">
-<h2>Register for Family Calendar</h2>
+<h2>{{ 'Register for Family Calendar' | translate }}</h2>
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline" style="width:100%;margin-bottom:16px;">
-    <mat-label>Family Name</mat-label>
+    <mat-label>{{ 'Family Name' | translate }}</mat-label>
     <input matInput type="text" formControlName="familyName" id="familyName" required>
   </mat-form-field>
   <div *ngIf="submitted && (f['familyName']?.errors ?? false)" class="error">
-    <div *ngIf="(f['familyName']?.errors?.['required'] ?? false)">Family Name is required</div>
+    <div *ngIf="(f['familyName']?.errors?.['required'] ?? false)">{{ 'Family Name is required' | translate }}</div>
   </div>
   <div formArrayName="members">
     <div *ngFor="let member of memberControls; let i = index" [formGroupName]="i" class="member-entry">
       <mat-form-field appearance="outline" style="width:100%;margin-bottom:8px;">
-        <mat-label>Member Name</mat-label>
+        <mat-label>{{ 'Member Name' | translate }}</mat-label>
         <input matInput type="text" formControlName="memberName" required>
       </mat-form-field>
       <mat-form-field appearance="outline" style="width:100%;margin-bottom:8px;">
-        <mat-label>Username</mat-label>
+        <mat-label>{{ 'Username' | translate }}</mat-label>
         <input matInput type="text" formControlName="username" required>
       </mat-form-field>
       <mat-form-field appearance="outline" style="width:100%;margin-bottom:8px;">
-        <mat-label>Email</mat-label>
+        <mat-label>{{ 'Email' | translate }}</mat-label>
         <input matInput type="email" formControlName="email">
       </mat-form-field>
       <mat-form-field appearance="outline" style="width:100%;margin-bottom:8px;">
-        <mat-label>Country</mat-label>
+        <mat-label>{{ 'Country' | translate }}</mat-label>
         <mat-select formControlName="country">
-          <mat-option value="">Select country</mat-option>
-          <mat-option value="Israel (+972)">Israel (+972)</mat-option>
-          <mat-option value="United States (+1)">United States (+1)</mat-option>
-          <mat-option value="United Kingdom (+44)">United Kingdom (+44)</mat-option>
-          <mat-option value="France (+33)">France (+33)</mat-option>
-          <mat-option value="Germany (+49)">Germany (+49)</mat-option>
-          <mat-option value="India (+91)">India (+91)</mat-option>
-          <mat-option value="Brazil (+55)">Brazil (+55)</mat-option>
-          <mat-option value="Russia (+7)">Russia (+7)</mat-option>
-          <mat-option value="China (+86)">China (+86)</mat-option>
-          <mat-option value="Japan (+81)">Japan (+81)</mat-option>
-          <mat-option value="Nepal (+977)">Nepal (+977)</mat-option>
+          <mat-option value="">{{ 'Select country' | translate }}</mat-option>
+          <mat-option value="Israel (+972)">{{ 'Israel (+972)' | translate }}</mat-option>
+          <mat-option value="United States (+1)">{{ 'United States (+1)' | translate }}</mat-option>
+          <mat-option value="United Kingdom (+44)">{{ 'United Kingdom (+44)' | translate }}</mat-option>
+          <mat-option value="France (+33)">{{ 'France (+33)' | translate }}</mat-option>
+          <mat-option value="Germany (+49)">{{ 'Germany (+49)' | translate }}</mat-option>
+          <mat-option value="India (+91)">{{ 'India (+91)' | translate }}</mat-option>
+          <mat-option value="Brazil (+55)">{{ 'Brazil (+55)' | translate }}</mat-option>
+          <mat-option value="Russia (+7)">{{ 'Russia (+7)' | translate }}</mat-option>
+          <mat-option value="China (+86)">{{ 'China (+86)' | translate }}</mat-option>
+          <mat-option value="Japan (+81)">{{ 'Japan (+81)' | translate }}</mat-option>
+          <mat-option value="Nepal (+977)">{{ 'Nepal (+977)' | translate }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" style="width:100%;margin-bottom:8px;">
-        <mat-label>Phone</mat-label>
-        <input matInput type="tel" formControlName="whatsappNumber" placeholder="e.g., 0545766580">
+        <mat-label>{{ 'Phone' | translate }}</mat-label>
+        <input matInput type="tel" formControlName="whatsappNumber" placeholder="{{ 'e.g., 0545766580' | translate }}">
       </mat-form-field>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <label style="margin-right:8px;">Color:</label>
+        <label style="margin-right:8px;">{{ 'Color' | translate }}:</label>
         <input type="color" formControlName="color" style="width:32px;height:32px;border:none;background:none;">
       </div>
       <mat-checkbox formControlName="isParent">
-        Parent (can access parent settings)
+        {{ 'Parent (can access parent settings)' | translate }}
       </mat-checkbox>
       <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
-        <button mat-icon-button color="primary" type="button" (click)="editMember(i)" aria-label="Edit member">
+        <button mat-icon-button color="primary" type="button" (click)="editMember(i)" aria-label="{{ 'Edit member' | translate }}">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" type="button" (click)="removeMember(i)" aria-label="Remove member">
+        <button mat-icon-button color="warn" type="button" (click)="removeMember(i)" aria-label="{{ 'Remove member' | translate }}">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
     </div>
   </div>
   <button mat-stroked-button color="primary" type="button" (click)="addMember()" style="margin-bottom:16px;">
-    <mat-icon>add</mat-icon> Add Member
+    <mat-icon></mat-icon> {{ 'Add Member' | translate }}
   </button>
   
 
 <div>
   <button mat-raised-button color="primary" class="fam-btn" type="submit" [disabled]="loading">
-    <span *ngIf="loading">Registering...</span>
-    <span *ngIf="!loading">Register</span>
+    <span *ngIf="loading">{{ 'Registering...' | translate }}</span>
+    <span *ngIf="!loading">{{ 'Register' | translate }}</span>
   </button>
 </div>
   <div *ngIf="error()" class="error-message">{{ error() }}</div>
 </form>
 
-<p>Already have an account? <a [routerLink]="['/login']" class="login-link">Login here</a></p>
+<p>{{ 'Already have an account?' | translate }} <a [routerLink]="['/login']" class="login-link">{{ 'Login here' | translate }}</a></p>
 <style>
   .login-link {
     cursor: pointer;

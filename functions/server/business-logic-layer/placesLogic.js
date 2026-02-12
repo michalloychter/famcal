@@ -26,7 +26,6 @@ async function getNearbyPlaces(type, lat, lon) {
 
   const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=3000&type=${googleType}&key=${apiKey}`;
   const response = await axios.get(url);
-  console.log('Google Places raw response:', JSON.stringify(response.data));
   if (!response.data.results) return [];
   return response.data.results.slice(0, 4).map(place => ({
     name: place.name,

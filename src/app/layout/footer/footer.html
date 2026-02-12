@@ -1,43 +1,14 @@
-<footer class="main-footer">
+<footer class="main-footer" dir="ltr">
   <!-- Desktop footer -->
   <div class="desktop-footer">
-    Family Calendar - Keeping your family connected
+     {{ 'FAMILY_CALENDAR' | translate }} - {{ 'KEEPING_YOUR_FAMILY_CONNECTED' | translate }}
   </div>
   
   <!-- Mobile bottom navigation -->
   <div class="mobile-footer">
-    <nav class="mobile-nav" *ngIf="authService.currentUser()">
-      <a [routerLink]="['/daily-calendar']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-calendar-day"></i>
-        <span>Today</span>
-      </a>
-      <a [routerLink]="['/family-calendar']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-calendar"></i>
-        <span>Calendar</span>
-      </a>
-      <a [routerLink]="['/family-members']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-users"></i>
-        <span>Members</span>
-      </a>
-      <a [routerLink]="['/shopping-list']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span>Shopping</span>
-      </a>
-      <a [routerLink]="['/family-evening']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-moon"></i>
-        <span>Evening</span>
-      </a>
-      <a [routerLink]="['/house-tasks-table']" routerLinkActive="active" class="nav-item">
-        <i class="fa-solid fa-list-check"></i>
-        <span>Tasks</span>
-      </a>
-      <a *ngIf="authService.currentUser()?.isParent" [routerLink]="['/parent-settings']" routerLinkActive="active" class="nav-item heart-link-mobile">
-        <i class="fa-solid fa-heart"></i>
-        <span>Parents</span>
-      </a>
-    </nav>
+  <app-nav-icons [showLabels]="true" navType="footer" class="mobile-nav"></app-nav-icons>
     <div class="mobile-footer-text">
-      Family Calendar - Keeping your family connected
+     {{ 'FAMILY_CALENDAR' | translate }} - {{ 'KEEPING_YOUR_FAMILY_CONNECTED' | translate }}
     </div>
   </div>
 </footer>

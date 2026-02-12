@@ -1,3 +1,8 @@
+
+
+html, body {
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}
 /* Global required error message style */
 .required-error-message {
 	color: #eab308; /* yellow-500 */
@@ -22,4 +27,4 @@ main {
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: 'Roboto', Arial, Helvetica, sans-serif; }

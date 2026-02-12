@@ -13,6 +13,7 @@ import { convertAnyDateToJSDate } from '../../shared/convertTimestamp';
 import { GoogleCalendarService, GoogleCalendarEvent } from '../../core/googleCalendarService';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 
 function isEventInput(event: EventInput | null): event is EventInput {
 	return event !== null;
@@ -21,7 +22,7 @@ function isEventInput(event: EventInput | null): event is EventInput {
 @Component({
 	selector: 'app-family-calendar',
 	standalone: true,
-	imports: [FullCalendarModule, CommonModule, MatButtonModule, MatIconModule],
+	imports: [FullCalendarModule, CommonModule, MatButtonModule, MatIconModule, TranslateModule],
 	templateUrl: './family-calendar.html',
 	styleUrl: './family-calendar.css'
 })

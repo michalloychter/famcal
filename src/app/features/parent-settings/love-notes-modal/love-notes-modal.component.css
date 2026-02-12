@@ -1,0 +1,137 @@
+.modal-content {
+  padding: 0;
+  position: relative;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: #f0f0f0;
+}
+.close-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #722f37;
+  cursor: pointer;
+  background: white;
+  border: none;
+  font-size: 1.5rem;
+  z-index: 100;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+.close-x:hover {
+  background: #f0f0f0;
+}
+h2 {
+  color: white;
+  background: #722f37;
+  margin: 0;
+  padding: 15px 20px;
+  padding-right: 50px;
+  font-size: 1.2rem;
+}
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  background: #f0f0f0;
+  min-height: 300px;
+  max-height: 50vh;
+}
+.chat-messages {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+}
+.no-messages {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-style: italic;
+}
+.message-wrapper {
+  display: flex;
+  width: 100%;
+}
+.message-wrapper.my-message {
+  justify-content: flex-end;
+}
+.message-bubble {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  word-wrap: break-word;
+}
+.message-bubble.my-bubble {
+  background: #dcf8c6;
+}
+.message-text {
+  margin: 0 0 5px 0;
+  color: #333;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+}
+.message-author {
+  color: #9f3939;
+  font-weight: 500;
+}
+.message-time {
+  color: #666;
+}
+.message-input-section {
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #ddd;
+}
+.message-input-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+textarea {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  font-size: 1rem;
+  resize: none;
+  min-height: 40px;
+  max-height: 100px;
+  font-family: inherit;
+}
+textarea:focus {
+  outline: none;
+  border-color: #722f37;
+}
+.send-btn {
+  background: none;
+  border: none;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.send-btn:not(:disabled):hover i {
+  color: #5c1f29;
+}
+.send-btn i {
+  font-size: 1.5rem;
+  color: #722f37;
+}

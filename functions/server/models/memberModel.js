@@ -78,7 +78,7 @@ const MemberModel = {
           familyId: String(familyId),
           familyName: member.familyName || '',
           color: member.color || '#1976d2', // Store color with default
-          isParent: Boolean(member.isParent) // Always store as boolean
+          isParent: member.isParent || false // Store isParent field
         });
       }
       await batch.commit();

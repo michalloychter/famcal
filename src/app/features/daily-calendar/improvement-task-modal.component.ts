@@ -1,17 +1,18 @@
 
 import { Component, Inject } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Task } from '../../core/tasksService';
+import type { Task } from '../../core/tasksService';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-improvement-task-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, FormsModule, ConfirmationDialogComponent, MatFormFieldModule, MatInputModule],
+  imports: [CommonModule, MatDialogModule, FormsModule, MatFormFieldModule, MatInputModule, TranslateModule],
   template: `
     <div class="modal-header">
     </div>
@@ -21,14 +22,14 @@ import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/co
     <div class="modal-title-row">
       <h2 mat-dialog-title *ngIf="!editMode">{{ data.title }}</h2>
       <mat-form-field *ngIf="editMode" appearance="outline" class="edit-field">
-        <mat-label>Task title</mat-label>
+        <mat-label>{{ 'TASK_TITLE' | translate }}</mat-label>
         <input matInput [(ngModel)]="editTitle" />
       </mat-form-field>
     </div>
     <mat-dialog-content>
-      <div *ngIf="!editMode"><strong>Details:</strong> {{ data.details }}</div>
+      <div *ngIf="!editMode"><strong>{{ 'TASK_DETAILS' | translate }}:</strong> {{ data.details }}</div>
       <mat-form-field *ngIf="editMode" appearance="outline" class="edit-field">
-        <mat-label>Task details</mat-label>
+        <mat-label>{{ 'TASK_DETAILS' | translate }}</mat-label>
         <textarea matInput rows="3" [(ngModel)]="editDetails"></textarea>
       </mat-form-field>
     </mat-dialog-content>

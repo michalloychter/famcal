@@ -1,48 +1,34 @@
-<header class="main-header">
-  <div class="logo">
+<header class="main-header" dir="ltr">
+ <div style="display: flex; flex-direction: row;"> <div class="logo" (click)="onLogoClick()" style="cursor:pointer;">
     <div class="logo-circle">
       <span class="logo-fam">fam</span>
       <div class="divider"></div>
       <span class="logo-cal">cal</span>
     </div>
   </div>
+ <a *ngIf="authService.currentUser()" (click)="openAllMessages()" [attr.title]="'ALL_MESSAGES' | translate" class="message-header-icon">
+  <i class="fa-solid fa-comments"></i>
+    </a></div>
+  <app-nav-icons [showLabels]="true" navType="header" class="desktop-nav-links"></app-nav-icons>
+<div style="display: flex;">
+  <div style="position: relative; display: inline-block;">
+    <select class="lang-dropdown" [value]="currentLang()" (change)="onLangChange($event)">
+      <option value="en">En</option>
+      <option value="he">עב</option>
+    </select>
+  </div>
 
-  <nav class="main-nav">
-    <!-- Desktop navigation links -->
-    <div class="desktop-nav-links" *ngIf="authService.currentUser()">
-  <span><a [routerLink]="['/daily-calendar']">daily-Calendar</a></span>
-  <span><a [routerLink]="['/family-calendar']">Calendar</a></span>
-  <span><a [routerLink]="['/family-members']">family-members</a></span>
-  <span><a [routerLink]="['/shopping-list']">shopping-list</a></span>
-  <span><a [routerLink]="['/family-evening']">family-evening</a></span>
-  <span>
-    <a [routerLink]="['/house-tasks-table']">
-     house-tasks-table
-    </a>
+  <span *ngIf="authService.currentUser()" class="user-menu-container">
+    <span class="user-icon" title="Logged in" (click)="toggleUserMenu()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="4" fill="#888"/>
+        <rect x="4" y="16" width="16" height="6" rx="3" fill="#888"/>
+      </svg>
+    </span>
+    <ul class="user-dropdown-menu" *ngIf="userMenuOpen()">
+      <li class="user-name">{{ authService.currentUser()?.name || authService.currentUser()?.familyName }}</li>
+      <li><a class="main-nav-list" href="#" (click)="logout()">{{ 'LOGOUT' | translate }}</a></li>
+    </ul>
   </span>
-      <!-- Couple Time heart icon near user menu -->
-      <span *ngIf="authService.currentUser()?.isParent" class="couple-header-icon">
-        <a [routerLink]="['/parent-settings']" title="Couple Time">
-     couple time
-        </a>
-      </span>
-    </div>
-    
-    <div class="header-right">
-     
-      <span *ngIf="authService.currentUser()" class="user-menu-container">
-        <span class="user-icon" title="Logged in" (click)="toggleUserMenu()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="8" r="4" fill="#888"/>
-            <rect x="4" y="16" width="16" height="6" rx="3" fill="#888"/>
-          </svg>
-        </span>
-        <ul class="user-dropdown-menu" *ngIf="userMenuOpen()">
-          <li class="user-name">{{ authService.currentUser()?.name || authService.currentUser()?.familyName }}</li>
-          <li><a class="main-nav-list" href="#" (click)="logout()">Logout</a></li>
-        </ul>
-      </span>
-    </div>
-  </nav>
- 
+</div>
 </header>

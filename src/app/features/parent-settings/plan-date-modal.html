@@ -1,0 +1,27 @@
+<div class="modal-content">
+  <button mat-icon-button class="close-x" mat-dialog-close>
+  <i class="fa-solid fa-times"></i>
+  </button>
+  <h2><i class="fa-solid fa-calendar-days"></i> <i class="fa-solid fa-pencil"></i> {{ 'PLAN_A_DATE' | translate }}</h2>
+  <p>{{ 'SCHEDULE_YOUR_NEXT_ROMANTIC_DATE' | translate }}</p>
+  <form [formGroup]="dateForm" (ngSubmit)="saveDatePlan()" class="date-form">
+    <div class="form-group">
+      <label><i class="fa-solid fa-calendar"></i></label>
+      <input type="datetime-local" formControlName="datetime" required />
+    </div>
+    <div class="form-group">
+      <label><i class="fa-solid fa-location-dot"></i></label>
+      <input type="text" formControlName="place" placeholder="{{ 'PLACEHOLDER_PLACE' | translate }}" required />
+    </div>
+    <div class="form-group">
+      <label><i class="fa-solid fa-note-sticky"></i></label>
+      <textarea formControlName="details" rows="3" placeholder="{{ 'PLACEHOLDER_DETAILS' | translate }}"></textarea>
+    </div>
+    <div style="position: relative;">
+      <button mat-raised-button type="submit" class="save-btn" [disabled]="!dateForm.valid || saving">
+        <i class="fa-solid fa-heart"></i> {{ saving ? 'Saving...' : 'Save Date Plan' }}
+      </button>
+      <i *ngIf="showHeart" class="fa-solid fa-heart floating-heart"></i>
+    </div>
+  </form>
+</div>

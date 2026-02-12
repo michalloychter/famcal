@@ -1,15 +1,30 @@
-@media (max-width: 768px) {
-    .improvement-title {
-        font-weight: 500;
-        font-size: 1em;
-    }
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #333;
+    color: #fff !important;
+    border: 1px solid #222;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.13);
 }
-@media (max-width: 768px) {
-    ul.suggesting-list li {
-        padding: 5px;
-        width: 70px;
-    }
+
+.icon-button:hover {
+    background: #111;
+    color: #ffe066 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
+@media (min-width: 768px) {
+    .main-div {
+    padding: 20px;
+    padding-left: 20% !important;
+    padding-right: 20% !important;
+}
+}
+
 /* Improvement tasks list styles */
 .improvement-tasks-list {
     display: flex;
@@ -48,6 +63,7 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
+    margin-top: 20px;
     /* gap removed */
 }
 
@@ -80,7 +96,7 @@
 }
 .small-icon {
     font-size: 1rem;
-    color: #888;
+    color: #222;
     cursor: pointer;
     margin-left: 6px;
     transition: color 0.2s;
@@ -115,17 +131,27 @@
 /* Task type background colors (copied from family-members.css) */
 .main-div {
     padding: 20px;
+   
 }
 .daily-tasks-container ul {
     list-style-type: none; /* Removes the bullet points */
     padding: 0;           /* Removes default padding */
-    margin: 0; 
-    display: flex;           /* Removes default margin */
-}
+    margin: 0; }
+    .greeting-text {
+            border-start-end-radius: 30px;
+border-end-end-radius: 30px;
+border-start-start-radius: 0px;
+border-end-start-radius: 0px;
+                background: #bbeee9;
+                font-weight: 700;
+                padding-block: 10px;
+                padding-inline: 5px 30px;
+                
+            }
 .daily-tasks-container ul .task-li{
     background-color: #d7f2f1;
     align-self: center;
-    width: 90vw;
+    width: 30%;
     border-radius: 10px;
     list-style: none;
     padding: 20px;
@@ -220,7 +246,7 @@
     padding: 16px;
     background: #f5f9ff;
     border-radius: 10px;
-    border-left: 4px solid #1976d2;
+        border-inline-start: 4px solid #1976d2;
 }
 
 .clothing-advice h4 {

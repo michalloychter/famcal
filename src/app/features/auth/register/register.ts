@@ -1,6 +1,7 @@
 
 
-import { Component, signal } from '@angular/core';
+import { Component, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/authService';
@@ -11,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 
@@ -27,7 +29,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatSelectModule,
     MatCheckboxModule,
     MatIconModule,
-    MatButtonModule
+  MatButtonModule,
+  TranslateModule
   ],
   templateUrl: './register.html',
   styleUrl: './register.css'
@@ -79,7 +82,8 @@ export class Register {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.registerForm = this.fb.group({
       familyName: ['', Validators.required],
@@ -143,17 +147,21 @@ export class Register {
 
 
   onSubmit() {
+    if (!isPlatformBrowser(this.platformId)) {
+      // Skip registration logic during SSR/prerendering
+      return;
+    }
     this.submitted = true;
     this.error.set('');
     const missing: string[] = [];
     if (this.registerForm.invalid) {
       missing.push('familyName');
     }
-  const firstMember = this.members.at(0).value;
-  if (!firstMember.memberName) missing.push('first member name');
-  if (!firstMember.username) missing.push('first member username');
-  if (!firstMember.email) missing.push('first member email');
-  if (!firstMember.whatsappNumber) missing.push('first member whatsappNumber');
+    const firstMember = this.members.at(0).value;
+    if (!firstMember.memberName) missing.push('first member name');
+    if (!firstMember.username) missing.push('first member username');
+    if (!firstMember.email) missing.push('first member email');
+    if (!firstMember.whatsappNumber) missing.push('first member whatsappNumber');
     if (missing.length > 0) {
       this.missingFields.set(missing);
       this.error.set('Please fill all required fields');

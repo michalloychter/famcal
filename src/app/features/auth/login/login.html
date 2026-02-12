@@ -1,14 +1,16 @@
 <div class="login-container main-div">
   <div class="welcome-screen">
-    <h1>Hi, good to see you!</h1>
-    <p class="welcome-subtitle">Ready to organize your family life?</p>
-    
+    <div class="greeting-bubble">
+      {{ 'Hi, good to see you!' | translate }}
+    </div>
+   
     <div class="action-buttons">
-      <button mat-raised-button color="primary" class="use-btn" (click)="openLoginForm()">
-        User
+      <button class="user-bubble-btn" (click)="openLoginForm()">
+        {{ 'User' | translate }}
       </button>
-      <button mat-raised-button color="accent" class="register-btn" (click)="goToRegister()">
-        Not yet? Register
+  <div class="greeting-bubble">{{ 'Not yet?' | translate }}</div>
+      <button class="user-bubble-btn" (click)="goToRegister()">
+        {{ 'Register' | translate }}
       </button>
     </div>
   </div>

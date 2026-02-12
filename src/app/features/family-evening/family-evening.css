@@ -1,3 +1,31 @@
+.evening-task-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+.delete-task-icon-btn {
+  background: none;
+  border: none;
+  color: #b71c1c;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 2px 6px;
+  margin-inline-start: 10px;
+  transition: color 0.2s;
+}
+.delete-task-icon-btn:hover {
+  color: #e53935;
+}
+.task-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
 /* Remove list decoration from family evening cards */
 .family-evening-container .task-card ul {
   list-style: none;
@@ -13,30 +41,24 @@
 /* Ensure delete icon button never gets generic button background */
 .family-evening-container .delete-icon {
   background: none !important;
-  color: #581515;
+  color: #0c0a0a;
   border: none;
   box-shadow: none;
 }
 .family-evening-container .delete-icon:hover,
 .family-evening-container .delete-icon:focus {
-  color: #a82020;
+  color: #581515;
 }
 /* Delete icon button styles */
 .delete-icon {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+ 
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 20px;
-  color: #581515;
+  color: #271b1b;
   transition: color 0.2s;
 }
-.delete-icon:hover,
-.delete-icon:focus {
-  color: #a82020;
-}
+
 /* Header row for title and add button */
 .fe-header-row {
   display: flex;
@@ -131,7 +153,7 @@
   border-radius: 14px;
   min-height: calc(100vh - 200px);
   overflow: hidden;
-  text-align: center;
+  text-align: start;
 }
 .family-evening-container h2 {
   margin-bottom: 12px;
@@ -190,9 +212,8 @@
   position: relative;
   z-index: 1;
   box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-  padding: 20px 22px;
-  min-width: 200px;
-  max-width: 320px;
+  padding:5px 22px;
+  width: 300px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -240,4 +261,8 @@
   font-size: 0.96em;
   color: #059669;
   font-weight: 500;
+}
+@media (max-width: 768px) {
+.task-card {
+    width: 80%;}
 }

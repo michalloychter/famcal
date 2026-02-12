@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -12,7 +13,7 @@ export interface AiSuggestionEditData {
 @Component({
   selector: 'app-ai-suggestion-edit-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, ReactiveFormsModule],
+  imports: [CommonModule, MatDialogModule, ReactiveFormsModule, TranslateModule],
   template: `
     <div class="modal-header">
       <h2 mat-dialog-title>Edit Suggestion</h2>

@@ -1,5 +1,6 @@
+import 'zone.js';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
+import { appConfig } from './app/app.i18n.config';
 import { App } from './app/app';
 
 // Only import emulator connection in development

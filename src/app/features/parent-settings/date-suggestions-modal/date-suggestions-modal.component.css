@@ -1,0 +1,135 @@
+.small-close {
+  padding: 2px 6px !important;
+  min-width: 28px;
+  min-height: 28px;
+  width: 28px;
+  height: 28px;
+}
+.modal-content {
+  padding: 20px;
+  position: relative;
+  max-height: 60%;
+  overflow-y: scroll;
+}
+.close-x {
+  margin-inline-start: 85%;
+  color: #722f37;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  z-index: 10;
+}
+.close-x:hover {
+  color: #5c1f29;
+}
+h2 {
+  color: #722f37;
+  margin-bottom: 10px;
+}
+.add-date-section {
+  background: #f6ebf2;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.add-date-section h3 {
+  color: #722f37;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+.date-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-group {
+  position: relative;
+}
+.place-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: #722f37;
+}
+.maps-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #9f3939;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.maps-btn:hover {
+  background: #722f37;
+}
+.maps-btn i {
+  font-size: 1.2rem;
+}
+.save-btn {
+  background: #722f37;
+  color: white;
+}
+.save-btn:disabled {
+  background: #ccc;
+}
+.floating-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  animation: floatUp 2s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -200%) scale(2);
+  }
+}
+.suggestions-content {
+  margin: 20px 0;
+  min-height: 150px;
+}
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #722f37;
+  font-size: 1.2rem;
+}
+.fa-spinner {
+  margin-right: 10px;
+}
+.suggestions-list {
+  padding: 15px;
+  background: #f6ebf2;
+  border-radius: 8px;
+  line-height: 1.8;
+  max-height: 150px;
+  overflow-y: scroll;
+}
+.tips {
+  white-space: pre-line;
+}

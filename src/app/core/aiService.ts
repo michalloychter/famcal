@@ -13,11 +13,11 @@ export class AiService {
     return this.http.post<{ suggestions: { title: string; details: string }[] }>(`${this.apiUrl}/ai-improvement-suggestion`, { question });
   }
 
-  getFamilyEveningTasks(idea: string, date: string): Observable<{ tasks: any[] }> {
-    return this.http.post<{ tasks: any[] }>(`${this.apiUrl}/ai-family-evening-tasks`, { idea, date });
+  getFamilyEveningTasks(idea: string, date: string, lang: string): Observable<{ tasks: any[] }> {
+    return this.http.post<{ tasks: any[] }>(`${this.apiUrl}/ai-family-evening-tasks`, { idea, date, lang });
   }
 
-  getClothingSuggestion(temp: number, description: string, city: string): Observable<{ advice: string }> {
-    return this.http.post<{ advice: string }>(`${this.apiUrl}/ai-clothing-suggestion`, { temp, description, city });
+  getClothingSuggestion(temp: number, description: string, city: string, lang: string): Observable<{ advice: string }> {
+    return this.http.post<{ advice: string }>(`${this.apiUrl}/ai-clothing-suggestion`, { temp, description, city, lang });
   }
 }

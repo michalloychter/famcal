@@ -1,0 +1,73 @@
+<ng-container *ngIf="authService.currentUser()">
+  <ng-container *ngIf="navType === 'footer'; else headerNav">
+    <!-- Footer nav: icons only, label hidden, tooltip shows label -->
+   
+    <a [routerLink]="['/daily-calendar']" [attr.title]="'DAILY_CALENDAR' | translate">
+      <i class="fa-solid fa-calendar-day"></i>
+      <span class="nav-label">{{ 'DAILY_CALENDAR'  | translate }}</span>
+    </a>
+
+    <a [routerLink]="['/family-calendar']" matTooltip="{{ 'CALENDAR' | translate }}" class="footer-icon">
+      <i class="fa-solid fa-calendar"></i>
+      <span class="nav-label">{{ 'CALENDAR' | translate }}</span>
+    </a>
+    <a [routerLink]="['/family-members']" matTooltip="{{ 'FAMILY_MEMBERS' | translate }}" class="footer-icon">
+      <i class="fa-solid fa-users"></i>
+      <span class="nav-label">{{ 'FAMILY_MEMBERS' | translate }}</span>
+    </a>
+    <a [routerLink]="['/shopping-list']" matTooltip="{{ 'SHOPPING_LIST' | translate }}" class="footer-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="nav-label">{{ 'SHOPPING_LIST' | translate }}</span>
+    </a>
+    <a [routerLink]="['/family-evening']" matTooltip="{{ 'FAMILY_EVENING' | translate }}" class="footer-icon">
+      <i class="fa-solid fa-moon"></i>
+      <span class="nav-label">{{ 'FAMILY_EVENING' | translate }}</span>
+    </a>
+    <a [routerLink]="['/house-tasks-table']" matTooltip="{{ 'HOUSE_TASKS_TABLE' | translate }}" class="footer-icon">
+      <i class="fa-solid fa-list-check"></i>
+      <span class="nav-label">{{ 'HOUSE_TASKS_TABLE' | translate }}</span>
+    </a>
+    <a *ngIf="authService.currentUser()?.isParent" [routerLink]="['/parent-settings']" matTooltip="{{ 'COUPLE_TIME' | translate }}" class="footer-icon couple-header-icon">
+      <i class="fa-solid fa-champagne-glasses"></i>
+      <span class="nav-label">{{ 'COUPLE_TIME' | translate }}</span>
+    </a>
+  </ng-container>
+  <ng-template #headerNav>
+    <!-- Header nav: only icons, no labels, and you can customize which icons appear here if needed -->
+   
+
+  <a [routerLink]="['/daily-calendar']" [attr.title]="'DAILY_CALENDAR' | translate">
+    <i class="fa-solid fa-calendar-day"></i>
+    <span *ngIf="showLabels" class="nav-label">{{ 'DAILY_CALENDAR' | translate }}</span>
+   </a>
+
+    <a [routerLink]="['/family-calendar']" [attr.title]="'CALENDAR' | translate">
+      <i class="fa-solid fa-calendar"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'CALENDAR' | translate }}</span>
+    </a>
+    <a [routerLink]="['/family-members']" [attr.title]="'FAMILY_MEMBERS' | translate">
+      <i class="fa-solid fa-users"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'FAMILY_MEMBERS' | translate }}</span>
+    </a>
+    <a [routerLink]="['/shopping-list']" [attr.title]="'SHOPPING_LIST' | translate">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'SHOPPING_LIST' | translate }}</span>
+    </a>
+    <a [routerLink]="['/family-evening']" [attr.title]="'FAMILY_EVENING' | translate">
+      <i class="fa-solid fa-moon"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'FAMILY_EVENING' | translate }}</span>
+    </a>
+    <a [routerLink]="['/house-tasks-table']" [attr.title]="'HOUSE_TASKS_TABLE' | translate">
+      <i class="fa-solid fa-list-check"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'HOUSE_TASKS_TABLE' | translate }}</span>
+    </a>
+    <a *ngIf="authService.currentUser()?.isParent" [routerLink]="['/parent-settings']" [attr.title]="'COUPLE_TIME' | translate" class="couple-header-icon">
+      <i class="fa-solid fa-champagne-glasses"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'COUPLE_TIME' | translate }}</span>
+    </a>
+    <a *ngIf="authService.currentUser()?.isParent" (click)="openAllMessages()" [attr.title]="'ALL_MESSAGES' | translate" class="message-header-icon">
+      <i class="fa-solid fa-message"></i>
+      <span *ngIf="showLabels" class="nav-label">{{ 'ALL_MESSAGES' | translate }}</span>
+    </a>
+  </ng-template>
+</ng-container>

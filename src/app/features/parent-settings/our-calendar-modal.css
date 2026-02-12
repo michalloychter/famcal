@@ -1,0 +1,61 @@
+.modal-content {
+  padding: 0;
+  width: 95vw;
+  height: 95vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.close-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #722f37;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  z-index: 1000;
+}
+.close-x:hover {
+  color: #5c1f29;
+}
+app-family-calendar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+::ng-deep app-family-calendar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+::ng-deep .calendar-container {
+  height: 100% !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  padding: 20px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+::ng-deep .calendar-header {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  width: 100%;
+}
+::ng-deep full-calendar {
+  flex: 1 !important;
+  height: auto !important;
+  min-height: 0;
+  width: 100%;
+}
+::ng-deep .fc {
+  height: 100% !important;
+  width: 100%;
+}
+::ng-deep .fc-view-harness {
+  height: 100% !important;
+}
